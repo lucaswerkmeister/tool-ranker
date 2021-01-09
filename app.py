@@ -165,6 +165,12 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
     entity = response['entities'][entity_id]
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
+
+    prefetch_property_ids = set()
+    for statement in statements:
+        prefetch_property_ids.update(statement.get('qualifiers', {}).keys())
+    wbformat.prefetch_properties(session, prefetch_property_ids)
+
     return flask.render_template('edit.html',
                                  wiki=wiki,
                                  entity_id=entity_id,
