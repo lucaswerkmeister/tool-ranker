@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='edit.css') }}">
+<script src="{{ url_for('static', filename='selection-buttons.js') }}"></script>
 {% endblock head %}
 
 {% macro format_snak(wiki, property_id, snak) %}
@@ -16,6 +17,12 @@
 {% endmacro %}
 
 {% block main %}
+<div id="selection_buttons">
+  <noscript>
+    Enable JavaScript for “select all”, “select none” and “invert selection” buttons.
+    (The rest of the tool works without JavaScript, if you can’t enable it.)
+  </noscript>
+</div>
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <input name="base_revision_id" type="hidden" value="{{ base_revision_id }}">
