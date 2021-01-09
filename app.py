@@ -14,6 +14,8 @@ from typing import List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
+import wbformat
+
 
 app = flask.Flask(__name__)
 
@@ -108,12 +110,7 @@ def can_edit() -> bool:
 
 @app.template_global()
 def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
-    session = anonymous_session(wiki)
-    response = session.get(action='wbformatvalue',
-                           datavalue=json.dumps(value),
-                           property=property_id,
-                           generate='text/plain')
-    return flask.Markup.escape(response['result'])
+    return wbformat.format_value(anonymous_session(wiki), property_id, value)
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
