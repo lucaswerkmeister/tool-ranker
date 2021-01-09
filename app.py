@@ -106,6 +106,17 @@ def can_edit() -> bool:
     return 'oauth_access_token' in flask.session
 
 
+@app.template_global()
+def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
+    anonymous_session = mwapi.Session('https://' + wiki,
+                                      user_agent=user_agent)
+    response = anonymous_session.get(action='wbformatvalue',
+                                     datavalue=json.dumps(value),
+                                     property=property_id,
+                                     generate='text/plain')
+    return flask.Markup.escape(response['result'])
+
+
 def authenticated_session() -> Optional[mwapi.Session]:
     if 'oauth_access_token' not in flask.session:
         return None
@@ -149,12 +160,11 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
     entity = response['entities'][entity_id]
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
-    statement_ids = [statement['id'] for statement in statements]
     return flask.render_template('edit.html',
                                  wiki=wiki,
                                  entity_id=entity_id,
                                  property_id=property_id,
-                                 statement_ids=statement_ids,
+                                 statements=statements,
                                  base_revision_id=base_revision_id)
 
 

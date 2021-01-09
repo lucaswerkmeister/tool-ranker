@@ -1,3 +1,4 @@
+import flask
 import pytest  # type: ignore
 
 import app as ranker
@@ -38,3 +39,11 @@ def test_index_redirect(client):
                                  'property_id': 'P361'})
     expected_redirect = 'http://localhost/edit/www.wikidata.org/Q4115189/P361/'
     assert response.headers['location'] == expected_redirect
+
+
+def test_format_value_escapes_html():
+    value = {'value': '<script>alert("!Mediengruppe Bitnik");</script>',
+             'type': 'string'}
+    expected = flask.Markup(r'&lt;script&gt;alert(&#34;!Mediengruppe'
+                            r' Bitnik&#34;);&lt;/script&gt;')
+    assert ranker.format_value('test.wikidata.org', 'P95', value) == expected

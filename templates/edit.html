@@ -1,12 +1,28 @@
 {% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='edit.css') }}">
+{% endblock head %}
+
+{% macro format_snak(wiki, property_id, snak) %}
+{% if snak.snaktype == 'somevalue' %}
+<span class="somevalue">unknown value</span>
+{% elif snak.snaktype == 'novalue' %}
+<span class="novalue">no value</span>
+{% else %}
+{{ format_value(wiki, property_id, snak.datavalue) }}
+{% endif %}
+{% endmacro %}
+
 {% block main %}
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <input name="base_revision_id" type="hidden" value="{{ base_revision_id }}">
-  {% for statement_id in statement_ids %}
-  <div class="form-group form-check">
-    <input type="checkbox" class="form-check-input" id="{{ statement_id }}" name="{{ statement_id }}">
-    <label for="{{ statement_id }}">{{ statement_id }}</label>
+  {% for statement in statements %}
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="{{ statement.id }}" name="{{ statement.id }}">
+    <label for="{{ statement.id }}">{{ format_snak(wiki, property_id, statement.mainsnak) }}</label>
   </div>
   {% endfor %}
   <button
