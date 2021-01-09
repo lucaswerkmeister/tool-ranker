@@ -16,9 +16,8 @@ def format_value(session: mwapi.Session,
     return flask.Markup.escape(response['result'])
 
 
-FormatPropertyCache = cachetools.TTLCache[Tuple[str, str], flask.Markup]
-format_property_cache: FormatPropertyCache = cachetools.TTLCache(maxsize=1000,
-                                                                 ttl=60 * 60)
+format_property_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
+                                            ttl=60 * 60)
 format_property_cache_lock = threading.RLock()
 
 
@@ -27,7 +26,7 @@ def format_property_key(session: mwapi.Session,
     return (session.host, property_id)
 
 
-@cachetools.cached(cache=format_property_cache,  # type: ignore
+@cachetools.cached(cache=format_property_cache,
                    key=format_property_key,
                    lock=format_property_cache_lock)
 def format_property(session: mwapi.Session,
