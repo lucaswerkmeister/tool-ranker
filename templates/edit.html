@@ -31,6 +31,20 @@
     <input type="checkbox" class="form-check-input" id="{{ statement.id }}" name="{{ statement.id }}">
     <label for="{{ statement.id }}">
       <div class="mainsnak">{{ format_snak(wiki, property_id, statement.mainsnak) }}</div>
+      {% if statement.qualifiers %}
+      <ul class="qualifiers-list">
+        {% for qualifier_property_id in statement.qualifiers %}
+        <li>
+          {{ format_property(wiki, qualifier_property_id) }}:
+          <ul class="snak-list" data-property-id="{{ qualifier_property_id }}">
+            {% for qualifier_snak in statement.qualifiers[qualifier_property_id] -%}
+            <li>{{ format_snak(wiki, qualifier_property_id, qualifier_snak) }}</li>
+            {%- endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </label>
   </div>
   {% endfor %}

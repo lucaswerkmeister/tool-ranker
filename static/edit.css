@@ -13,3 +13,20 @@
     content: " (deprecated rank)";
     color: #ac6600; /* Yellow30 */
 }
+
+.qualifiers-list {
+    margin-bottom: 0;
+}
+
+.snak-list {
+    display: inline;
+    padding: 0;
+}
+
+.snak-list > li {
+    display: inline;
+}
+
+.snak-list > li:not(:first-child)::before {
+    content: ", ";
+}
