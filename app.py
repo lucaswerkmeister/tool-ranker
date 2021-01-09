@@ -113,6 +113,11 @@ def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
     return wbformat.format_value(anonymous_session(wiki), property_id, value)
 
 
+@app.template_global()
+def format_property(wiki: str, property_id: str) -> flask.Markup:
+    return wbformat.format_property(anonymous_session(wiki), property_id)
+
+
 def anonymous_session(wiki: str) -> mwapi.Session:
     return mwapi.Session('https://' + wiki,
                          user_agent=user_agent)

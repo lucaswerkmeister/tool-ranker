@@ -1,3 +1,4 @@
+cachetools
 flake8
 flask
 mwapi

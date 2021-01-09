@@ -11,3 +11,12 @@ def test_format_value_escapes_html():
     expected = flask.Markup(r'&lt;script&gt;alert(&#34;!Mediengruppe'
                             r' Bitnik&#34;);&lt;/script&gt;')
     assert wbformat.format_value(session, 'P95', value) == expected
+
+
+def test_format_property_P31():
+    session = mwapi.Session('https://www.wikidata.org',
+                            user_agent='Ranker unit tests')
+    expected = flask.Markup(r'<a title="Property:P31"'
+                            r' href="https://www.wikidata.org/wiki'
+                            r'/Property:P31">instance of</a>')
+    assert wbformat.format_property(session, 'P31') == expected
