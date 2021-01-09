@@ -216,7 +216,8 @@ def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
                                 token=token)
     revision_id = api_response['entity']['lastrevid']
 
-    return flask.redirect(f'https://{wiki}/w/index.php?diff={revision_id}')
+    return flask.redirect(f'https://{wiki}/w/index.php'
+                          f'?diff={revision_id}&oldid={base_revision_id}')
 
 
 @app.route('/login')
