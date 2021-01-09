@@ -29,3 +29,12 @@ def test_csrf_token_load():
     with ranker.app.test_request_context() as context:
         context.session['csrf_token'] = 'test token'
         assert ranker.csrf_token() == 'test token'
+
+
+def test_index_redirect(client):
+    response = client.post('/',
+                           data={'wiki': 'www.wikidata.org',
+                                 'entity_id': 'Q4115189',
+                                 'property_id': 'P361'})
+    expected_redirect = 'http://localhost/edit/www.wikidata.org/Q4115189/P361/'
+    assert response.headers['location'] == expected_redirect

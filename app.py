@@ -121,8 +121,14 @@ def authenticated_session() -> Optional[mwapi.Session]:
                          user_agent=user_agent)
 
 
-@app.route('/')
-def index() -> str:
+@app.route('/', methods=['GET', 'POST'])
+def index() -> Union[str, werkzeug.Response]:
+    if flask.request.method == 'POST':
+        url = flask.url_for('show_edit_form',
+                            wiki=flask.request.form['wiki'],
+                            entity_id=flask.request.form['entity_id'],
+                            property_id=flask.request.form['property_id'])
+        return flask.redirect(url)
     return flask.render_template('index.html')
 
 
