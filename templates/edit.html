@@ -6,15 +6,15 @@
 <script src="{{ url_for('static', filename='selection-buttons.js') }}"></script>
 {% endblock head %}
 
-{% macro format_snak(wiki, property_id, snak) %}
-{% if snak.snaktype == 'somevalue' %}
+{% macro format_snak(wiki, property_id, snak) -%}
+{%- if snak.snaktype == 'somevalue' -%}
 <span class="somevalue">unknown value</span>
-{% elif snak.snaktype == 'novalue' %}
+{%- elif snak.snaktype == 'novalue' -%}
 <span class="novalue">no value</span>
-{% else %}
+{%- else -%}
 {{ format_value(wiki, property_id, snak.datavalue) }}
-{% endif %}
-{% endmacro %}
+{%- endif -%}
+{%- endmacro %}
 
 {% block main %}
 <div id="selection_buttons">
