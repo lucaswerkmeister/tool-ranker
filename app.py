@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import flask
+import json
 import mwapi  # type: ignore
 import mwoauth  # type: ignore
 import os
 import random
+import requests
 import requests_oauthlib  # type: ignore
 import string
 import toolforge
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
@@ -97,6 +99,13 @@ def authentication_area() -> flask.Markup:
             flask.Markup(r'</span>'))
 
 
+@app.template_global()
+def can_edit() -> bool:
+    if 'oauth' not in app.config:
+        return True
+    return 'oauth_access_token' in flask.session
+
+
 def authenticated_session() -> Optional[mwapi.Session]:
     if 'oauth_access_token' not in flask.session:
         return None
@@ -117,46 +126,78 @@ def index() -> str:
     return flask.render_template('index.html')
 
 
-@app.route('/greet/<name>')
-def greet(name: str) -> str:
-    return flask.render_template('greet.html',
-                                 name=name)
+@app.route('/edit/<wiki>/<entity_id>/<property_id>/')
+def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
+    if wiki not in {'www.wikidata.org',
+                    'test.wikidata.org',
+                    'commons.wikimedia.org',
+                    'test-commons.wikimedia.org'}:
+        return 'invalid wiki'  # TODO nicer error page
+
+    anonymous_session = mwapi.Session('https://' + wiki,
+                                      user_agent=user_agent)
+    response = anonymous_session.get(action='wbgetentities',
+                                     ids=[entity_id],
+                                     props=['info', 'claims'],
+                                     formatversion=2)
+    entity = response['entities'][entity_id]
+    base_revision_id = entity['lastrevid']
+    statements = entity_statements(entity, property_id)
+    statement_ids = [statement['id'] for statement in statements]
+    return flask.render_template('edit.html',
+                                 wiki=wiki,
+                                 entity_id=entity_id,
+                                 property_id=property_id,
+                                 statement_ids=statement_ids,
+                                 base_revision_id=base_revision_id)
 
 
-@app.route('/praise', methods=['GET', 'POST'])
-def praise() -> str:
-    csrf_error = False
-    if flask.request.method == 'POST':
-        if submitted_request_valid():
-            praise = flask.request.form.get('praise', 'praise missing')
-            flask.session['praise'] = praise
-        else:
-            csrf_error = True
-            flask.g.repeat_form = True
+@app.route('/edit/<wiki>/<entity_id>/<property_id>/set-preferred',
+           methods=['POST'])
+def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
+        -> Union[werkzeug.Response, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
 
+    if 'oauth_access_token' not in flask.session:
+        return 'not logged in', 401  # TODO better error
     session = authenticated_session()
-    if session:
-        userinfo = session.get(action='query',
-                               meta='userinfo',
-                               uiprop='options')['query']['userinfo']
-        name = userinfo['name']
-        gender = userinfo['options']['gender']
-        if gender == 'male':
-            default_praise = 'Praise him with great praise!'
-        elif gender == 'female':
-            default_praise = 'Praise her with great praise!'
-        else:
-            default_praise = 'Praise them with great praise!'
+    assert session is not None
+
+    base_revision_id = flask.request.form['base_revision_id']
+    response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
+                            f'{entity_id}.json?revision={base_revision_id}')
+    entity = response.json()['entities'][entity_id]
+    statements = entity_statements(entity, property_id)
+
+    edited_statements = 0
+    for statement in statements:
+        if statement['id'] in flask.request.form:
+            statement['rank'] = 'preferred'
+            edited_statements += 1
+
+    edited_entity = {'id': entity_id,
+                     'claims': {  # TODO 'statements' in MediaInfo :S
+                         property_id: statements,
+                     }}
+    if edited_statements == 1:
+        summary = 'Set rank of 1 statement to "preferred"'
     else:
-        name = None
-        default_praise = 'You rock!'
+        summary = f'Set rank of {edited_statements} statements to "preferred"'
 
-    praise = flask.session.get('praise', default_praise)
+    token = session.get(action='query',
+                        meta='tokens',
+                        type='csrf')['query']['tokens']['csrftoken']
 
-    return flask.render_template('praise.html',
-                                 name=name,
-                                 praise=praise,
-                                 csrf_error=csrf_error)
+    api_response = session.post(action='wbeditentity',
+                                id=entity_id,
+                                data=json.dumps(edited_entity),
+                                summary=summary,
+                                baserevid=base_revision_id,
+                                token=token)
+    revision_id = api_response['entity']['lastrevid']
+
+    return flask.redirect(f'https://{wiki}/w/index.php?diff={revision_id}')
 
 
 @app.route('/login')
@@ -240,3 +281,11 @@ def deny_frame(response: flask.Response) -> flask.Response:
     """
     response.headers['X-Frame-Options'] = 'deny'
     return response
+
+
+def entity_statements(entity: dict, property_id: str) -> List[dict]:
+    if entity['type'] == 'mediainfo':
+        statements = entity['statements']
+    else:
+        statements = entity['claims']
+    return statements.setdefault(property_id, [])

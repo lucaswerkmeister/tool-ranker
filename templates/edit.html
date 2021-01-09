@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block main %}
+<form method="post">
+  <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+  <input name="base_revision_id" type="hidden" value="{{ base_revision_id }}">
+  {% for statement_id in statement_ids %}
+  <div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="{{ statement_id }}" name="{{ statement_id }}">
+    <label for="{{ statement_id }}">{{ statement_id }}</label>
+  </div>
+  {% endfor %}
+  <button
+    type="submit"
+    class="btn btn-primary"
+    formaction="{{ url_for('edit_set_preferred', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
+    {% if not can_edit() %}disabled{% endif %}>Set to preferred rank</button>
+  {% if not can_edit() %}
+  <div class="alert alert-warning" role="alert">
+    You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  </div>
+  {% endif %}
+</form>
+{% endblock %}
