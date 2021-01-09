@@ -3,3 +3,13 @@
     font-style: italic;
     color: #54595d; /* Base20 */
 }
+
+.statement-preferred .mainsnak::after {
+    content: " (preferred rank)";
+    color: #14866d; /* Green30 */
+}
+
+.statement-deprecated .mainsnak::after {
+    content: " (deprecated rank)";
+    color: #ac6600; /* Yellow30 */
+}
