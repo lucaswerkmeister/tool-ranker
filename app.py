@@ -108,16 +108,20 @@ def can_edit() -> bool:
 
 @app.template_global()
 def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
-    anonymous_session = mwapi.Session('https://' + wiki,
-                                      user_agent=user_agent)
-    response = anonymous_session.get(action='wbformatvalue',
-                                     datavalue=json.dumps(value),
-                                     property=property_id,
-                                     generate='text/plain')
+    session = anonymous_session(wiki)
+    response = session.get(action='wbformatvalue',
+                           datavalue=json.dumps(value),
+                           property=property_id,
+                           generate='text/plain')
     return flask.Markup.escape(response['result'])
 
 
-def authenticated_session() -> Optional[mwapi.Session]:
+def anonymous_session(wiki: str) -> mwapi.Session:
+    return mwapi.Session('https://' + wiki,
+                         user_agent=user_agent)
+
+
+def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
     if 'oauth_access_token' not in flask.session:
         return None
 
@@ -127,7 +131,7 @@ def authenticated_session() -> Optional[mwapi.Session]:
                                     client_secret=consumer_token.secret,
                                     resource_owner_key=access_token.key,
                                     resource_owner_secret=access_token.secret)
-    return mwapi.Session(host='https://www.wikidata.org',
+    return mwapi.Session(host='https://' + wiki,
                          auth=auth,
                          user_agent=user_agent)
 
@@ -151,12 +155,11 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
                     'test-commons.wikimedia.org'}:
         return 'invalid wiki'  # TODO nicer error page
 
-    anonymous_session = mwapi.Session('https://' + wiki,
-                                      user_agent=user_agent)
-    response = anonymous_session.get(action='wbgetentities',
-                                     ids=[entity_id],
-                                     props=['info', 'claims'],
-                                     formatversion=2)
+    session = anonymous_session(wiki)
+    response = session.get(action='wbgetentities',
+                           ids=[entity_id],
+                           props=['info', 'claims'],
+                           formatversion=2)
     entity = response['entities'][entity_id]
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
@@ -177,7 +180,7 @@ def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
 
     if 'oauth_access_token' not in flask.session:
         return 'not logged in', 401  # TODO better error
-    session = authenticated_session()
+    session = authenticated_session(wiki)
     assert session is not None
 
     base_revision_id = flask.request.form['base_revision_id']
