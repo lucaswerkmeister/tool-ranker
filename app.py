@@ -179,9 +179,9 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
                                  base_revision_id=base_revision_id)
 
 
-@app.route('/edit/<wiki>/<entity_id>/<property_id>/set-preferred',
+@app.route('/edit/<wiki>/<entity_id>/<property_id>/set/<rank>',
            methods=['POST'])
-def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
+def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         -> Union[werkzeug.Response, Tuple[str, int]]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
@@ -200,7 +200,7 @@ def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
     edited_statements = 0
     for statement in statements:
         if statement['id'] in flask.request.form:
-            statement['rank'] = 'preferred'
+            statement['rank'] = rank
             edited_statements += 1
 
     edited_entity = {'id': entity_id,
@@ -208,9 +208,9 @@ def edit_set_preferred(wiki: str, entity_id: str, property_id: str) \
                          property_id: statements,
                      }}
     if edited_statements == 1:
-        summary = 'Set rank of 1 statement to "preferred"'
+        summary = f'Set rank of 1 statement to "{rank}"'
     else:
-        summary = f'Set rank of {edited_statements} statements to "preferred"'
+        summary = f'Set rank of {edited_statements} statements to "{rank}"'
 
     token = session.get(action='query',
                         meta='tokens',

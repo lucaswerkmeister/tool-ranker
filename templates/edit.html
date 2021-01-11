@@ -51,8 +51,18 @@
   <button
     type="submit"
     class="btn btn-primary"
-    formaction="{{ url_for('edit_set_preferred', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
+    formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='preferred') }}"
     {% if not can_edit() %}disabled{% endif %}>Set to preferred rank</button>
+  <button
+    type="submit"
+    class="btn btn-secondary"
+    formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='normal') }}"
+    {% if not can_edit() %}disabled{% endif %}>Set to normal rank</button>
+  <button
+    type="submit"
+    class="btn btn-secondary"
+    formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='deprecated') }}"
+    {% if not can_edit() %}disabled{% endif %}>Set to deprecated rank</button>
   {% if not can_edit() %}
   <div class="alert alert-warning" role="alert">
     You must <a href="{{ url_for('login') }}">log in</a> to make edits.
