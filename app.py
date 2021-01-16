@@ -14,6 +14,7 @@ from typing import List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
+from converters import WikiConverter
 import wbformat
 
 
@@ -38,6 +39,9 @@ if 'oauth' in app.config:
     consumer_token = mwoauth.ConsumerToken(oauth_config['consumer_key'],
                                            oauth_config['consumer_secret'])
     index_php = 'https://www.wikidata.org/w/index.php'
+
+
+app.url_map.converters['wiki'] = WikiConverter
 
 
 @app.template_global()
@@ -149,14 +153,8 @@ def index() -> Union[str, werkzeug.Response]:
     return flask.render_template('index.html')
 
 
-@app.route('/edit/<wiki>/<entity_id>/<property_id>/')
+@app.route('/edit/<wiki:wiki>/<entity_id>/<property_id>/')
 def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
-    if wiki not in {'www.wikidata.org',
-                    'test.wikidata.org',
-                    'commons.wikimedia.org',
-                    'test-commons.wikimedia.org'}:
-        return 'invalid wiki'  # TODO nicer error page
-
     session = anonymous_session(wiki)
     response = session.get(action='wbgetentities',
                            ids=[entity_id],
@@ -179,7 +177,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
                                  base_revision_id=base_revision_id)
 
 
-@app.route('/edit/<wiki>/<entity_id>/<property_id>/set/<rank>',
+@app.route('/edit/<wiki:wiki>/<entity_id>/<property_id>/set/<rank>',
            methods=['POST'])
 def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         -> Union[werkzeug.Response, Tuple[str, int]]:
@@ -228,7 +226,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
                           f'?diff={revision_id}&oldid={base_revision_id}')
 
 
-@app.route('/edit/<wiki>/<entity_id>/<property_id>/increment',
+@app.route('/edit/<wiki:wiki>/<entity_id>/<property_id>/increment',
            methods=['POST'])
 def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
         -> Union[werkzeug.Response, Tuple[str, int]]:
