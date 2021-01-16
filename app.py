@@ -205,10 +205,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
             statement['rank'] = rank
             edited_statements += 1
 
-    edited_entity = {'id': entity_id,
-                     'claims': {  # TODO 'statements' in MediaInfo :S
-                         property_id: statements,
-                     }}
+    edited_entity = build_entity(entity_id, property_id, statements)
     if edited_statements == 1:
         summary = f'Set rank of 1 statement to "{rank}"'
     else:
@@ -247,10 +244,7 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
                 statement['rank'] = incremented_rank
                 edited_statements += 1
 
-    edited_entity = {'id': entity_id,
-                     'claims': {  # TODO 'statements' in MediaInfo :S
-                         property_id: statements,
-                     }}
+    edited_entity = build_entity(entity_id, property_id, statements)
     if edited_statements == 1:
         summary = 'Incremented rank of 1 statement'
     else:
@@ -359,6 +353,17 @@ def increment_rank(rank: str) -> str:
         'normal': 'preferred',
         'preferred': 'preferred',
     }[rank]
+
+
+def build_entity(entity_id: str,
+                 property_id: str,
+                 statements: List[dict]) -> dict:
+    return {
+        'id': entity_id,
+        'claims': {  # yes, 'claims' even for MediaInfo entities
+            property_id: statements,
+        },
+    }
 
 
 def save_entity_and_redirect(entity_data: dict,
