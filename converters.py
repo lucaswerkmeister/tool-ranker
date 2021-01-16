@@ -1,6 +1,23 @@
 from typing import Set
 from werkzeug.exceptions import BadRequest
-from werkzeug.routing import BaseConverter
+from werkzeug.routing import BaseConverter, ValidationError
+
+
+class PropertyIdConverter(BaseConverter):
+    def to_python(self, value: str) -> str:
+        if len(value) < 2:
+            raise ValidationError('Property ID must have ≥2 characters')
+        if value[0] != 'P':
+            raise ValidationError('Property ID must start with P')
+        if value[1] == '0':
+            raise ValidationError('Property ID must not be zero-padded')
+        numeric_part = value[1:]
+        if not numeric_part.isascii() and numeric_part.isnumeric():
+            raise ValidationError('Property ID must be (ASCII) numeric')
+        return value
+
+    def to_url(self, value: str) -> str:
+        return value
 
 
 class RankConverter(BaseConverter):
