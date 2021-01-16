@@ -3,6 +3,37 @@ from werkzeug.exceptions import BadRequest
 from werkzeug.routing import BaseConverter
 
 
+class RankConverter(BaseConverter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.allowed_ranks = {
+            'deprecated',
+            'normal',
+            'preferred',
+        }
+
+    def to_python(self, value: str) -> str:
+        if value in self.allowed_ranks:
+            return value
+        raise BadRankException(self.allowed_ranks, value)
+
+    def to_url(self, value: str) -> str:
+        return value
+
+
+class BadRankException(BadRequest):
+    def __init__(self, allowed_ranks: Set[str], rank: str):
+        super().__init__()
+        self.description = f'Invalid rank {rank}, allowed ranks are: '
+        first = True
+        for allowed_rank in allowed_ranks:
+            if first:
+                first = False
+            else:
+                self.description += ', '
+            self.description += allowed_rank
+
+
 class WikiConverter(BaseConverter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

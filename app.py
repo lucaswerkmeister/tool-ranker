@@ -14,7 +14,7 @@ from typing import List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
-from converters import WikiConverter
+from converters import RankConverter, WikiConverter
 import wbformat
 
 
@@ -41,6 +41,7 @@ if 'oauth' in app.config:
     index_php = 'https://www.wikidata.org/w/index.php'
 
 
+app.url_map.converters['rank'] = RankConverter
 app.url_map.converters['wiki'] = WikiConverter
 
 
@@ -177,7 +178,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
                                  base_revision_id=base_revision_id)
 
 
-@app.route('/edit/<wiki:wiki>/<entity_id>/<property_id>/set/<rank>',
+@app.route('/edit/<wiki:wiki>/<entity_id>/<property_id>/set/<rank:rank>',
            methods=['POST'])
 def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         -> Union[werkzeug.Response, Tuple[str, int]]:
