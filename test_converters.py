@@ -2,7 +2,46 @@ import pytest  # type: ignore
 from werkzeug.routing import Map, ValidationError
 
 from converters import BadRankException, BadWikiException, \
-    PropertyIdConverter, RankConverter, WikiConverter
+    EntityIdConverter, PropertyIdConverter, RankConverter, WikiConverter
+
+
+@pytest.mark.parametrize('entity_id', [
+    'P1',
+    'Q1',
+    'M1',
+    'L1',
+    'L1-S1',
+    'L1-F1',
+    'Q2',
+    'P31',
+    'M56855503',
+    'L123-S116',
+])
+def test_EntityIdConverter_valid(entity_id):
+    converter = EntityIdConverter(Map())
+    assert converter.to_python(entity_id) == entity_id
+    assert converter.to_url(entity_id) == entity_id
+
+
+@pytest.mark.parametrize('entity_id', [
+    '31',
+    'X123',
+    'P031',
+    'L031',
+    'L031-S1',
+    'L123-S01',
+    'L123-F01',
+    'L-S',
+    'L-S1',
+    'L1-S',
+    'L1-X1',
+    'L1-S٣١',
+    'M٣١',
+])
+def test_EntityIdConverter_invalid(entity_id):
+    converter = EntityIdConverter(Map())
+    with pytest.raises(ValidationError):
+        converter.to_python(entity_id)
 
 
 @pytest.mark.parametrize('property_id', [
