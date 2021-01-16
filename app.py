@@ -214,20 +214,10 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     else:
         summary = f'Set rank of {edited_statements} statements to "{rank}"'
 
-    token = session.get(action='query',
-                        meta='tokens',
-                        type='csrf')['query']['tokens']['csrftoken']
-
-    api_response = session.post(action='wbeditentity',
-                                id=entity_id,
-                                data=json.dumps(edited_entity),
-                                summary=summary,
-                                baserevid=base_revision_id,
-                                token=token)
-    revision_id = api_response['entity']['lastrevid']
-
-    return flask.redirect(f'https://{wiki}/w/index.php'
-                          f'?diff={revision_id}&oldid={base_revision_id}')
+    return save_entity_and_redirect(edited_entity,
+                                    summary,
+                                    base_revision_id,
+                                    session)
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/increment',
@@ -266,20 +256,10 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     else:
         summary = f'Incremented rank of {edited_statements} statements'
 
-    token = session.get(action='query',
-                        meta='tokens',
-                        type='csrf')['query']['tokens']['csrftoken']
-
-    api_response = session.post(action='wbeditentity',
-                                id=entity_id,
-                                data=json.dumps(edited_entity),
-                                summary=summary,
-                                baserevid=base_revision_id,
-                                token=token)
-    revision_id = api_response['entity']['lastrevid']
-
-    return flask.redirect(f'https://{wiki}/w/index.php'
-                          f'?diff={revision_id}&oldid={base_revision_id}')
+    return save_entity_and_redirect(edited_entity,
+                                    summary,
+                                    base_revision_id,
+                                    session)
 
 
 @app.route('/login')
@@ -379,3 +359,24 @@ def increment_rank(rank: str) -> str:
         'normal': 'preferred',
         'preferred': 'preferred',
     }[rank]
+
+
+def save_entity_and_redirect(entity_data: dict,
+                             summary: str,
+                             base_revision_id: int,
+                             session: mwapi.Session) -> werkzeug.Response:
+
+    token = session.get(action='query',
+                        meta='tokens',
+                        type='csrf')['query']['tokens']['csrftoken']
+
+    api_response = session.post(action='wbeditentity',
+                                id=entity_data['id'],
+                                data=json.dumps(entity_data),
+                                summary=summary,
+                                baserevid=base_revision_id,
+                                token=token)
+    revision_id = api_response['entity']['lastrevid']
+
+    return flask.redirect(f'{session.host}/w/index.php'
+                          f'?diff={revision_id}&oldid={base_revision_id}')
