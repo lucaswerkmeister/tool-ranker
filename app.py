@@ -228,6 +228,58 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
                           f'?diff={revision_id}&oldid={base_revision_id}')
 
 
+@app.route('/edit/<wiki>/<entity_id>/<property_id>/increment',
+           methods=['POST'])
+def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
+        -> Union[werkzeug.Response, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    if 'oauth_access_token' not in flask.session:
+        return 'not logged in', 401  # TODO better error
+    session = authenticated_session(wiki)
+    assert session is not None
+
+    base_revision_id = flask.request.form['base_revision_id']
+    response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
+                            f'{entity_id}.json?revision={base_revision_id}')
+    entity = response.json()['entities'][entity_id]
+    statements = entity_statements(entity, property_id)
+
+    edited_statements = 0
+    for statement in statements:
+        if statement['id'] in flask.request.form:
+            rank = statement['rank']
+            incremented_rank = increment_rank(rank)
+            if incremented_rank != rank:
+                statement['rank'] = incremented_rank
+                edited_statements += 1
+
+    edited_entity = {'id': entity_id,
+                     'claims': {  # TODO 'statements' in MediaInfo :S
+                         property_id: statements,
+                     }}
+    if edited_statements == 1:
+        summary = 'Incremented rank of 1 statement'
+    else:
+        summary = f'Incremented rank of {edited_statements} statements'
+
+    token = session.get(action='query',
+                        meta='tokens',
+                        type='csrf')['query']['tokens']['csrftoken']
+
+    api_response = session.post(action='wbeditentity',
+                                id=entity_id,
+                                data=json.dumps(edited_entity),
+                                summary=summary,
+                                baserevid=base_revision_id,
+                                token=token)
+    revision_id = api_response['entity']['lastrevid']
+
+    return flask.redirect(f'https://{wiki}/w/index.php'
+                          f'?diff={revision_id}&oldid={base_revision_id}')
+
+
 @app.route('/login')
 def login() -> werkzeug.Response:
     redirect, request_token = mwoauth.initiate(index_php,
@@ -317,3 +369,11 @@ def entity_statements(entity: dict, property_id: str) -> List[dict]:
     else:
         statements = entity['claims']
     return statements.setdefault(property_id, [])
+
+
+def increment_rank(rank: str) -> str:
+    return {
+        'deprecated': 'normal',
+        'normal': 'preferred',
+        'preferred': 'preferred',
+    }[rank]

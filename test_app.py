@@ -47,3 +47,12 @@ def test_format_value_escapes_html():
     expected = flask.Markup(r'&lt;script&gt;alert(&#34;!Mediengruppe'
                             r' Bitnik&#34;);&lt;/script&gt;')
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
+
+
+@pytest.mark.parametrize('rank, expected', [
+    ('deprecated', 'normal'),
+    ('normal', 'preferred'),
+    ('preferred', 'preferred'),
+])
+def test_increment_rank(rank, expected):
+    assert ranker.increment_rank(rank) == expected
