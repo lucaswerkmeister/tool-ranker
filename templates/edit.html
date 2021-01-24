@@ -17,6 +17,7 @@
 {%- endmacro %}
 
 {% block main %}
+{% set is_mediainfo = entity_id.startswith('M') %}
 <div id="selection_buttons">
   <noscript>
     Enable JavaScript for “select all”, “select none” and “invert selection” buttons.
@@ -52,12 +53,25 @@
     type="submit"
     class="btn btn-primary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='preferred') }}"
-    {% if not can_edit() %}disabled{% endif %}>Set to preferred rank</button>
+    {% if not can_edit() %}disabled{% endif %}>
+    {% if is_mediainfo %}
+    Mark as prominent
+    {% else %}
+    Set to preferred rank
+    {% endif %}
+  </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='normal') }}"
-    {% if not can_edit() %}disabled{% endif %}>Set to normal rank</button>
+    {% if not can_edit() %}disabled{% endif %}>
+    {% if is_mediainfo %}
+    Mark as not prominent
+    {% else %}
+    Set to normal rank
+    {% endif %}
+  </button>
+  {%  if not is_mediainfo %}
   <button
     type="submit"
     class="btn btn-secondary"
@@ -68,6 +82,7 @@
     class="btn btn-secondary"
     formaction="{{ url_for('edit_increment_rank', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
     {% if not can_edit() %}disabled{% endif %}>Increment rank</button>
+  {% endif %}
   {% if not can_edit() %}
   <div class="alert alert-warning" role="alert">
     You must <a href="{{ url_for('login') }}">log in</a> to make edits.
