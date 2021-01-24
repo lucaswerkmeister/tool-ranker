@@ -154,7 +154,10 @@ def index() -> Union[str, werkzeug.Response]:
                             entity_id=flask.request.form['entity_id'],
                             property_id=flask.request.form['property_id'])
         return flask.redirect(url)
-    return flask.render_template('index.html')
+    return flask.render_template('index.html',
+                                 wiki=flask.request.args.get('wiki'),
+                                 entity_id=flask.request.args.get('entity_id'),
+                                 property_id=flask.request.args.get('property_id'))
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')

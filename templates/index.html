@@ -9,19 +9,19 @@
   <div class="form-group">
     <label for="wiki">Wiki</label>
     <select class="form-control" id="wiki" name="wiki">
-      <option value="www.wikidata.org">Wikidata</option>
-      <option value="commons.wikimedia.org">Wikimedia Commons</option>
-      <option value="test.wikidata.org">Test Wikidata</option>
-      <option value="test-commons.wikimedia.org">Test Wikimedia Commons</option>
+      <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>Wikidata</option>
+      <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>Wikimedia Commons</option>
+      <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>Test Wikidata</option>
+      <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>Test Wikimedia Commons</option>
     </select>
   </div>
   <div class="form-group">
     <label for="entity_id">Entity ID</label>
-    <input id="entity_id" class="form-control" type="text" name="entity_id" required pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9](?:-[SF][1-9][0-9]*)?)$" placeholder="Q42">
+    <input id="entity_id" class="form-control" type="text" name="entity_id" required pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9](?:-[SF][1-9][0-9]*)?)$" placeholder="Q42" {% if entity_id %}value="{{ entity_id }}" {% endif %}>
   </div>
   <div class="form-group">
     <label for="property_id">Property ID</label>
-    <input id="property_id" class="form-control" type="text" name="property_id" required pattern="^P[1-9][0-9]*$" placeholder="P361">
+    <input id="property_id" class="form-control" type="text" name="property_id" required pattern="^P[1-9][0-9]*$" placeholder="P361" {% if property_id %}value="{{ property_id }}" {% endif %}>
   </div>
   <button type="submit" class="btn btn-primary">Select statements</button>
 </form>
