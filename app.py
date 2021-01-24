@@ -149,15 +149,17 @@ def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
 @app.route('/', methods=['GET', 'POST'])
 def index() -> Union[str, werkzeug.Response]:
     if flask.request.method == 'POST':
+        data = flask.request.form
         url = flask.url_for('show_edit_form',
-                            wiki=flask.request.form['wiki'],
-                            entity_id=flask.request.form['entity_id'],
-                            property_id=flask.request.form['property_id'])
+                            wiki=data['wiki'],
+                            entity_id=data['entity_id'],
+                            property_id=data['property_id'])
         return flask.redirect(url)
+    data = flask.request.args
     return flask.render_template('index.html',
-                                 wiki=flask.request.args.get('wiki'),
-                                 entity_id=flask.request.args.get('entity_id'),
-                                 property_id=flask.request.args.get('property_id'))
+                                 wiki=data.get('wiki'),
+                                 entity_id=data.get('entity_id'),
+                                 property_id=data.get('property_id'))
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
