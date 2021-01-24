@@ -103,6 +103,7 @@
     {{- entity_id -}}
   </a>
   has no statements for {{ format_property(wiki, property_id) }}.
+  <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">Return to main page</a>
 </p>
 {% endif %}
 {% endblock %}
