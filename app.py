@@ -328,7 +328,7 @@ def deny_frame(response: flask.Response) -> flask.Response:
 
 
 def entity_statements(entity: dict, property_id: str) -> List[dict]:
-    if entity['type'] == 'mediainfo':
+    if entity.get('type') == 'mediainfo':  # optional due to T272804
         statements = entity['statements']
     else:
         statements = entity['claims']
