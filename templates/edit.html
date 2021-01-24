@@ -102,10 +102,7 @@
   <a href="https://{{ wiki }}/wiki/Special:EntityPage/{{ entity_id }}">
     {{- entity_id -}}
   </a>
-  has no statements for
-  <a href="https://{{ wiki }}/wiki/Special:EntityPage/{{ property_id }}">
-    {{- property_id -}}
-  </a>.
+  has no statements for {{ format_property(wiki, property_id) }}.
 </p>
 {% endif %}
 {% endblock %}
