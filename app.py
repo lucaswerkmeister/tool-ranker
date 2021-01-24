@@ -168,7 +168,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
 
-    prefetch_property_ids = set()
+    prefetch_property_ids = {property_id}
     for statement in statements:
         prefetch_property_ids.update(statement.get('qualifiers', {}).keys())
     wbformat.prefetch_properties(session, prefetch_property_ids)
