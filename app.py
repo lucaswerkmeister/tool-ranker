@@ -210,6 +210,8 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         summary = f'Set rank of 1 statement to "{rank}"'
     else:
         summary = f'Set rank of {edited_statements} statements to "{rank}"'
+    if flask.request.form.get('summary'):
+        summary += ': ' + flask.request.form['summary']
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
