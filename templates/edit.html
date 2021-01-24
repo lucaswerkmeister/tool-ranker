@@ -20,7 +20,7 @@
 {% set is_mediainfo = entity_id.startswith('M') %}
 {% if statements %}
 <p>
-  You can edit the rank of the following statements:
+  You can edit the rank of the following {{ format_property(wiki, property_id) }} statements:
 </p>
 <div id="selection_buttons">
   <noscript>
