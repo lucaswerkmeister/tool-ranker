@@ -251,6 +251,8 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
         summary = 'Incremented rank of 1 statement'
     else:
         summary = f'Incremented rank of {edited_statements} statements'
+    if flask.request.form.get('summary'):
+        summary += ': ' + flask.request.form['summary']
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
