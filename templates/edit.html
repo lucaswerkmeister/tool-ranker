@@ -18,6 +18,10 @@
 
 {% block main %}
 {% set is_mediainfo = entity_id.startswith('M') %}
+{% if statements %}
+<p>
+  You can edit the rank of the following statements:
+</p>
 <div id="selection_buttons">
   <noscript>
     Enable JavaScript for “select all”, “select none” and “invert selection” buttons.
@@ -89,4 +93,15 @@
   </div>
   {% endif %}
 </form>
+{% else %}
+<p class="alert alert-info" role="alert">
+  <a href="https://{{ wiki }}/wiki/Special:EntityPage/{{ entity_id }}">
+    {{- entity_id -}}
+  </a>
+  has no statements for
+  <a href="https://{{ wiki }}/wiki/Special:EntityPage/{{ property_id }}">
+    {{- property_id -}}
+  </a>.
+</p>
+{% endif %}
 {% endblock %}
