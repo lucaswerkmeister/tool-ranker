@@ -19,8 +19,18 @@
 {% block main %}
 {% set is_mediainfo = entity_id.startswith('M') %}
 {% if statements %}
+{% if not can_edit() %}
+<div class="alert alert-warning" role="alert">
+  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+</div>
+{% endif %}
 <p>
-  You can edit the rank of the following {{ format_property(wiki, property_id) }} statements:
+  {% if can_edit() %}
+  You
+  {% else %}
+  Once you log in, you
+  {% endif %}
+  can edit the rank of the following {{ format_property(wiki, property_id) }} statements:
 </p>
 <div id="selection_buttons">
   <noscript>
@@ -57,11 +67,16 @@
     <label for="summary">Edit summary (optional):</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
+  {% if can_edit() %}
+  {% set disabled_attrs = '' %}
+  {% else %}
+  {% set disabled_attrs = 'disabled title="You must log in to make edits."' | safe %}
+  {% endif %}
   <button
     type="submit"
     class="btn btn-primary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='preferred') }}"
-    {% if not can_edit() %}disabled{% endif %}>
+    {{ disabled_attrs }}>
     {% if is_mediainfo %}
     Mark as prominent
     {% else %}
@@ -72,7 +87,7 @@
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='normal') }}"
-    {% if not can_edit() %}disabled{% endif %}>
+    {{ disabled_attrs }}>
     {% if is_mediainfo %}
     Mark as not prominent
     {% else %}
@@ -84,17 +99,12 @@
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='deprecated') }}"
-    {% if not can_edit() %}disabled{% endif %}>Set to deprecated rank</button>
+    {{ disabled_attrs }}>Set to deprecated rank</button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_increment_rank', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
-    {% if not can_edit() %}disabled{% endif %}>Increment rank</button>
-  {% endif %}
-  {% if not can_edit() %}
-  <div class="alert alert-warning" role="alert">
-    You must <a href="{{ url_for('login') }}">log in</a> to make edits.
-  </div>
+    {{ disabled_attrs }}>Increment rank</button>
   {% endif %}
 </form>
 {% else %}
