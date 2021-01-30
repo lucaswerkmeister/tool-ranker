@@ -16,48 +16,48 @@ def format_value(session: mwapi.Session,
     return flask.Markup.escape(response['result'])
 
 
-format_property_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
-                                            ttl=60 * 60)
-format_property_cache_lock = threading.RLock()
+format_entity_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
+                                          ttl=60 * 60)
+format_entity_cache_lock = threading.RLock()
 
 
-def format_property_key(session: mwapi.Session,
-                        property_id: str) -> Tuple[str, str]:
-    return (session.host, property_id)
+def format_entity_key(session: mwapi.Session,
+                      entity_id: str) -> Tuple[str, str]:
+    return (session.host, entity_id)
 
 
-@cachetools.cached(cache=format_property_cache,
-                   key=format_property_key,
-                   lock=format_property_cache_lock)
-def format_property(session: mwapi.Session,
-                    property_id: str) -> flask.Markup:
+@cachetools.cached(cache=format_entity_cache,
+                   key=format_entity_key,
+                   lock=format_entity_cache_lock)
+def format_entity(session: mwapi.Session,
+                  entity_id: str) -> flask.Markup:
     response = session.get(action='wbformatentities',
-                           ids=[property_id],
+                           ids=[entity_id],
                            formatversion=2)
-    return flask.Markup(response['wbformatentities'][property_id])
+    return flask.Markup(response['wbformatentities'][entity_id])
 
 
-def prefetch_properties(session: mwapi.Session,
-                        property_ids: Set[str]):
-    with format_property_cache_lock:
-        property_id_chunks: List[List[str]] = []
-        for property_id in property_ids:
-            key = format_property_key(session, property_id)
-            if key in format_property_cache:
+def prefetch_entities(session: mwapi.Session,
+                      entity_ids: Set[str]):
+    with format_entity_cache_lock:
+        entity_id_chunks: List[List[str]] = []
+        for entity_id in entity_ids:
+            key = format_entity_key(session, entity_id)
+            if key in format_entity_cache:
                 continue
-            if len(property_id_chunks) == 0:
-                property_id_chunks.append([property_id])
+            if len(entity_id_chunks) == 0:
+                entity_id_chunks.append([entity_id])
             else:
-                last_chunk = property_id_chunks[-1]
+                last_chunk = entity_id_chunks[-1]
                 if len(last_chunk) >= 50:
-                    property_id_chunks.append([property_id])
+                    entity_id_chunks.append([entity_id])
                 else:
-                    last_chunk.append(property_id)
-        for property_id_chunk in property_id_chunks:
+                    last_chunk.append(entity_id)
+        for entity_id_chunk in entity_id_chunks:
             response = session.get(action='wbformatentities',
-                                   ids=property_id_chunk,
+                                   ids=entity_id_chunk,
                                    formatversion=2)['wbformatentities']
-            for property_id in response:
-                key = format_property_key(session, property_id)
-                value = flask.Markup(response[property_id])
-                format_property_cache[key] = value
+            for entity_id in response:
+                key = format_entity_key(session, entity_id)
+                value = flask.Markup(response[entity_id])
+                format_entity_cache[key] = value

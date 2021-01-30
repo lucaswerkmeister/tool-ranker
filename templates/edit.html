@@ -30,7 +30,7 @@
   {% else %}
   Once you log in, you
   {% endif %}
-  can edit the rank of the following {{ format_property(wiki, property_id) }} statements:
+  can edit the rank of the following {{ format_entity(wiki, property_id) }} statements on {{ format_entity(wiki, entity_id) }}:
 </p>
 <div id="selection_buttons">
   <noscript>
@@ -50,7 +50,7 @@
       <ul class="qualifiers-list">
         {% for qualifier_property_id in statement.qualifiers %}
         <li>
-          {{ format_property(wiki, qualifier_property_id) }}:
+          {{ format_entity(wiki, qualifier_property_id) }}:
           <ul class="snak-list" data-property-id="{{ qualifier_property_id }}">
             {% for qualifier_snak in statement.qualifiers[qualifier_property_id] -%}
             <li>{{ format_snak(wiki, qualifier_property_id, qualifier_snak) }}</li>
@@ -109,10 +109,7 @@
 </form>
 {% else %}
 <p class="alert alert-info" role="alert">
-  <a href="https://{{ wiki }}/wiki/Special:EntityPage/{{ entity_id }}">
-    {{- entity_id -}}
-  </a>
-  has no statements for {{ format_property(wiki, property_id) }}.
+  {{ format_entity(wiki, entity_id) }} has no statements for {{ format_entity(wiki, property_id) }}.
   <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">Return to main page</a>
 </p>
 {% endif %}

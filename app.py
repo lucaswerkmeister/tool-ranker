@@ -122,8 +122,8 @@ def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
 
 
 @app.template_global()
-def format_property(wiki: str, property_id: str) -> flask.Markup:
-    return wbformat.format_property(anonymous_session(wiki), property_id)
+def format_entity(wiki: str, entity_id: str) -> flask.Markup:
+    return wbformat.format_entity(anonymous_session(wiki), entity_id)
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
@@ -173,10 +173,10 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
 
-    prefetch_property_ids = {property_id}
+    prefetch_entity_ids = {entity_id, property_id}
     for statement in statements:
-        prefetch_property_ids.update(statement.get('qualifiers', {}).keys())
-    wbformat.prefetch_properties(session, prefetch_property_ids)
+        prefetch_entity_ids.update(statement.get('qualifiers', {}).keys())
+    wbformat.prefetch_entities(session, prefetch_entity_ids)
 
     return flask.render_template('edit.html',
                                  wiki=wiki,
