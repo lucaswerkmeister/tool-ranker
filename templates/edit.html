@@ -30,7 +30,13 @@
   {% else %}
   Once you log in, you
   {% endif %}
-  can edit the rank of the following {{ format_entity(wiki, property_id) }} statements on {{ format_entity(wiki, entity_id) }}:
+  can edit the rank of the following {{ format_entity(wiki, property_id) }}
+  {% if statements | length > 1 %}
+  statements
+  {% else %}
+  statement
+  {% endif %}
+  on {{ format_entity(wiki, entity_id) }}:
 </p>
 <div id="selection_buttons">
   <noscript>
