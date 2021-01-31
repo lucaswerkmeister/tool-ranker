@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('static', filename='index-entity-id-placeholder.js') }}"></script>
+{% endblock head %}
+
 {% block main %}
 <h1>Ranker</h1>
 <p>
@@ -22,6 +28,7 @@
       type="text" name="entity_id"
       required
       pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9]*(?:-[SF][1-9][0-9]*)?)|(?:File:.*)$"
+      {# these placeholders are also in static/index-entity-id-placeholder.js #}
       {% if wiki == "www.wikidata.org" or wiki == "test.wikidata.org" or not wiki %}
       placeholder="Q42, P31, L99…"
       {% elif wiki == "commons.wikimedia.org" or wiki == "test-commons.wikimedia.org" %}
