@@ -150,9 +150,21 @@ def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
 def index() -> Union[str, werkzeug.Response]:
     if flask.request.method == 'POST':
         data = flask.request.form
+        wiki = data['wiki']
+        entity_id = data['entity_id']
+        if entity_id.startswith('File:'):
+            try:
+                session = anonymous_session(wiki)
+                response = session.get(action='query',
+                                       titles=[entity_id],
+                                       formatversion=2)
+                page_id = response['query']['pages'][0]['pageid']
+                entity_id = f'M{page_id}'
+            except Exception:
+                pass  # leave entity_id as it is
         url = flask.url_for('show_edit_form',
-                            wiki=data['wiki'],
-                            entity_id=data['entity_id'],
+                            wiki=wiki,
+                            entity_id=entity_id,
                             property_id=data['property_id'])
         return flask.redirect(url)
     data = flask.request.args

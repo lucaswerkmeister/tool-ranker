@@ -41,6 +41,16 @@ def test_index_redirect(client):
     assert response.headers['location'] == expected_redirect
 
 
+def test_index_redirect_mediainfo(client):
+    response = client.post('/',
+                           data={'wiki': 'commons.wikimedia.org',
+                                 'entity_id': 'File:DSC 0484 2-01.jpg',
+                                 'property_id': 'P180'})
+    expected_redirect = ('http://localhost/edit'
+                         '/commons.wikimedia.org/M79869096/P180/')
+    assert response.headers['location'] == expected_redirect
+
+
 def test_format_value_escapes_html():
     value = {'value': '<script>alert("!Mediengruppe Bitnik");</script>',
              'type': 'string'}

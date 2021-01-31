@@ -17,11 +17,29 @@
   </div>
   <div class="form-group">
     <label for="entity_id">Entity ID</label>
-    <input id="entity_id" class="form-control" type="text" name="entity_id" required pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9]*(?:-[SF][1-9][0-9]*)?)$" placeholder="Q42" {% if entity_id %}value="{{ entity_id }}" {% endif %}>
+    <input
+      id="entity_id" class="form-control"
+      type="text" name="entity_id"
+      required
+      pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9]*(?:-[SF][1-9][0-9]*)?)|(?:File:.*)$"
+      {% if wiki == "www.wikidata.org" or wiki == "test.wikidata.org" or not wiki %}
+      placeholder="Q42, P31, L99…"
+      {% elif wiki == "commons.wikimedia.org" or wiki == "test-commons.wikimedia.org" %}
+      placeholder="M79869096 or File:DSC 0484 2-01.jpg"
+      {% endif %}
+      {% if entity_id %}value="{{ entity_id }}" {% endif %}
+      >
   </div>
   <div class="form-group">
     <label for="property_id">Property ID</label>
-    <input id="property_id" class="form-control" type="text" name="property_id" required pattern="^P[1-9][0-9]*$" placeholder="P361" {% if property_id %}value="{{ property_id }}" {% endif %}>
+    <input
+      id="property_id" class="form-control"
+      type="text" name="property_id"
+      required
+      pattern="^P[1-9][0-9]*$"
+      placeholder="P361"
+      {% if property_id %}value="{{ property_id }}" {% endif %}
+      >
   </div>
   <button type="submit" class="btn btn-primary">Select statements</button>
 </form>
