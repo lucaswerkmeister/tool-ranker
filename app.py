@@ -175,13 +175,18 @@ def index() -> Union[str, werkzeug.Response]:
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
-def show_edit_form(wiki: str, entity_id: str, property_id: str) -> str:
+def show_edit_form(wiki: str, entity_id: str, property_id: str) \
+        -> Union[str, Tuple[str, int]]:
     session = anonymous_session(wiki)
     response = session.get(action='wbgetentities',
                            ids=[entity_id],
                            props=['info', 'claims'],
                            formatversion=2)
     entity = response['entities'][entity_id]
+    if 'missing' in entity:
+        return flask.render_template('no-such-entity.html',
+                                     wiki=wiki,
+                                     entity_id=entity_id), 404
     base_revision_id = entity['lastrevid']
     statements = entity_statements(entity, property_id)
 
