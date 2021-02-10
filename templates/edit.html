@@ -3,7 +3,7 @@
 {% block head %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='edit.css') }}">
-<script src="{{ url_for('static', filename='selection-buttons.js') }}"></script>
+<script defer src="{{ url_for('static', filename='selection-buttons.js') }}"></script>
 {% endblock head %}
 
 {% macro format_snak(wiki, property_id, snak) -%}

@@ -2,7 +2,7 @@
 
 {% block head %}
 {{ super() }}
-<script src="{{ url_for('static', filename='index-entity-id-placeholder.js') }}"></script>
+<script defer src="{{ url_for('static', filename='index-entity-id-placeholder.js') }}"></script>
 {% endblock head %}
 
 {% block main %}
