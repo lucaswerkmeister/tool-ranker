@@ -295,9 +295,16 @@ def login() -> werkzeug.Response:
 
 
 @app.route('/oauth/callback')
-def oauth_callback() -> werkzeug.Response:
-    request_token = mwoauth.RequestToken(
-        **flask.session.pop('oauth_request_token'))
+def oauth_callback() -> Union[werkzeug.Response, str]:
+    oauth_request_token = flask.session.pop('oauth_request_token', None)
+    if oauth_request_token is None:
+        already_logged_in = 'oauth_access_token' in flask.session
+        query_string = flask.request.query_string\
+                                    .decode(flask.request.url_charset)
+        return flask.render_template('no-oauth-request-token.html',
+                                     already_logged_in=already_logged_in,
+                                     query_string=query_string)
+    request_token = mwoauth.RequestToken(**oauth_request_token)
     access_token = mwoauth.complete(index_php,
                                     consumer_token,
                                     request_token,
