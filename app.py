@@ -395,10 +395,10 @@ def edit_token(session: mwapi.Session) -> str:
     return token
 
 
-def save_entity_and_redirect(entity_data: dict,
-                             summary: str,
-                             base_revision_id: int,
-                             session: mwapi.Session) -> werkzeug.Response:
+def save_entity(entity_data: dict,
+                summary: str,
+                base_revision_id: int,
+                session: mwapi.Session) -> int:
 
     token = edit_token(session)
 
@@ -409,6 +409,19 @@ def save_entity_and_redirect(entity_data: dict,
                                 baserevid=base_revision_id,
                                 token=token)
     revision_id = api_response['entity']['lastrevid']
+
+    return revision_id
+
+
+def save_entity_and_redirect(entity_data: dict,
+                             summary: str,
+                             base_revision_id: int,
+                             session: mwapi.Session) -> werkzeug.Response:
+
+    revision_id = save_entity(entity_data,
+                              summary,
+                              base_revision_id,
+                              session)
 
     return flask.redirect(f'{session.host}/w/index.php'
                           f'?diff={revision_id}&oldid={base_revision_id}')
