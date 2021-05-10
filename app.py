@@ -50,6 +50,11 @@ app.url_map.converters['wiki'] = WikiConverter
 
 @app.template_global()
 def csrf_token() -> str:
+    """Get a CSRF token for the current session in the tool.
+
+    Not to be confused with edit_token,
+    which gets a token for use with the MediaWiki API."""
+
     if 'csrf_token' not in flask.session:
         characters = string.ascii_letters + string.digits
         random_string = ''.join(random.choice(characters) for _ in range(64))
@@ -372,14 +377,30 @@ def build_entity(entity_id: str,
     }
 
 
+def edit_token(session: mwapi.Session) -> str:
+    """Get an edit token / CSRF token for the MediaWiki API.
+
+    Not to be confused with csrf_token,
+    which gets a token for use within the tool."""
+
+    edit_tokens = flask.g.setdefault('edit_tokens', {})
+    key = session.host
+    if key in edit_tokens:
+        return edit_tokens[key]
+
+    token = session.get(action='query',
+                        meta='tokens',
+                        type='csrf')['query']['tokens']['csrftoken']
+    edit_tokens[key] = token
+    return token
+
+
 def save_entity_and_redirect(entity_data: dict,
                              summary: str,
                              base_revision_id: int,
                              session: mwapi.Session) -> werkzeug.Response:
 
-    token = session.get(action='query',
-                        meta='tokens',
-                        type='csrf')['query']['tokens']['csrftoken']
+    token = edit_token(session)
 
     api_response = session.post(action='wbeditentity',
                                 id=entity_data['id'],
