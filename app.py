@@ -57,26 +57,6 @@ def csrf_token() -> str:
     return flask.session['csrf_token']
 
 
-@app.template_global()
-def form_value(name: str) -> flask.Markup:
-    if 'repeat_form' in flask.g and name in flask.request.form:
-        return (flask.Markup(r' value="') +
-                flask.Markup.escape(flask.request.form[name]) +
-                flask.Markup(r'" '))
-    else:
-        return flask.Markup()
-
-
-@app.template_global()
-def form_attributes(name: str) -> flask.Markup:
-    return (flask.Markup(r' id="') +
-            flask.Markup.escape(name) +
-            flask.Markup(r'" name="') +
-            flask.Markup.escape(name) +
-            flask.Markup(r'" ') +
-            form_value(name))
-
-
 @app.template_filter()
 def user_link(user_name: str) -> flask.Markup:
     user_href = 'https://www.wikidata.org/wiki/User:'
