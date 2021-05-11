@@ -10,7 +10,7 @@ import requests
 import requests_oauthlib  # type: ignore
 import string
 import toolforge
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
@@ -168,7 +168,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) \
                                      wiki=wiki,
                                      entity_id=entity_id), 404
     base_revision_id = entity['lastrevid']
-    statements = entity_statements(entity, property_id)
+    statements = entity_statements(entity).get(property_id, [])
 
     prefetch_entity_ids = {entity_id, property_id}
     for statement in statements:
@@ -199,7 +199,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
     entity = response.json()['entities'][entity_id]
-    statements = entity_statements(entity, property_id)
+    statements = entity_statements(entity).get(property_id, [])
 
     edited_statements = 0
     for statement in statements:
@@ -237,7 +237,7 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
     entity = response.json()['entities'][entity_id]
-    statements = entity_statements(entity, property_id)
+    statements = entity_statements(entity).get(property_id, [])
 
     edited_statements = 0
     for statement in statements:
@@ -356,14 +356,14 @@ def get_entities(session: mwapi.Session, entity_ids: Iterable[str]) -> dict:
     return entities
 
 
-def entity_statements(entity: dict, property_id: str) -> List[dict]:
+def entity_statements(entity: dict) -> Dict[str, List[dict]]:
     if entity.get('type') == 'mediainfo':  # optional due to T272804
         statements = entity['statements']
         if statements == []:
             statements = {}  # work around T222159
     else:
         statements = entity['claims']
-    return statements.setdefault(property_id, [])
+    return statements
 
 
 def increment_rank(rank: str) -> str:
