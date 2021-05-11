@@ -59,6 +59,17 @@ def test_format_value_escapes_html():
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
+def test_get_entities():
+    class FakeSession:
+        def get(self, ids, **kwargs):
+            assert len(ids) <= 50
+            return {'entities': {id: f'entity {id}' for id in ids}}
+
+    entity_ids = [f'Q{id}' for id in range(1, 120)]
+    entities = ranker.get_entities(FakeSession(), entity_ids)
+    assert entities == {id: f'entity {id}' for id in entity_ids}
+
+
 @pytest.mark.parametrize('rank, expected', [
     ('deprecated', 'normal'),
     ('normal', 'preferred'),

@@ -10,7 +10,7 @@ import requests
 import requests_oauthlib  # type: ignore
 import string
 import toolforge
-from typing import List, Optional, Tuple, Union
+from typing import Iterable, List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
@@ -162,11 +162,7 @@ def index() -> Union[str, werkzeug.Response]:
 def show_edit_form(wiki: str, entity_id: str, property_id: str) \
         -> Union[str, Tuple[str, int]]:
     session = anonymous_session(wiki)
-    response = session.get(action='wbgetentities',
-                           ids=[entity_id],
-                           props=['info', 'claims'],
-                           formatversion=2)
-    entity = response['entities'][entity_id]
+    entity = get_entities(session, [entity_id])[entity_id]
     if 'missing' in entity:
         return flask.render_template('no-such-entity.html',
                                      wiki=wiki,
@@ -346,6 +342,18 @@ def deny_frame(response: flask.Response) -> flask.Response:
     """
     response.headers['X-Frame-Options'] = 'deny'
     return response
+
+
+def get_entities(session: mwapi.Session, entity_ids: Iterable[str]) -> dict:
+    entity_ids = list(set(entity_ids))
+    entities = {}
+    for chunk in [entity_ids[i:i+50] for i in range(0, len(entity_ids), 50)]:
+        response = session.get(action='wbgetentities',
+                               ids=chunk,
+                               props=['info', 'claims'],
+                               formatversion=2)
+        entities.update(response['entities'])
+    return entities
 
 
 def entity_statements(entity: dict, property_id: str) -> List[dict]:
