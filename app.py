@@ -10,7 +10,7 @@ import requests
 import requests_oauthlib  # type: ignore
 import string
 import toolforge
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Container, Iterable, List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
@@ -201,13 +201,14 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     entity = response.json()['entities'][entity_id]
     statements = entity_statements(entity).get(property_id, [])
 
-    edited_statements = 0
-    for statement in statements:
-        if statement['id'] in flask.request.form:
-            statement['rank'] = rank
-            edited_statements += 1
+    statement_groups, edited_statements = statements_set_rank_to(
+        flask.request.form,
+        rank,
+        {property_id: statements},
+        property_id,
+    )
 
-    edited_entity = build_entity(entity_id, {property_id: statements})
+    edited_entity = build_entity(entity_id, statement_groups)
     if edited_statements == 1:
         summary = f'Set rank of 1 statement to "{rank}"'
     else:
@@ -372,6 +373,34 @@ def increment_rank(rank: str) -> str:
         'normal': 'preferred',
         'preferred': 'preferred',
     }[rank]
+
+
+def statements_set_rank_to(statement_ids: Container[str],
+                           rank: str,
+                           statements: Dict[str, List[dict]],
+                           property_id: Optional[str] = None) \
+        -> Tuple[Dict[str, List[dict]], int]:
+    """Set the rank of certain statements to a constant value.
+
+    statement_ids specifies the statements to edit, and rank the target rank.
+    statements is a mapping from property IDs to statement groups.
+    If property_id is given, only statements for that property are checked
+    (i.e. the other statements are not inspected, as an optimization).
+
+    Returns a dict of edited statement groups
+    (though the lists in the statements parameter are also edited in-place),
+    and the number of edited statements."""
+    if property_id is None:
+        statement_groups = statements
+    else:
+        statement_groups = {property_id: statements.get(property_id, [])}
+    edited_statements = 0
+    for statement_group in statement_groups.values():
+        for statement in statement_group:
+            if statement['id'] in statement_ids:
+                statement['rank'] = rank
+                edited_statements += 1
+    return statement_groups, edited_statements
 
 
 def build_entity(entity_id: str,
