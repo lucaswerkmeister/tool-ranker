@@ -209,12 +209,9 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     )
 
     edited_entity = build_entity(entity_id, statement_groups)
-    if edited_statements == 1:
-        summary = f'Set rank of 1 statement to "{rank}"'
-    else:
-        summary = f'Set rank of {edited_statements} statements to "{rank}"'
-    if flask.request.form.get('summary'):
-        summary += ': ' + flask.request.form['summary']
+    summary = get_summary_set_rank(edited_statements,
+                                   rank,
+                                   flask.request.form.get('summary'))
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -410,6 +407,18 @@ def build_entity(entity_id: str,
         'claims': statement_groups,
         # yes, 'claims' even for MediaInfo entities
     }
+
+
+def get_summary_set_rank(edited_statements: int,
+                         rank: str,
+                         custom_summary: Optional[str]) -> str:
+    if edited_statements == 1:
+        summary = f'Set rank of 1 statement to {rank}'
+    else:
+        summary = f'Set rank of {edited_statements} statements to {rank}'
+    if custom_summary is not None:
+        summary += ': ' + custom_summary
+    return summary
 
 
 def edit_token(session: mwapi.Session) -> str:
