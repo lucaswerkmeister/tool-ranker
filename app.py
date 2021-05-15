@@ -248,12 +248,8 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
                 edited_statements += 1
 
     edited_entity = build_entity(entity_id, {property_id: statements})
-    if edited_statements == 1:
-        summary = 'Incremented rank of 1 statement'
-    else:
-        summary = f'Incremented rank of {edited_statements} statements'
-    if flask.request.form.get('summary'):
-        summary += ': ' + flask.request.form['summary']
+    summary = get_summary_increment_rank(edited_statements,
+                                         flask.request.form.get('summary'))
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -479,6 +475,17 @@ def get_summary_set_rank(edited_statements: int,
         summary = f'Set rank of 1 statement to {rank}'
     else:
         summary = f'Set rank of {edited_statements} statements to {rank}'
+    if custom_summary is not None:
+        summary += ': ' + custom_summary
+    return summary
+
+
+def get_summary_increment_rank(edited_statements: int,
+                               custom_summary: Optional[str]) -> str:
+    if edited_statements == 1:
+        summary = 'Incremented rank of 1 statement'
+    else:
+        summary = f'Incremented rank of {edited_statements} statements'
     if custom_summary is not None:
         summary += ': ' + custom_summary
     return summary
