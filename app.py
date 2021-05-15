@@ -279,12 +279,8 @@ def batch_list_set_rank(wiki: str, rank: str) \
     session = authenticated_session(wiki)
     assert session is not None
 
-    statement_ids = flask.request.form.get('statement_ids', '').splitlines()
-    statement_ids_by_entity_id: Dict[str, List[str]] = {}
-    for statement_id in statement_ids:
-        entity_id = statement_id.split('$', 1)[0].upper()
-        statement_ids_by_entity_id.setdefault(entity_id, [])\
-                                  .append(statement_id)
+    statement_ids_by_entity_id = parse_statement_ids_list(
+        flask.request.form.get('statement_ids', ''))
 
     entities = get_entities(session, statement_ids_by_entity_id.keys())
     edits = {}
@@ -397,6 +393,16 @@ def deny_frame(response: flask.Response) -> flask.Response:
     """
     response.headers['X-Frame-Options'] = 'deny'
     return response
+
+
+def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
+    statement_ids = input.splitlines()
+    statement_ids_by_entity_id: Dict[str, List[str]] = {}
+    for statement_id in statement_ids:
+        entity_id = statement_id.split('$', 1)[0].upper()
+        statement_ids_by_entity_id.setdefault(entity_id, [])\
+                                  .append(statement_id)
+    return statement_ids_by_entity_id
 
 
 def get_entities(session: mwapi.Session, entity_ids: Iterable[str]) -> dict:
