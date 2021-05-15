@@ -570,7 +570,7 @@ def edit_token(session: mwapi.Session) -> str:
     Not to be confused with csrf_token,
     which gets a token for use within the tool."""
 
-    edit_tokens = flask.g.setdefault('edit_tokens', {})
+    edit_tokens = flask.g.setdefault('edit_tokens', {})  # type: ignore
     key = session.host
     if key in edit_tokens:
         return edit_tokens[key]
