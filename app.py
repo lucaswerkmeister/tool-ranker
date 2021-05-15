@@ -238,14 +238,11 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     entity = response.json()['entities'][entity_id]
     statements = entity_statements(entity).get(property_id, [])
 
-    edited_statements = 0
-    for statement in statements:
-        if statement['id'] in flask.request.form:
-            rank = statement['rank']
-            incremented_rank = increment_rank(rank)
-            if incremented_rank != rank:
-                statement['rank'] = incremented_rank
-                edited_statements += 1
+    statement_groups, edited_statements = statements_increment_rank(
+        flask.request.form,
+        {property_id: statements},
+        property_id,
+    )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
     summary = get_summary_increment_rank(edited_statements,
@@ -456,6 +453,36 @@ def statements_set_rank_to(statement_ids: Container[str],
             if statement['id'] in statement_ids:
                 statement['rank'] = rank
                 edited_statements += 1
+    return statement_groups, edited_statements
+
+
+def statements_increment_rank(statement_ids: Container[str],
+                              statements: Dict[str, List[dict]],
+                              property_id: Optional[str] = None) \
+        -> Tuple[Dict[str, List[dict]], int]:
+    """Increment the rank of certain statements.
+
+    statement_ids specifies the statements to edit.
+    statements is a mapping from property IDs to statement groups.
+    If property_id is given, only statements for that property are checked
+    (i.e. the other statements are not inspected, as an optimization).
+
+    Returns a dict of edited statement groups
+    (though the lists in the statements parameter are also edited in-place),
+    and the number of edited statements."""
+    if property_id is None:
+        statement_groups = statements
+    else:
+        statement_groups = {property_id: statements.get(property_id, [])}
+    edited_statements = 0
+    for statement_group in statement_groups.values():
+        for statement in statement_group:
+            if statement['id'] in statement_ids:
+                rank = statement['rank']
+                incremented_rank = increment_rank(rank)
+                if incremented_rank != rank:
+                    statement['rank'] = incremented_rank
+                    edited_statements += 1
     return statement_groups, edited_statements
 
 
