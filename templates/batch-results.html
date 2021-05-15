@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block main %}
+{% if edits %}
+<p>
+  The following entities were successfully edited:
+</p>
+<ul>
+  {% for entity_id, revision_id in edits.items() %}
+  <li>
+    {{ format_entity(wiki, entity_id) }}
+    (<a href="https://{{ wiki }}/w/index.php?diff={{ revision_id }}">diff</a>)
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% if errors %}
+<p>
+  The following entities could not be edited due to errors:
+</p>
+<ul>
+  {% for entity_id, error in errors.items() %}
+  <li>
+    {{ format_entity(wiki, entity_id) }}
+    ({{ error.info }})
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

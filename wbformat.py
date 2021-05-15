@@ -3,7 +3,7 @@ import flask
 import json
 import mwapi  # type: ignore
 import threading
-from typing import List, Set, Tuple
+from typing import AbstractSet, List, Tuple
 
 
 def format_value(session: mwapi.Session,
@@ -38,7 +38,7 @@ def format_entity(session: mwapi.Session,
 
 
 def prefetch_entities(session: mwapi.Session,
-                      entity_ids: Set[str]):
+                      entity_ids: AbstractSet[str]):
     with format_entity_cache_lock:
         entity_id_chunks: List[List[str]] = []
         for entity_id in entity_ids:
