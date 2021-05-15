@@ -306,6 +306,52 @@ def batch_list_set_rank(wiki: str, rank: str) \
                                  errors=errors)
 
 
+@app.route('/batch/list/collective/<wiki:wiki>/increment',
+           methods=['POST'])
+def batch_list_increment_rank(wiki: str) \
+        -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    if 'oauth_access_token' not in flask.session:
+        return 'not logged in', 401  # TODO better error
+    session = authenticated_session(wiki)
+    assert session is not None
+
+    statement_ids_by_entity_id = parse_statement_ids_list(
+        flask.request.form.get('statement_ids', ''))
+
+    entities = get_entities(session, statement_ids_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, statement_ids in statement_ids_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_increment_rank(
+            statement_ids,
+            statements,
+        )
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_increment_rank(edited_statements,
+                                             flask.request.form.get('summary'))
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
 @app.route('/login')
 def login() -> werkzeug.Response:
     redirect, request_token = mwoauth.initiate(index_php,
