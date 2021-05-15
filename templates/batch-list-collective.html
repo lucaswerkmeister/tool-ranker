@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block main %}
+{% if not can_edit() %}
+<div class="alert alert-warning" role="alert">
+  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+</div>
+{% endif %}
+<form method="post">
+  <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+  <div class="form-group">
+    <label for="statement_ids">Statement IDs (one per line):</label>
+    <textarea
+      class="form-control"
+      id="statement_ids"
+      name="statement_ids"
+      placeholder="Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac&#xa;Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344"
+      required
+      rows="10"
+      ></textarea>
+  </div>
+  <div class="form-group">
+    <label for="summary">Edit summary (optional):</label>
+    <input name="summary" type="text" id="summary" class="form-control">
+  </div>
+  {% if can_edit() %}
+  {% set disabled_attrs = '' %}
+  {% else %}
+  {% set disabled_attrs = 'disabled title="You must log in to make edits."' | safe %}
+  {% endif %}
+  <button
+    type="submit"
+    class="btn btn-primary"
+    formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='preferred') }}"
+    {{ disabled_attrs }}>
+    Set to preferred rank
+  </button>
+  <button
+    type="submit"
+    class="btn btn-secondary"
+    formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='normal') }}"
+    {{ disabled_attrs }}>
+    Set to normal rank
+  </button>
+  <button
+    type="submit"
+    class="btn btn-secondary"
+    formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='deprecated') }}"
+    {{ disabled_attrs }}>
+    Set to deprecated rank
+  </button>
+  {#
+  <button
+    type="submit"
+    class="btn btn-secondary"
+    formaction="{{ url_for('batch_list_increment_rank', wiki=wiki) }}"
+    {{ disabled_attrs }}>
+    Increment rank
+  </button>
+  #}
+</form>
+{% endblock %}
