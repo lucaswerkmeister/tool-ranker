@@ -309,6 +309,8 @@ def batch_list_set_rank(wiki: str, rank: str) \
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
                                  edits=edits,
