@@ -6,6 +6,7 @@ import mwapi  # type: ignore
 import mwoauth  # type: ignore
 import os
 import random
+import re
 import requests
 import requests_oauthlib  # type: ignore
 import string
@@ -348,6 +349,54 @@ def batch_list_increment_rank(wiki: str) \
                                  errors=errors)
 
 
+@app.route('/batch/list/individual/<wiki:wiki>/')
+def show_batch_list_individual_form(wiki: str) -> str:
+    return flask.render_template('batch-list-individual.html',
+                                 wiki=wiki)
+
+
+@app.route('/batch/list/individual/<wiki:wiki>/',
+           methods=['POST'])
+def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    session = authenticated_session(wiki)
+    if session is None:
+        return 'not logged in', 401  # TODO better error
+
+    commands_by_entity_id = parse_statement_ids_with_ranks(
+        flask.request.form.get('commands', ''))
+
+    entities = get_entities(session, commands_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, commands in commands_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_edit_rank(commands,
+                                                             statements)
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_edit_rank(edited_statements,
+                                        flask.request.form.get('summary'))
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
 @app.route('/login')
 def login() -> werkzeug.Response:
     redirect, request_token = mwoauth.initiate(index_php,
@@ -430,14 +479,29 @@ def deny_frame(response: flask.Response) -> flask.Response:
     return response
 
 
+def entity_id_from_statement_id(statement_id: str) -> str:
+    return statement_id.split('$', 1)[0].upper()
+
+
 def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
     statement_ids = input.splitlines()
     statement_ids_by_entity_id: Dict[str, List[str]] = {}
     for statement_id in statement_ids:
-        entity_id = statement_id.split('$', 1)[0].upper()
+        entity_id = entity_id_from_statement_id(statement_id)
         statement_ids_by_entity_id.setdefault(entity_id, [])\
                                   .append(statement_id)
     return statement_ids_by_entity_id
+
+
+def parse_statement_ids_with_ranks(input: str) \
+        -> Dict[str, Dict[str, str]]:
+    commands = input.splitlines()
+    commands_by_entity_id: Dict[str, Dict[str, str]] = {}
+    for command in commands:
+        statement_id, rank = re.split('[|\t]', command, maxsplit=1)
+        entity_id = entity_id_from_statement_id(statement_id)
+        commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
+    return commands_by_entity_id
 
 
 def get_entities(session: mwapi.Session, entity_ids: Iterable[str]) -> dict:
@@ -528,6 +592,20 @@ def statements_increment_rank(statement_ids: Container[str],
     return statement_groups, edited_statements
 
 
+def statements_edit_rank(commands: Dict[str, str],
+                         statements: Dict[str, List[dict]]) \
+        -> Tuple[Dict[str, List[dict]], int]:
+    edited_statements = 0
+    for statement_group in statements.values():
+        for statement in statement_group:
+            if statement['id'] in commands:
+                edited_rank = commands[statement['id']]
+                if edited_rank != statement['rank']:
+                    statement['rank'] = edited_rank
+                    edited_statements += 1
+    return statements, edited_statements
+
+
 def build_entity(entity_id: str,
                  statement_groups: Dict[str, List[dict]]) -> dict:
     return {
@@ -555,6 +633,17 @@ def get_summary_increment_rank(edited_statements: int,
         summary = 'Incremented rank of 1 statement'
     else:
         summary = f'Incremented rank of {edited_statements} statements'
+    if custom_summary is not None:
+        summary += ': ' + custom_summary
+    return summary
+
+
+def get_summary_edit_rank(edited_statements: int,
+                          custom_summary: Optional[str]) -> str:
+    if edited_statements == 1:
+        summary = 'Edited rank of 1 statement'
+    else:
+        summary = f'Edited rank of {edited_statements} statements'
     if custom_summary is not None:
         summary += ': ' + custom_summary
     return summary
