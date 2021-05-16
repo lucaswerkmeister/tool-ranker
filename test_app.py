@@ -59,6 +59,22 @@ def test_format_value_escapes_html():
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
+def test_parse_statement_ids_list():
+    input = '''
+Q1$123
+Q2$123
+Q1$456
+q2$456
+P3$123
+'''.strip()
+    statement_ids_by_entity_id = ranker.parse_statement_ids_list(input)
+    assert statement_ids_by_entity_id == {
+        'Q1': ['Q1$123', 'Q1$456'],
+        'Q2': ['Q2$123', 'q2$456'],
+        'P3': ['P3$123'],
+    }
+
+
 def test_get_entities():
     class FakeSession:
         def get(self, ids, **kwargs):
