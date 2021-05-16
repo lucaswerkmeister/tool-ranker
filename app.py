@@ -191,10 +191,9 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
-    if 'oauth_access_token' not in flask.session:
-        return 'not logged in', 401  # TODO better error
     session = authenticated_session(wiki)
-    assert session is not None
+    if session is None:
+        return 'not logged in', 401  # TODO better error
 
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
@@ -227,10 +226,9 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
-    if 'oauth_access_token' not in flask.session:
-        return 'not logged in', 401  # TODO better error
     session = authenticated_session(wiki)
-    assert session is not None
+    if session is None:
+        return 'not logged in', 401  # TODO better error
 
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
@@ -267,10 +265,9 @@ def batch_list_set_rank(wiki: str, rank: str) \
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
-    if 'oauth_access_token' not in flask.session:
-        return 'not logged in', 401  # TODO better error
     session = authenticated_session(wiki)
-    assert session is not None
+    if session is None:
+        return 'not logged in', 401  # TODO better error
 
     statement_ids_by_entity_id = parse_statement_ids_list(
         flask.request.form.get('statement_ids', ''))
@@ -313,10 +310,9 @@ def batch_list_increment_rank(wiki: str) \
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
-    if 'oauth_access_token' not in flask.session:
-        return 'not logged in', 401  # TODO better error
     session = authenticated_session(wiki)
-    assert session is not None
+    if session is None:
+        return 'not logged in', 401  # TODO better error
 
     statement_ids_by_entity_id = parse_statement_ids_list(
         flask.request.form.get('statement_ids', ''))
