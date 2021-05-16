@@ -430,11 +430,15 @@ def deny_frame(response: flask.Response) -> flask.Response:
     return response
 
 
+def entity_id_from_statement_id(statement_id: str) -> str:
+    return statement_id.split('$', 1)[0].upper()
+
+
 def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
     statement_ids = input.splitlines()
     statement_ids_by_entity_id: Dict[str, List[str]] = {}
     for statement_id in statement_ids:
-        entity_id = statement_id.split('$', 1)[0].upper()
+        entity_id = entity_id_from_statement_id(statement_id)
         statement_ids_by_entity_id.setdefault(entity_id, [])\
                                   .append(statement_id)
     return statement_ids_by_entity_id

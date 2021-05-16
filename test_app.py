@@ -60,6 +60,15 @@ def test_format_value_escapes_html():
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
+@pytest.mark.parametrize('statement_id, entity_id', [
+    ('Q1$123', 'Q1'),
+    ('p1$123', 'P1'),
+    ('L1-S1$123', 'L1-S1'),
+])
+def test_entity_id_from_statement_id(statement_id: str, entity_id: str):
+    assert ranker.entity_id_from_statement_id(statement_id) == entity_id
+
+
 def test_parse_statement_ids_list():
     input = '''
 Q1$123
