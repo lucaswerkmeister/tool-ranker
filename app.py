@@ -492,7 +492,7 @@ def statements_set_rank_to(statement_ids: Container[str],
     edited_statements = 0
     for statement_group in statement_groups.values():
         for statement in statement_group:
-            if statement['id'] in statement_ids:
+            if statement['id'] in statement_ids and statement['rank'] != rank:
                 statement['rank'] = rank
                 edited_statements += 1
     return statement_groups, edited_statements
