@@ -86,6 +86,21 @@ def test_get_entities():
     assert entities == {id: f'entity {id}' for id in entity_ids}
 
 
+@pytest.mark.parametrize('entity, expected_statements', [
+    pytest.param({'type': 'item', 'claims': 'X'}, 'X', id='item'),
+    pytest.param({'type': 'property', 'claims': 'X'}, 'X', id='property'),
+    pytest.param({'type': 'lexeme', 'claims': 'X'}, 'X', id='lexeme'),
+    pytest.param({'type': 'sense', 'claims': 'X'}, 'X', id='sense'),
+    pytest.param({'type': 'form', 'claims': 'X'}, 'X', id='form'),
+    pytest.param({'claims': 'X'}, 'X', id='sense or form (T272804)'),
+    pytest.param({'type': 'mediainfo', 'statements': ''}, '', id='mediainfo'),
+    pytest.param({'type': 'mediainfo', 'statements': []}, {}, id='T222159'),
+])
+def test_entity_statements(entity: dict, expected_statements):
+    statements = ranker.entity_statements(entity)
+    assert expected_statements == statements
+
+
 @pytest.mark.parametrize('rank, expected', [
     ('deprecated', 'normal'),
     ('normal', 'preferred'),
