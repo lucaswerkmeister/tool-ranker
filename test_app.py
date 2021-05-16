@@ -117,3 +117,41 @@ def test_statements_set_rank_to(with_property_id: bool):
     assert unedited_statement['rank'] == 'preferred'
     assert unselected_statement['rank'] == 'normal'
     assert unrelated_statement['rank'] == 'normal'
+
+
+@pytest.mark.parametrize('with_property_id', [
+    True,
+    False,
+])
+def test_statements_increment_rank(with_property_id: bool):
+    unrelated_statement = {'id': 'X', 'rank': 'normal'}
+    unselected_statement = {'id': 'Y', 'rank': 'normal'}
+    unedited_statement = {'id': 'a', 'rank': 'preferred'}
+    edited_statement = {'id': 'b', 'rank': 'normal'}
+    property_id = 'P1'
+    unrelated_property_id = 'P2'
+    statement_ids = {'a', 'b'}
+    statements = {
+        property_id: [
+            unselected_statement,
+            unedited_statement,
+            edited_statement,
+        ],
+        unrelated_property_id: [
+            unrelated_statement,
+        ],
+    }
+
+    statements, edited_statements = ranker.statements_increment_rank(
+        statement_ids,
+        statements,
+        property_id if with_property_id else None,
+    )
+
+    assert edited_statements == 1
+    assert property_id in statements
+    assert edited_statement in statements[property_id]
+    assert edited_statement['rank'] == 'preferred'
+    assert unedited_statement['rank'] == 'preferred'
+    assert unselected_statement['rank'] == 'normal'
+    assert unrelated_statement['rank'] == 'normal'
