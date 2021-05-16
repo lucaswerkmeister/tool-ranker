@@ -85,6 +85,21 @@ P3$123
     }
 
 
+def test_parse_statement_ids_with_ranks():
+    input = '''
+Q1$123|normal
+Q2$123|deprecated
+Q1$456\tpreferred
+q2$456\tnormal
+P3$123|preferred
+'''.strip()
+    assert ranker.parse_statement_ids_with_ranks(input) == {
+        'Q1': {'Q1$123': 'normal', 'Q1$456': 'preferred'},
+        'Q2': {'Q2$123': 'deprecated', 'q2$456': 'normal'},
+        'P3': {'P3$123': 'preferred'},
+    }
+
+
 def test_get_entities():
     class FakeSession:
         def get(self, ids, **kwargs):
@@ -198,6 +213,32 @@ def test_statements_increment_rank(with_property_id: bool):
     assert unrelated_statement['rank'] == 'normal'
 
 
+def test_statements_edit_rank():
+    unselected_statement = {'id': 'Y', 'rank': 'normal'}
+    unedited_statement = {'id': 'a', 'rank': 'preferred'}
+    edited_statement = {'id': 'b', 'rank': 'normal'}
+    commands = {'a': 'preferred', 'b': 'preferred'}
+    statements = {
+        'P1': [
+            unselected_statement,
+            unedited_statement,
+            edited_statement,
+        ],
+    }
+
+    statements, edited_statements = ranker.statements_edit_rank(
+        commands,
+        statements,
+    )
+
+    assert edited_statements == 1
+    assert 'P1' in statements
+    assert edited_statement in statements['P1']
+    assert edited_statement['rank'] == 'preferred'
+    assert unedited_statement['rank'] == 'preferred'
+    assert unselected_statement['rank'] == 'normal'
+
+
 @pytest.mark.parametrize('edited_statements, rank, custom_summary, expected', [
     (1, 'preferred', None, 'Set rank of 1 statement to preferred'),
     (2, 'deprecated', None, 'Set rank of 2 statements to deprecated'),
@@ -221,3 +262,14 @@ def test_get_summary_increment_rank(edited_statements: int,
                                     expected: str):
     assert expected == ranker.get_summary_increment_rank(edited_statements,
                                                          custom_summary)
+
+
+@pytest.mark.parametrize('edited_statements, custom_summary, expected', [
+    (1, None, 'Edited rank of 1 statement'),
+    (2, 'custom', 'Edited rank of 2 statements: custom'),
+])
+def test_get_summary_edit_rank(edited_statements: int,
+                               custom_summary: Optional[str],
+                               expected: str):
+    assert expected == ranker.get_summary_edit_rank(edited_statements,
+                                                    custom_summary)
