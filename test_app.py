@@ -1,5 +1,6 @@
 import flask
 import pytest  # type: ignore
+from typing import Optional
 
 import app as ranker
 
@@ -186,3 +187,28 @@ def test_statements_increment_rank(with_property_id: bool):
     assert unedited_statement['rank'] == 'preferred'
     assert unselected_statement['rank'] == 'normal'
     assert unrelated_statement['rank'] == 'normal'
+
+
+@pytest.mark.parametrize('edited_statements, rank, custom_summary, expected', [
+    (1, 'preferred', None, 'Set rank of 1 statement to preferred'),
+    (2, 'deprecated', None, 'Set rank of 2 statements to deprecated'),
+    (3, 'normal', 'custom', 'Set rank of 3 statements to normal: custom'),
+])
+def test_get_summary_set_rank(edited_statements: int,
+                              rank: str,
+                              custom_summary: Optional[str],
+                              expected: str):
+    assert expected == ranker.get_summary_set_rank(edited_statements,
+                                                   rank,
+                                                   custom_summary)
+
+
+@pytest.mark.parametrize('edited_statements, custom_summary, expected', [
+    (1, None, 'Incremented rank of 1 statement'),
+    (2, 'custom', 'Incremented rank of 2 statements: custom'),
+])
+def test_get_summary_increment_rank(edited_statements: int,
+                                    custom_summary: Optional[str],
+                                    expected: str):
+    assert expected == ranker.get_summary_increment_rank(edited_statements,
+                                                         custom_summary)
