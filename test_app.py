@@ -239,10 +239,22 @@ def test_statements_edit_rank():
     assert unselected_statement['rank'] == 'normal'
 
 
+@pytest.mark.parametrize('s, expected', [
+    (None, None),
+    ('', ''),
+    (' ', ''),
+    (' abc ', 'abc'),
+    ('abc', 'abc'),
+])
+def test_str_strip_optional(s: Optional[str], expected: Optional[str]):
+    assert ranker.str_strip_optional(s) == expected
+
+
 @pytest.mark.parametrize('edited_statements, rank, custom_summary, expected', [
     (1, 'preferred', None, 'Set rank of 1 statement to preferred'),
-    (2, 'deprecated', None, 'Set rank of 2 statements to deprecated'),
+    (2, 'deprecated', '', 'Set rank of 2 statements to deprecated'),
     (3, 'normal', 'custom', 'Set rank of 3 statements to normal: custom'),
+    (4, 'preferred', ' ', 'Set rank of 4 statements to preferred'),
 ])
 def test_get_summary_set_rank(edited_statements: int,
                               rank: str,
@@ -256,6 +268,8 @@ def test_get_summary_set_rank(edited_statements: int,
 @pytest.mark.parametrize('edited_statements, custom_summary, expected', [
     (1, None, 'Incremented rank of 1 statement'),
     (2, 'custom', 'Incremented rank of 2 statements: custom'),
+    (3, '', 'Incremented rank of 3 statements'),
+    (4, ' ', 'Incremented rank of 4 statements'),
 ])
 def test_get_summary_increment_rank(edited_statements: int,
                                     custom_summary: Optional[str],
@@ -267,6 +281,8 @@ def test_get_summary_increment_rank(edited_statements: int,
 @pytest.mark.parametrize('edited_statements, custom_summary, expected', [
     (1, None, 'Edited rank of 1 statement'),
     (2, 'custom', 'Edited rank of 2 statements: custom'),
+    (3, '', 'Edited rank of 3 statements'),
+    (4, ' ', 'Edited rank of 4 statements'),
 ])
 def test_get_summary_edit_rank(edited_statements: int,
                                custom_summary: Optional[str],

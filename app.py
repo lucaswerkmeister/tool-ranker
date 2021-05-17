@@ -615,6 +615,10 @@ def build_entity(entity_id: str,
     }
 
 
+def str_strip_optional(s: Optional[str]) -> Optional[str]:
+    return s.strip() if s is not None else None
+
+
 def get_summary_set_rank(edited_statements: int,
                          rank: str,
                          custom_summary: Optional[str]) -> str:
@@ -622,7 +626,8 @@ def get_summary_set_rank(edited_statements: int,
         summary = f'Set rank of 1 statement to {rank}'
     else:
         summary = f'Set rank of {edited_statements} statements to {rank}'
-    if custom_summary is not None:
+    custom_summary = str_strip_optional(custom_summary)
+    if custom_summary:
         summary += ': ' + custom_summary
     return summary
 
@@ -633,7 +638,8 @@ def get_summary_increment_rank(edited_statements: int,
         summary = 'Incremented rank of 1 statement'
     else:
         summary = f'Incremented rank of {edited_statements} statements'
-    if custom_summary is not None:
+    custom_summary = str_strip_optional(custom_summary)
+    if custom_summary:
         summary += ': ' + custom_summary
     return summary
 
@@ -644,7 +650,8 @@ def get_summary_edit_rank(edited_statements: int,
         summary = 'Edited rank of 1 statement'
     else:
         summary = f'Edited rank of {edited_statements} statements'
-    if custom_summary is not None:
+    custom_summary = str_strip_optional(custom_summary)
+    if custom_summary:
         summary += ': ' + custom_summary
     return summary
 
