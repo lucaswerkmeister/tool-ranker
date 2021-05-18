@@ -279,35 +279,11 @@ def batch_list_set_rank(wiki: str, rank: str) \
 
     statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
-    entities = get_entities(session, statement_ids_by_entity_id.keys())
-    edits = {}
-    errors = {}
-
-    for entity_id, statement_ids in statement_ids_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_set_rank_to(statement_ids,
-                                                               rank,
-                                                               statements)
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_set_rank(edited_statements,
-                                       rank,
-                                       custom_summary)
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
-
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
-
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+    return batch_set_rank_and_show_results(wiki,
+                                           statement_ids_by_entity_id,
+                                           rank,
+                                           session,
+                                           custom_summary)
 
 
 @app.route('/batch/list/collective/<wiki:wiki>/increment',
@@ -326,35 +302,10 @@ def batch_list_increment_rank(wiki: str) \
 
     statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
-    entities = get_entities(session, statement_ids_by_entity_id.keys())
-    edits = {}
-    errors = {}
-
-    for entity_id, statement_ids in statement_ids_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_increment_rank(
-            statement_ids,
-            statements,
-        )
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_increment_rank(edited_statements,
-                                             custom_summary)
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
-
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
-
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+    return batch_increment_rank_and_show_results(wiki,
+                                                 statement_ids_by_entity_id,
+                                                 session,
+                                                 custom_summary)
 
 
 @app.route('/batch/list/individual/<wiki:wiki>/')
@@ -714,3 +665,78 @@ def save_entity_and_redirect(entity_data: dict,
 
     return flask.redirect(f'{session.host}/w/index.php'
                           f'?diff={revision_id}&oldid={base_revision_id}')
+
+
+def batch_set_rank_and_show_results(
+        wiki: str,
+        statement_ids_by_entity_id: Dict[str, List[str]],
+        rank: str,
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, statement_ids_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, statement_ids in statement_ids_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_set_rank_to(statement_ids,
+                                                               rank,
+                                                               statements)
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_set_rank(edited_statements,
+                                       rank,
+                                       custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
+def batch_increment_rank_and_show_results(
+        wiki: str,
+        statement_ids_by_entity_id: Dict[str, List[str]],
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, statement_ids_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, statement_ids in statement_ids_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_increment_rank(
+            statement_ids,
+            statements,
+        )
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_increment_rank(edited_statements,
+                                             custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
