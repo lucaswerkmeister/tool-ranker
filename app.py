@@ -196,6 +196,8 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
+    statement_ids = flask.request.form
+    custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
@@ -203,7 +205,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     statements = entity_statements(entity).get(property_id, [])
 
     statement_groups, edited_statements = statements_set_rank_to(
-        flask.request.form,
+        statement_ids,
         rank,
         {property_id: statements},
         property_id,
@@ -212,7 +214,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     edited_entity = build_entity(entity_id, statement_groups)
     summary = get_summary_set_rank(edited_statements,
                                    rank,
-                                   flask.request.form.get('summary'))
+                                   custom_summary)
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -231,6 +233,8 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
+    statement_ids = flask.request.form
+    custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
@@ -238,14 +242,14 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     statements = entity_statements(entity).get(property_id, [])
 
     statement_groups, edited_statements = statements_increment_rank(
-        flask.request.form,
+        statement_ids,
         {property_id: statements},
         property_id,
     )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
     summary = get_summary_increment_rank(edited_statements,
-                                         flask.request.form.get('summary'))
+                                         custom_summary)
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -270,8 +274,10 @@ def batch_list_set_rank(wiki: str, rank: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    statement_ids_by_entity_id = parse_statement_ids_list(
-        flask.request.form.get('statement_ids', ''))
+    statement_ids_list = flask.request.form.get('statement_ids', '')
+    custom_summary = flask.request.form.get('summary')
+
+    statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
     entities = get_entities(session, statement_ids_by_entity_id.keys())
     edits = {}
@@ -286,7 +292,7 @@ def batch_list_set_rank(wiki: str, rank: str) \
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_set_rank(edited_statements,
                                        rank,
-                                       flask.request.form.get('summary'))
+                                       custom_summary)
         try:
             edits[entity_id] = save_entity(edited_entity,
                                            summary,
@@ -315,8 +321,10 @@ def batch_list_increment_rank(wiki: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    statement_ids_by_entity_id = parse_statement_ids_list(
-        flask.request.form.get('statement_ids', ''))
+    statement_ids_list = flask.request.form.get('statement_ids', '')
+    custom_summary = flask.request.form.get('summary')
+
+    statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
     entities = get_entities(session, statement_ids_by_entity_id.keys())
     edits = {}
@@ -331,7 +339,7 @@ def batch_list_increment_rank(wiki: str) \
         )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_increment_rank(edited_statements,
-                                             flask.request.form.get('summary'))
+                                             custom_summary)
         try:
             edits[entity_id] = save_entity(edited_entity,
                                            summary,
@@ -365,8 +373,10 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    commands_by_entity_id = parse_statement_ids_with_ranks(
-        flask.request.form.get('commands', ''))
+    commands_list = flask.request.form.get('commands', '')
+    custom_summary = flask.request.form.get('summary')
+
+    commands_by_entity_id = parse_statement_ids_with_ranks(commands_list)
 
     entities = get_entities(session, commands_by_entity_id.keys())
     edits = {}
@@ -379,7 +389,7 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
                                                              statements)
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_edit_rank(edited_statements,
-                                        flask.request.form.get('summary'))
+                                        custom_summary)
         try:
             edits[entity_id] = save_entity(edited_entity,
                                            summary,
