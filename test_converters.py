@@ -1,8 +1,10 @@
 import pytest  # type: ignore
 from werkzeug.routing import Map, ValidationError
 
-from converters import BadRankException, BadWikiException, \
-    EntityIdConverter, PropertyIdConverter, RankConverter, WikiConverter
+from converters import EntityIdConverter, PropertyIdConverter, \
+    RankConverter, BadRankException, \
+    WikiConverter, BadWikiException, \
+    WikiWithQueryServiceConverter, WikiWithoutQueryServiceException
 
 
 @pytest.mark.parametrize('entity_id', [
@@ -115,6 +117,42 @@ def test_WikiConverter_valid(wiki):
 def test_WikiConverter_invalid(wiki):
     converter = WikiConverter(Map())
     with pytest.raises(BadWikiException) as excinfo:
+        converter.to_python(wiki)
+    assert wiki in excinfo.value.get_description()
+    assert 'www.wikidata.org' in excinfo.value.get_description()
+
+
+@pytest.mark.parametrize('wiki', [
+    'www.wikidata.org',
+    'commons.wikimedia.org',
+])
+def test_WikiWithQueryServiceConverter_valid(wiki):
+    converter = WikiWithQueryServiceConverter(Map())
+    assert converter.to_python(wiki) == wiki
+    assert converter.to_url(wiki) == wiki
+
+
+@pytest.mark.parametrize('wiki', [
+    'en.wikipedia.org',
+    'en.wikipedia.beta.wmflabs.org',
+    'en.wikipedia.org.google.com',
+    'lucaswerkmeister.de',
+])
+def test_WikiWithQueryServiceConverter_bad(wiki):
+    converter = WikiWithQueryServiceConverter(Map())
+    with pytest.raises(BadWikiException) as excinfo:
+        converter.to_python(wiki)
+    assert wiki in excinfo.value.get_description()
+    assert 'www.wikidata.org' in excinfo.value.get_description()
+
+
+@pytest.mark.parametrize('wiki', [
+    'test.wikidata.org',
+    'test-commons.wikimedia.org',
+])
+def test_WikiWithQueryServiceConverter_without(wiki):
+    converter = WikiWithQueryServiceConverter(Map())
+    with pytest.raises(WikiWithoutQueryServiceException) as excinfo:
         converter.to_python(wiki)
     assert wiki in excinfo.value.get_description()
     assert 'www.wikidata.org' in excinfo.value.get_description()

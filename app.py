@@ -17,7 +17,7 @@ import werkzeug
 import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
-    RankConverter, WikiConverter
+    RankConverter, WikiConverter, WikiWithQueryServiceConverter
 from query_service import query_service_name, query_service_url
 import wbformat
 
@@ -49,6 +49,7 @@ app.url_map.converters['eid'] = EntityIdConverter
 app.url_map.converters['pid'] = PropertyIdConverter
 app.url_map.converters['rank'] = RankConverter
 app.url_map.converters['wiki'] = WikiConverter
+app.url_map.converters['wwqs'] = WikiWithQueryServiceConverter
 
 
 @app.template_global()
