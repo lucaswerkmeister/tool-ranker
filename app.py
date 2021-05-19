@@ -18,7 +18,7 @@ import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter, WikiWithQueryServiceConverter
-from query_service import query_service_name, query_service_url
+from query_service import query_wiki, query_service_name, query_service_url
 import wbformat
 
 
@@ -470,6 +470,21 @@ def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
     statement_ids = input.splitlines()
     statement_ids_by_entity_id: Dict[str, List[str]] = {}
     for statement_id in statement_ids:
+        entity_id = entity_id_from_statement_id(statement_id)
+        statement_ids_by_entity_id.setdefault(entity_id, [])\
+                                  .append(statement_id)
+    return statement_ids_by_entity_id
+
+
+def query_statement_ids(wiki: str, query: str) -> Dict[str, List[str]]:
+    results = query_wiki(wiki, query, user_agent)
+    assert 'statement' in results['head']['vars']  # TODO better error handling
+    statement_ids_by_entity_id: Dict[str, List[str]] = {}
+    for result in results['results']['bindings']:
+        if result['statement']['type'] != 'uri':
+            continue
+        statement_id = statement_id_from_uri(result['statement']['value'],
+                                             wiki)
         entity_id = entity_id_from_statement_id(statement_id)
         statement_ids_by_entity_id.setdefault(entity_id, [])\
                                   .append(statement_id)

@@ -3,6 +3,9 @@ import pytest  # type: ignore
 from typing import Optional
 
 import app as ranker
+import query_service
+
+import test_query_service
 
 
 @pytest.fixture
@@ -94,6 +97,24 @@ P3$123
         'Q1': ['Q1$123', 'Q1$456'],
         'Q2': ['Q2$123', 'q2$456'],
         'P3': ['P3$123'],
+    }
+
+
+def test_query_statement_ids(monkeypatch):
+    def query_wiki(wiki: str, query: str, user_agent: str) -> dict:
+        assert wiki == test_query_service.test_wiki
+        assert query == test_query_service.test_query
+        return test_query_service.test_query_results
+
+    # monkeypatch original and imported function to support either import style
+    monkeypatch.setattr(ranker, 'query_wiki', query_wiki)
+    monkeypatch.setattr(query_service, 'query_wiki', query_wiki)
+
+    wiki = test_query_service.test_wiki
+    query = test_query_service.test_query
+    assert ranker.query_statement_ids(wiki, query) == {
+        'Q474472': ['Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac'],
+        'Q3841190': ['Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344'],
     }
 
 
