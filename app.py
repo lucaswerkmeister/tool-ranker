@@ -451,6 +451,17 @@ def deny_frame(response: flask.Response) -> flask.Response:
     return response
 
 
+def statement_id_from_uri(uri: str, wiki: str) -> str:
+    for protocol in ['http', 'https']:
+        prefix = f'{protocol}://{wiki}/entity/statement/'
+        if uri.startswith(prefix):
+            break
+    else:
+        raise ValueError('URI {uri} does not belong to wiki {wiki}')
+    entity_id, _, guid = uri[len(prefix):].partition('-')
+    return f'{entity_id}${guid}'
+
+
 def entity_id_from_statement_id(statement_id: str) -> str:
     return statement_id.split('$', 1)[0].upper()
 

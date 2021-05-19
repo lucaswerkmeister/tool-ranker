@@ -60,6 +60,18 @@ def test_format_value_escapes_html():
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
+@pytest.mark.parametrize('uri, wiki, statement_id', [
+    ('http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa:E501
+     'www.wikidata.org',
+     'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac'),
+    ('https://commons.wikimedia.org/entity/statement/M80857538-e33a73d7-4567-a029-a6e6-14eb3bab8a65',  # noqa:E501
+     'commons.wikimedia.org',
+     'M80857538$e33a73d7-4567-a029-a6e6-14eb3bab8a65')
+])
+def test_statement_id_from_uri(uri: str, wiki: str, statement_id: str):
+    assert ranker.statement_id_from_uri(uri, wiki) == statement_id
+
+
 @pytest.mark.parametrize('statement_id, entity_id', [
     ('Q1$123', 'Q1'),
     ('p1$123', 'P1'),
