@@ -18,6 +18,7 @@ import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter
+from query_service import query_service_name, query_service_url
 import wbformat
 
 
@@ -110,6 +111,15 @@ def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
 @app.template_global()
 def format_entity(wiki: str, entity_id: str) -> flask.Markup:
     return wbformat.format_entity(anonymous_session(wiki), entity_id)
+
+
+@app.template_filter()
+def format_query_service(wiki: str) -> flask.Markup:
+    return (flask.Markup(r'<a href="') +
+            flask.Markup.escape(query_service_url(wiki)) +
+            flask.Markup(r'">') +
+            flask.Markup.escape(query_service_name(wiki)) +
+            flask.Markup(r'</a>'))
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
