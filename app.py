@@ -676,7 +676,7 @@ def edit_token(session: mwapi.Session) -> str:
 
 def save_entity(entity_data: dict,
                 summary: str,
-                base_revision_id: int,
+                base_revision_id: Union[int, str],
                 session: mwapi.Session) -> int:
 
     token = edit_token(session)
@@ -694,7 +694,7 @@ def save_entity(entity_data: dict,
 
 def save_entity_and_redirect(entity_data: dict,
                              summary: str,
-                             base_revision_id: int,
+                             base_revision_id: Union[int, str],
                              session: mwapi.Session) -> werkzeug.Response:
 
     revision_id = save_entity(entity_data,
