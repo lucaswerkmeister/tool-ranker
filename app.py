@@ -397,6 +397,34 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
                                             custom_summary)
 
 
+@app.route('/batch/query/individual/<wwqs:wiki>/')
+def show_batch_query_individual_form(wiki: str) -> str:
+    return flask.render_template('batch-query-individual.html',
+                                 wiki=wiki)
+
+
+@app.route('/batch/query/individual/<wwqs:wiki>/',
+           methods=['POST'])
+def batch_query_edit_rank(wiki: str) \
+        -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    session = authenticated_session(wiki)
+    if session is None:
+        return 'not logged in', 401  # TODO better error
+
+    query = flask.request.form.get('query', '')
+    custom_summary = flask.request.form.get('summary')
+
+    commands_by_entity_id = query_statement_ids_with_ranks(wiki, query)
+
+    return batch_edit_rank_and_show_results(wiki,
+                                            commands_by_entity_id,
+                                            session,
+                                            custom_summary)
+
+
 @app.route('/login')
 def login() -> werkzeug.Response:
     redirect, request_token = mwoauth.initiate(index_php,
