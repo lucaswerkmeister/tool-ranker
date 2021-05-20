@@ -391,33 +391,38 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
 
     commands_by_entity_id = parse_statement_ids_with_ranks(commands_list)
 
-    entities = get_entities(session, commands_by_entity_id.keys())
-    edits = {}
-    errors = {}
+    return batch_edit_rank_and_show_results(wiki,
+                                            commands_by_entity_id,
+                                            session,
+                                            custom_summary)
 
-    for entity_id, commands in commands_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_edit_rank(commands,
-                                                             statements)
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_edit_rank(edited_statements,
-                                        custom_summary)
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
+@app.route('/batch/query/individual/<wwqs:wiki>/')
+def show_batch_query_individual_form(wiki: str) -> str:
+    return flask.render_template('batch-query-individual.html',
+                                 wiki=wiki)
 
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+
+@app.route('/batch/query/individual/<wwqs:wiki>/',
+           methods=['POST'])
+def batch_query_edit_rank(wiki: str) \
+        -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    session = authenticated_session(wiki)
+    if session is None:
+        return 'not logged in', 401  # TODO better error
+
+    query = flask.request.form.get('query', '')
+    custom_summary = flask.request.form.get('summary')
+
+    commands_by_entity_id = query_statement_ids_with_ranks(wiki, query)
+
+    return batch_edit_rank_and_show_results(wiki,
+                                            commands_by_entity_id,
+                                            session,
+                                            custom_summary)
 
 
 @app.route('/login')
@@ -513,6 +518,14 @@ def statement_id_from_uri(uri: str, wiki: str) -> str:
     return f'{entity_id}${guid}'
 
 
+def rank_from_uri(uri: str) -> str:
+    return {
+        'http://wikiba.se/ontology#DeprecatedRank': 'deprecated',
+        'http://wikiba.se/ontology#NormalRank': 'normal',
+        'http://wikiba.se/ontology#PreferredRank': 'preferred',
+    }[uri]
+
+
 def entity_id_from_statement_id(statement_id: str) -> str:
     return statement_id.split('$', 1)[0].upper()
 
@@ -549,6 +562,26 @@ def parse_statement_ids_with_ranks(input: str) \
     for command in commands:
         statement_id, rank = re.split('[|\t]', command, maxsplit=1)
         entity_id = entity_id_from_statement_id(statement_id)
+        commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
+    return commands_by_entity_id
+
+
+def query_statement_ids_with_ranks(wiki: str, query: str) \
+        -> Dict[str, Dict[str, str]]:
+    results = query_wiki(wiki, query, user_agent)
+    # TODO better error handling
+    assert 'statement' in results['head']['vars']
+    assert 'rank' in results['head']['vars']
+    commands_by_entity_id: Dict[str, Dict[str, str]] = {}
+    for result in results['results']['bindings']:
+        if result['statement']['type'] != 'uri':
+            continue
+        if result['rank']['type'] != 'uri':
+            continue
+        statement_id = statement_id_from_uri(result['statement']['value'],
+                                             wiki)
+        entity_id = entity_id_from_statement_id(statement_id)
+        rank = rank_from_uri(result['rank']['value'])
         commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
     return commands_by_entity_id
 
@@ -823,6 +856,41 @@ def batch_increment_rank_and_show_results(
             errors[entity_id] = e
 
     wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
+def batch_edit_rank_and_show_results(
+        wiki: str,
+        commands_by_entity_id: Dict[str, Dict[str, str]],
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, commands_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, commands in commands_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_edit_rank(commands,
+                                                             statements)
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_edit_rank(edited_statements,
+                                        custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
