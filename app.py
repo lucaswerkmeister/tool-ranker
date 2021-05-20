@@ -561,6 +561,26 @@ def parse_statement_ids_with_ranks(input: str) \
     return commands_by_entity_id
 
 
+def query_statement_ids_with_ranks(wiki: str, query: str) \
+        -> Dict[str, Dict[str, str]]:
+    results = query_wiki(wiki, query, user_agent)
+    # TODO better error handling
+    assert 'statement' in results['head']['vars']
+    assert 'rank' in results['head']['vars']
+    commands_by_entity_id: Dict[str, Dict[str, str]] = {}
+    for result in results['results']['bindings']:
+        if result['statement']['type'] != 'uri':
+            continue
+        if result['rank']['type'] != 'uri':
+            continue
+        statement_id = statement_id_from_uri(result['statement']['value'],
+                                             wiki)
+        entity_id = entity_id_from_statement_id(statement_id)
+        rank = rank_from_uri(result['rank']['value'])
+        commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
+    return commands_by_entity_id
+
+
 def get_entities(session: mwapi.Session, entity_ids: Iterable[str]) -> dict:
     entity_ids = list(set(entity_ids))
     entities = {}

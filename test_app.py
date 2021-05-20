@@ -142,6 +142,81 @@ P3$123|preferred
     }
 
 
+def test_query_statement_ids_with_ranks(monkeypatch):
+    test_wiki = 'www.wikidata.org'
+    test_query = '''
+SELECT ?rank ?item ?statement ?value WHERE {
+  VALUES (?item ?num) {
+    (wd:Q474472 1)
+    (wd:Q3841190 2)
+  }
+  ?item p:P18 ?statement.
+  ?statement wikibase:rank ?rank;
+             ps:P18 ?value.
+}
+ORDER BY ?num
+'''.strip()
+    test_query_results = {
+        'head': {'vars': ['rank', 'item', 'statement', 'value']},
+        'results': {'bindings': [
+            {
+                'item': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q474472',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa:E501
+                },
+                'value': {
+                    'type': 'uri',
+                    'value': 'http://commons.wikimedia.org/wiki/Special:FilePath/Earth%20as%20a%20%22Pale%20Blue%20Dot%22%20photographed%20by%20Voyager%201%20-%2019900606.tif',  # noqa:E501
+                },
+                'rank': {
+                    'type': 'uri',
+                    'value': 'http://wikiba.se/ontology#NormalRank',
+                },
+            },
+            {
+                'item': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q3841190',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q3841190-dbcf6be8-41c0-5955-d618-2d06ab241344',  # noqa:E501
+                },
+                'value': {
+                    'type': 'uri',
+                    'value': 'http://commons.wikimedia.org/wiki/Special:FilePath/Black%20hole%20-%20Messier%2087.jpg',  # noqa:E501
+                },
+                'rank': {
+                    'type': 'uri',
+                    'value': 'http://wikiba.se/ontology#NormalRank',
+                },
+            },
+        ]},
+    }
+
+    def query_wiki(wiki: str, query: str, user_agent: str) -> dict:
+        assert wiki == test_wiki
+        assert query == test_query
+        return test_query_results
+
+    # monkeypatch original and imported function to support either import style
+    monkeypatch.setattr(ranker, 'query_wiki', query_wiki)
+    monkeypatch.setattr(query_service, 'query_wiki', query_wiki)
+
+    assert ranker.query_statement_ids_with_ranks(test_wiki, test_query) == {
+        'Q474472': {
+            'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac': 'normal',
+        },
+        'Q3841190': {
+            'Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344': 'normal',
+        },
+    }
+
+
 def test_get_entities():
     class FakeSession:
         def get(self, ids, **kwargs):
