@@ -2,6 +2,8 @@ from typing import Set
 from werkzeug.exceptions import BadRequest
 from werkzeug.routing import BaseConverter, ValidationError
 
+from query_service import wikis_with_query_service
+
 
 class EntityIdConverter(BaseConverter):
     def to_python(self, value: str) -> str:
@@ -122,3 +124,24 @@ class BadWikiException(BadRequest):
             else:
                 self.description += ', '
             self.description += allowed_wiki
+
+
+class WikiWithQueryServiceConverter(WikiConverter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.wikis_with_query_service = wikis_with_query_service()
+
+    def to_python(self, value: str) -> str:
+        value = super().to_python(value)
+        if value in self.wikis_with_query_service:
+            return value
+        raise WikiWithoutQueryServiceException(self.wikis_with_query_service,
+                                               value)
+
+
+class WikiWithoutQueryServiceException(BadRequest):
+    def __init__(self, wikis_with_query_service: Set[str], wiki: str):
+        super().__init__()
+        supported_wikis = ", ".join(wikis_with_query_service)
+        self.description = (f'Wiki {wiki} has no query service, '
+                            f'supported wikis are: {supported_wikis}')

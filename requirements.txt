@@ -8,4 +8,5 @@ mypy
 pyyaml
 requests
 requests_oauthlib
+SPARQLWrapper
 toolforge

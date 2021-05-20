@@ -17,7 +17,8 @@ import werkzeug
 import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
-    RankConverter, WikiConverter
+    RankConverter, WikiConverter, WikiWithQueryServiceConverter
+from query_service import query_wiki, query_service_name, query_service_url
 import wbformat
 
 
@@ -48,6 +49,7 @@ app.url_map.converters['eid'] = EntityIdConverter
 app.url_map.converters['pid'] = PropertyIdConverter
 app.url_map.converters['rank'] = RankConverter
 app.url_map.converters['wiki'] = WikiConverter
+app.url_map.converters['wwqs'] = WikiWithQueryServiceConverter
 
 
 @app.template_global()
@@ -110,6 +112,15 @@ def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
 @app.template_global()
 def format_entity(wiki: str, entity_id: str) -> flask.Markup:
     return wbformat.format_entity(anonymous_session(wiki), entity_id)
+
+
+@app.template_filter()
+def format_query_service(wiki: str) -> flask.Markup:
+    return (flask.Markup(r'<a href="') +
+            flask.Markup.escape(query_service_url(wiki)) +
+            flask.Markup(r'">') +
+            flask.Markup.escape(query_service_name(wiki)) +
+            flask.Markup(r'</a>'))
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
@@ -196,6 +207,8 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
+    statement_ids = flask.request.form
+    custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
@@ -203,7 +216,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     statements = entity_statements(entity).get(property_id, [])
 
     statement_groups, edited_statements = statements_set_rank_to(
-        flask.request.form,
+        statement_ids,
         rank,
         {property_id: statements},
         property_id,
@@ -212,7 +225,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
     edited_entity = build_entity(entity_id, statement_groups)
     summary = get_summary_set_rank(edited_statements,
                                    rank,
-                                   flask.request.form.get('summary'))
+                                   custom_summary)
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -231,6 +244,8 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
+    statement_ids = flask.request.form
+    custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
                             f'{entity_id}.json?revision={base_revision_id}')
@@ -238,14 +253,14 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     statements = entity_statements(entity).get(property_id, [])
 
     statement_groups, edited_statements = statements_increment_rank(
-        flask.request.form,
+        statement_ids,
         {property_id: statements},
         property_id,
     )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
     summary = get_summary_increment_rank(edited_statements,
-                                         flask.request.form.get('summary'))
+                                         custom_summary)
 
     return save_entity_and_redirect(edited_entity,
                                     summary,
@@ -270,38 +285,16 @@ def batch_list_set_rank(wiki: str, rank: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    statement_ids_by_entity_id = parse_statement_ids_list(
-        flask.request.form.get('statement_ids', ''))
+    statement_ids_list = flask.request.form.get('statement_ids', '')
+    custom_summary = flask.request.form.get('summary')
 
-    entities = get_entities(session, statement_ids_by_entity_id.keys())
-    edits = {}
-    errors = {}
+    statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
-    for entity_id, statement_ids in statement_ids_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_set_rank_to(statement_ids,
-                                                               rank,
-                                                               statements)
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_set_rank(edited_statements,
-                                       rank,
-                                       flask.request.form.get('summary'))
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
-
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
-
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+    return batch_set_rank_and_show_results(wiki,
+                                           statement_ids_by_entity_id,
+                                           rank,
+                                           session,
+                                           custom_summary)
 
 
 @app.route('/batch/list/collective/<wiki:wiki>/increment',
@@ -315,38 +308,66 @@ def batch_list_increment_rank(wiki: str) \
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    statement_ids_by_entity_id = parse_statement_ids_list(
-        flask.request.form.get('statement_ids', ''))
+    statement_ids_list = flask.request.form.get('statement_ids', '')
+    custom_summary = flask.request.form.get('summary')
 
-    entities = get_entities(session, statement_ids_by_entity_id.keys())
-    edits = {}
-    errors = {}
+    statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
-    for entity_id, statement_ids in statement_ids_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_increment_rank(
-            statement_ids,
-            statements,
-        )
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_increment_rank(edited_statements,
-                                             flask.request.form.get('summary'))
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
+    return batch_increment_rank_and_show_results(wiki,
+                                                 statement_ids_by_entity_id,
+                                                 session,
+                                                 custom_summary)
 
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
 
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+@app.route('/batch/query/collective/<wwqs:wiki>/')
+def show_batch_query_collective_form(wiki: str) -> str:
+    return flask.render_template('batch-query-collective.html',
+                                 wiki=wiki)
+
+
+@app.route('/batch/query/collective/<wwqs:wiki>/set/<rank:rank>',
+           methods=['POST'])
+def batch_query_set_rank(wiki: str, rank: str) \
+        -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    session = authenticated_session(wiki)
+    if session is None:
+        return 'not logged in', 401  # TODO better error
+
+    query = flask.request.form.get('query', '')
+    custom_summary = flask.request.form.get('summary')
+
+    statement_ids_by_entity_id = query_statement_ids(wiki, query)
+
+    return batch_set_rank_and_show_results(wiki,
+                                           statement_ids_by_entity_id,
+                                           rank,
+                                           session,
+                                           custom_summary)
+
+
+@app.route('/batch/query/collective/<wwqs:wiki>/increment',
+           methods=['POST'])
+def batch_query_increment_rank(wiki: str) \
+        -> Union[str, Tuple[str, int]]:
+    if not submitted_request_valid():
+        return 'CSRF error', 400  # TODO better error
+
+    session = authenticated_session(wiki)
+    if session is None:
+        return 'not logged in', 401  # TODO better error
+
+    query = flask.request.form.get('query', '')
+    custom_summary = flask.request.form.get('summary')
+
+    statement_ids_by_entity_id = query_statement_ids(wiki, query)
+
+    return batch_increment_rank_and_show_results(wiki,
+                                                 statement_ids_by_entity_id,
+                                                 session,
+                                                 custom_summary)
 
 
 @app.route('/batch/list/individual/<wiki:wiki>/')
@@ -365,8 +386,10 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
     if session is None:
         return 'not logged in', 401  # TODO better error
 
-    commands_by_entity_id = parse_statement_ids_with_ranks(
-        flask.request.form.get('commands', ''))
+    commands_list = flask.request.form.get('commands', '')
+    custom_summary = flask.request.form.get('summary')
+
+    commands_by_entity_id = parse_statement_ids_with_ranks(commands_list)
 
     entities = get_entities(session, commands_by_entity_id.keys())
     edits = {}
@@ -379,7 +402,7 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
                                                              statements)
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_edit_rank(edited_statements,
-                                        flask.request.form.get('summary'))
+                                        custom_summary)
         try:
             edits[entity_id] = save_entity(edited_entity,
                                            summary,
@@ -479,6 +502,17 @@ def deny_frame(response: flask.Response) -> flask.Response:
     return response
 
 
+def statement_id_from_uri(uri: str, wiki: str) -> str:
+    for protocol in ['http', 'https']:
+        prefix = f'{protocol}://{wiki}/entity/statement/'
+        if uri.startswith(prefix):
+            break
+    else:
+        raise ValueError('URI {uri} does not belong to wiki {wiki}')
+    entity_id, _, guid = uri[len(prefix):].partition('-')
+    return f'{entity_id}${guid}'
+
+
 def entity_id_from_statement_id(statement_id: str) -> str:
     return statement_id.split('$', 1)[0].upper()
 
@@ -487,6 +521,21 @@ def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
     statement_ids = input.splitlines()
     statement_ids_by_entity_id: Dict[str, List[str]] = {}
     for statement_id in statement_ids:
+        entity_id = entity_id_from_statement_id(statement_id)
+        statement_ids_by_entity_id.setdefault(entity_id, [])\
+                                  .append(statement_id)
+    return statement_ids_by_entity_id
+
+
+def query_statement_ids(wiki: str, query: str) -> Dict[str, List[str]]:
+    results = query_wiki(wiki, query, user_agent)
+    assert 'statement' in results['head']['vars']  # TODO better error handling
+    statement_ids_by_entity_id: Dict[str, List[str]] = {}
+    for result in results['results']['bindings']:
+        if result['statement']['type'] != 'uri':
+            continue
+        statement_id = statement_id_from_uri(result['statement']['value'],
+                                             wiki)
         entity_id = entity_id_from_statement_id(statement_id)
         statement_ids_by_entity_id.setdefault(entity_id, [])\
                                   .append(statement_id)
@@ -704,3 +753,78 @@ def save_entity_and_redirect(entity_data: dict,
 
     return flask.redirect(f'{session.host}/w/index.php'
                           f'?diff={revision_id}&oldid={base_revision_id}')
+
+
+def batch_set_rank_and_show_results(
+        wiki: str,
+        statement_ids_by_entity_id: Dict[str, List[str]],
+        rank: str,
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, statement_ids_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, statement_ids in statement_ids_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_set_rank_to(statement_ids,
+                                                               rank,
+                                                               statements)
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_set_rank(edited_statements,
+                                       rank,
+                                       custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
+def batch_increment_rank_and_show_results(
+        wiki: str,
+        statement_ids_by_entity_id: Dict[str, List[str]],
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, statement_ids_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, statement_ids in statement_ids_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_increment_rank(
+            statement_ids,
+            statements,
+        )
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_increment_rank(edited_statements,
+                                             custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
