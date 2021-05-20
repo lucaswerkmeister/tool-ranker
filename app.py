@@ -391,33 +391,10 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
 
     commands_by_entity_id = parse_statement_ids_with_ranks(commands_list)
 
-    entities = get_entities(session, commands_by_entity_id.keys())
-    edits = {}
-    errors = {}
-
-    for entity_id, commands in commands_by_entity_id.items():
-        entity = entities[entity_id]
-        statements = entity_statements(entity)
-        statements, edited_statements = statements_edit_rank(commands,
-                                                             statements)
-        edited_entity = build_entity(entity_id, statements)
-        summary = get_summary_edit_rank(edited_statements,
-                                        custom_summary)
-        try:
-            edits[entity_id] = save_entity(edited_entity,
-                                           summary,
-                                           entity['lastrevid'],
-                                           session)
-        except mwapi.errors.APIError as e:
-            print('caught error in batch mode:', e, file=sys.stderr)
-            errors[entity_id] = e
-
-    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
-
-    return flask.render_template('batch-results.html',
-                                 wiki=wiki,
-                                 edits=edits,
-                                 errors=errors)
+    return batch_edit_rank_and_show_results(wiki,
+                                            commands_by_entity_id,
+                                            session,
+                                            custom_summary)
 
 
 @app.route('/login')
@@ -851,6 +828,41 @@ def batch_increment_rank_and_show_results(
             errors[entity_id] = e
 
     wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+
+    return flask.render_template('batch-results.html',
+                                 wiki=wiki,
+                                 edits=edits,
+                                 errors=errors)
+
+
+def batch_edit_rank_and_show_results(
+        wiki: str,
+        commands_by_entity_id: Dict[str, Dict[str, str]],
+        session: mwapi.Session,
+        custom_summary: Optional[str],
+) -> str:
+    entities = get_entities(session, commands_by_entity_id.keys())
+    edits = {}
+    errors = {}
+
+    for entity_id, commands in commands_by_entity_id.items():
+        entity = entities[entity_id]
+        statements = entity_statements(entity)
+        statements, edited_statements = statements_edit_rank(commands,
+                                                             statements)
+        edited_entity = build_entity(entity_id, statements)
+        summary = get_summary_edit_rank(edited_statements,
+                                        custom_summary)
+        try:
+            edits[entity_id] = save_entity(edited_entity,
+                                           summary,
+                                           entity['lastrevid'],
+                                           session)
+        except mwapi.errors.APIError as e:
+            print('caught error in batch mode:', e, file=sys.stderr)
+            errors[entity_id] = e
+
+    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
