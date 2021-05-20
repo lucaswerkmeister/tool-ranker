@@ -75,6 +75,15 @@ def test_statement_id_from_uri(uri: str, wiki: str, statement_id: str):
     assert ranker.statement_id_from_uri(uri, wiki) == statement_id
 
 
+@pytest.mark.parametrize('uri, rank', [
+    ('http://wikiba.se/ontology#DeprecatedRank', 'deprecated'),
+    ('http://wikiba.se/ontology#NormalRank', 'normal'),
+    ('http://wikiba.se/ontology#PreferredRank', 'preferred'),
+])
+def test_rank_from_uri(uri: str, rank: str):
+    assert ranker.rank_from_uri(uri) == rank
+
+
 @pytest.mark.parametrize('statement_id, entity_id', [
     ('Q1$123', 'Q1'),
     ('p1$123', 'P1'),

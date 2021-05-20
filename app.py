@@ -513,6 +513,14 @@ def statement_id_from_uri(uri: str, wiki: str) -> str:
     return f'{entity_id}${guid}'
 
 
+def rank_from_uri(uri: str) -> str:
+    return {
+        'http://wikiba.se/ontology#DeprecatedRank': 'deprecated',
+        'http://wikiba.se/ontology#NormalRank': 'normal',
+        'http://wikiba.se/ontology#PreferredRank': 'preferred',
+    }[uri]
+
+
 def entity_id_from_statement_id(statement_id: str) -> str:
     return statement_id.split('$', 1)[0].upper()
 
