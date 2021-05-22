@@ -50,4 +50,66 @@
   </div>
   <button type="submit" class="btn btn-primary">Select statements</button>
 </form>
+<h2 class="mt-3">Batch mode</h2>
+<p>
+  Several batch modes are also available.
+  You can provide the statements as a list or select them with a SPARQL query,
+  and you can perform the same action (set or increment rank) for all statements or specify a rank for each individual statement.
+  Please select below which batch mode you want to use.
+</p>
+<form method="post">
+  <table class="table table-bordered">
+    <tr>
+      <td>
+        <label for="batch-wiki" class="sr-only">Wiki</label>
+        <select class="form-control" id="batch-wiki" name="wiki">
+          <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>Wikidata</option>
+          <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>Wikimedia Commons</option>
+          <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>Test Wikidata</option>
+          <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>Test Wikimedia Commons</option>
+        </select>
+      </td>
+      <th scope="col" class="col-3">list statements</th>
+      <th scope="col" class="col-3">query statements</th>
+    </tr>
+    <tr>
+      <th scope="row">same action for all statements</th>
+      <td>
+        <button
+          type="submit"
+          class="btn btn-secondary btn-block"
+          formaction="{{ url_for('redirect_batch_list_collective') }}">
+          go
+        </button>
+      </td>
+      <td>
+        <button
+          type="submit"
+          class="btn btn-secondary btn-block"
+          formaction="{{ url_for('redirect_batch_query_collective') }}">
+          go
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">specify rank for each statement</th>
+      <td>
+        <button
+          type="submit"
+          class="btn btn-secondary btn-block"
+          formaction="{{ url_for('redirect_batch_list_individual') }}">
+          go
+        </button>
+      </td>
+      <td>
+        <button
+          type="submit"
+          class="btn btn-secondary btn-block"
+          formaction="{{ url_for('redirect_batch_query_individual') }}">
+          go
+        </button>
+      </td>
+    </tr>
+  </table>
+</form>
 {% endblock %}

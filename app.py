@@ -184,6 +184,30 @@ def redirect_edit() -> werkzeug.Response:
     return flask.redirect(url)
 
 
+@app.route('/batch/list/collective/', methods=['POST'])
+def redirect_batch_list_collective() -> werkzeug.Response:
+    return flask.redirect(flask.url_for('show_batch_list_collective_form',
+                                        wiki=flask.request.form['wiki']))
+
+
+@app.route('/batch/list/individual/', methods=['POST'])
+def redirect_batch_list_individual() -> werkzeug.Response:
+    return flask.redirect(flask.url_for('show_batch_list_individual_form',
+                                        wiki=flask.request.form['wiki']))
+
+
+@app.route('/batch/query/collective/', methods=['POST'])
+def redirect_batch_query_collective() -> werkzeug.Response:
+    return flask.redirect(flask.url_for('show_batch_query_collective_form',
+                                        wiki=flask.request.form['wiki']))
+
+
+@app.route('/batch/query/individual/', methods=['POST'])
+def redirect_batch_query_individual() -> werkzeug.Response:
+    return flask.redirect(flask.url_for('show_batch_query_individual_form',
+                                        wiki=flask.request.form['wiki']))
+
+
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
 def show_edit_form(wiki: str, entity_id: str, property_id: str) \
         -> Union[str, Tuple[str, int]]:
