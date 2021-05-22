@@ -11,7 +11,7 @@
   This tool lets you edit the rank of multiple statements at once.
   <!-- TODO more details -->
 </p>
-<form method="post">
+<form method="post" action="{{ url_for('redirect_edit') }}">
   <div class="form-group">
     <label for="wiki">Wiki</label>
     <select class="form-control" id="wiki" name="wiki">

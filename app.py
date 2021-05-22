@@ -153,32 +153,35 @@ def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
                          user_agent=user_agent)
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index() -> Union[str, werkzeug.Response]:
-    if flask.request.method == 'POST':
-        form = flask.request.form
-        wiki = form['wiki']
-        entity_id = form['entity_id']
-        if entity_id.startswith('File:'):
-            try:
-                session = anonymous_session(wiki)
-                response = session.get(action='query',
-                                       titles=[entity_id],
-                                       formatversion=2)
-                page_id = response['query']['pages'][0]['pageid']
-                entity_id = f'M{page_id}'
-            except Exception:
-                pass  # leave entity_id as it is
-        url = flask.url_for('show_edit_form',
-                            wiki=wiki,
-                            entity_id=entity_id,
-                            property_id=form['property_id'])
-        return flask.redirect(url)
+@app.route('/')
+def index() -> str:
     args = flask.request.args
     return flask.render_template('index.html',
                                  wiki=args.get('wiki'),
                                  entity_id=args.get('entity_id'),
                                  property_id=args.get('property_id'))
+
+
+@app.route('/', methods=['POST'])
+def redirect_edit() -> werkzeug.Response:
+    form = flask.request.form
+    wiki = form['wiki']
+    entity_id = form['entity_id']
+    if entity_id.startswith('File:'):
+        try:
+            session = anonymous_session(wiki)
+            response = session.get(action='query',
+                                   titles=[entity_id],
+                                   formatversion=2)
+            page_id = response['query']['pages'][0]['pageid']
+            entity_id = f'M{page_id}'
+        except Exception:
+            pass  # leave entity_id as it is
+    url = flask.url_for('show_edit_form',
+                        wiki=wiki,
+                        entity_id=entity_id,
+                        property_id=form['property_id'])
+    return flask.redirect(url)
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
