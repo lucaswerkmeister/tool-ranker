@@ -59,4 +59,13 @@
     Increment rank
   </button>
 </form>
+<p class="mt-3">
+  You can also
+  <a href="{{ url_for('show_batch_query_individual_form', wiki=wiki) }}">
+    select the rank for each statement individually
+  </a>
+  or
+  <a href="{{ url_for('show_batch_list_collective_form', wiki=wiki) }}">
+    provide a list of statement IDs</a>.
+</p>
 {% endblock %}

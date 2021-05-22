@@ -34,4 +34,12 @@
     Edit rank of statements
   </button>
 </form>
+<p class="mt-3">
+  You can also
+  <a href="{{ url_for('show_batch_list_collective_form', wiki=wiki) }}">
+    perform the same action for each statement</a>{% if has_query_service(wiki) %}
+  or
+  <a href="{{ url_for('show_batch_query_individual_form', wiki=wiki) }}">
+    select the statements and ranks using a SPARQL query</a>{% endif %}.
+</p>
 {% endblock %}
