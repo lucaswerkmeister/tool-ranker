@@ -36,6 +36,16 @@ def test_csrf_token_load():
         assert ranker.csrf_token() == 'test token'
 
 
+@pytest.mark.parametrize('wiki, has_query_service', [
+    ('www.wikidata.org', True),
+    ('commons.wikimedia.org', True),
+    ('test.wikidata.org', False),
+    ('test-commons.wikimedia.org', False),
+])
+def test_has_query_service(wiki: str, has_query_service: bool):
+    assert ranker.has_query_service(wiki) == has_query_service
+
+
 def test_index_redirect(client):
     response = client.post('/',
                            data={'wiki': 'www.wikidata.org',

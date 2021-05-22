@@ -17,7 +17,8 @@ import werkzeug
 import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
-    RankConverter, WikiConverter, WikiWithQueryServiceConverter
+    RankConverter, WikiConverter, WikiWithQueryServiceConverter, \
+    WikiWithoutQueryServiceException
 from query_service import query_wiki, query_service_name, query_service_url
 import wbformat
 
@@ -102,6 +103,15 @@ def can_edit() -> bool:
     if 'oauth' not in app.config:
         return True
     return 'oauth_access_token' in flask.session
+
+
+@app.template_global()
+def has_query_service(wiki: str) -> bool:
+    try:
+        app.url_map.converters['wwqs'](app.url_map).to_python(wiki)
+        return True
+    except WikiWithoutQueryServiceException:
+        return False
 
 
 @app.template_global()
