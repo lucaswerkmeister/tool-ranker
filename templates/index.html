@@ -59,6 +59,11 @@
 </p>
 <form method="post">
   <table class="table table-bordered">
+    <colgroup>
+      <col class="col-6">
+      <col class="col-3">
+      <col class="col-3">
+    </colgroup>
     <tr>
       <td>
         <label for="batch-wiki" class="sr-only">Wiki</label>
@@ -69,8 +74,8 @@
           <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>Test Wikimedia Commons</option>
         </select>
       </td>
-      <th scope="col" class="col-3">list statements</th>
-      <th scope="col" class="col-3">query statements</th>
+      <th scope="col">list statements</th>
+      <th scope="col">query statements</th>
     </tr>
     <tr>
       <th scope="row">same action for all statements</th>
