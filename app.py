@@ -105,7 +105,7 @@ def can_edit() -> bool:
     return 'oauth_access_token' in flask.session
 
 
-@app.template_global()
+@app.template_global()  # type: ignore
 def has_query_service(wiki: str) -> bool:
     try:
         app.url_map.converters['wwqs'](app.url_map).to_python(wiki)
@@ -114,12 +114,12 @@ def has_query_service(wiki: str) -> bool:
         return False
 
 
-@app.template_global()
+@app.template_global()  # type: ignore
 def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
     return wbformat.format_value(anonymous_session(wiki), property_id, value)
 
 
-@app.template_global()
+@app.template_global()  # type: ignore
 def format_entity(wiki: str, entity_id: str) -> flask.Markup:
     return wbformat.format_entity(anonymous_session(wiki), entity_id)
 
