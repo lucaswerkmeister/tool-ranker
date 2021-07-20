@@ -1,12 +1,17 @@
 cachetools
+decorator
 flake8
-flask
+flask >= 2.0.0
 mwapi
 mwoauth
 pytest
 mypy
-pyyaml
+PyYAML
 requests
 requests_oauthlib
 SPARQLWrapper
 toolforge
+types-cachetools
+types-decorator
+types-requests
+types-PyYAML

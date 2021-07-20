@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import decorator
 import flask
 import json
 import mwapi  # type: ignore
@@ -9,10 +10,12 @@ import random
 import re
 import requests
 import requests_oauthlib  # type: ignore
+import stat
 import string
 import sys
 import toolforge
-from typing import Dict, Container, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Container, Dict, \
+    Iterable, List, Optional, Tuple, Union
 import werkzeug
 import yaml
 
@@ -29,18 +32,36 @@ user_agent = toolforge.set_user_agent(
     'ranker',
     email='ranker@lucaswerkmeister.de')
 
-__dir__ = os.path.dirname(__file__)
-try:
-    with open(os.path.join(__dir__, 'config.yaml')) as config_file:
-        app.config.update(yaml.safe_load(config_file))
-except FileNotFoundError:
+
+@decorator.decorator
+def read_private(func: Callable, *args: Any, **kwargs: Any) -> Any:
+    try:
+        f = args[0]
+        fd = f.fileno()
+    except AttributeError:
+        pass
+    except IndexError:
+        pass
+    else:
+        mode = os.stat(fd).st_mode
+        if (stat.S_IRGRP | stat.S_IROTH) & mode:
+            name = getattr(f, "name", "config file")
+            raise ValueError(f'{name} is readable to others, '
+                             'must be exclusively user-readable!')
+    return func(*args, **kwargs)
+
+
+has_config = app.config.from_file('config.yaml',
+                                  load=read_private(yaml.safe_load),
+                                  silent=True)
+if not has_config:
     print('config.yaml file not found, assuming local development setup')
     characters = string.ascii_letters + string.digits
     random_string = ''.join(random.choice(characters) for _ in range(64))
     app.secret_key = random_string
 
-if 'oauth' in app.config:
-    oauth_config = app.config['oauth']
+if 'OAUTH' in app.config:
+    oauth_config = app.config['OAUTH']
     consumer_token = mwoauth.ConsumerToken(oauth_config['consumer_key'],
                                            oauth_config['consumer_secret'])
     index_php = 'https://www.wikidata.org/w/index.php'
@@ -81,7 +102,7 @@ def user_link(user_name: str) -> flask.Markup:
 
 @app.template_global()
 def authentication_area() -> flask.Markup:
-    if 'oauth' not in app.config:
+    if 'OAUTH' not in app.config:
         return flask.Markup()
 
     session = authenticated_session('www.wikidata.org')
@@ -100,7 +121,7 @@ def authentication_area() -> flask.Markup:
 
 @app.template_global()
 def can_edit() -> bool:
-    if 'oauth' not in app.config:
+    if 'OAUTH' not in app.config:
         return True
     return 'oauth_access_token' in flask.session
 
