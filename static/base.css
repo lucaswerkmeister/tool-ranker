@@ -1,0 +1,42 @@
+.navbar-dark {
+    /* H, S, and original L from https://commons.wikimedia.org/wiki/File:Gay_Pride_Flag.svg */
+    --darken: 1.5;
+    --l-25: calc(25% / var(--darken));
+    --l-28: calc(28% / var(--darken));
+    --l-45: calc(45% / var(--darken));
+    --l-50: calc(50% / var(--darken));
+    --rainbow-red: HSL(0, 97%, var(--l-45));
+    --rainbow-orange: HSL(33, 100%, var(--l-50));
+    --rainbow-yellow: HSL(56, 100%, var(--l-50));
+    --rainbow-green: HSL(138, 100%, var(--l-25));
+    --rainbow-blue: HSL(222, 100%, var(--l-50));
+    --rainbow-purple: HSL(292, 90%, var(--l-28));
+
+    background: repeating-linear-gradient(
+        0.375turn,
+        var(--rainbow-red), 10px,
+        var(--rainbow-orange) 10px, 20px,
+        var(--rainbow-yellow) 20px, 30px,
+        var(--rainbow-green) 30px, 40px,
+        var(--rainbow-blue) 40px, 50px,
+        var(--rainbow-purple) 50px, var(--rainbow-purple) 60px
+    );
+}
+
+.navbar-dark .nav-item,
+.navbar-dark .navbar-text {
+    --shadow: rgba(0, 0, 0, 50%);
+    text-shadow: 0px -1px var(--shadow),
+                 1px -1px var(--shadow),
+                 1px 0px var(--shadow),
+                 1px 1px var(--shadow),
+                 0px 1px var(--shadow),
+                 -1px 1px var(--shadow),
+                 -1px 0px var(--shadow),
+                 -1px -1px var(--shadow);
+}
+
+.navbar-dark .nav-item .nav-link,
+.navbar-dark .navbar-text {
+    filter: brightness(1.5);
+}
