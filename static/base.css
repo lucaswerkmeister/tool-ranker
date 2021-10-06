@@ -1,0 +1,57 @@
+.navbar-dark {
+    /* https://www.pinterest.com/pin/475270566933865833/ */
+    --rainbow-red: #a75051;
+    --rainbow-orange: #b27d58;
+    --rainbow-yellow: #b3af38;
+    --rainbow-green: #589a5d;
+    --rainbow-blue: #4781a7;
+    --rainbow-purple: #746198;
+
+    /* https://www.schemecolor.com/muted-rainbow.php */
+    --rainbow-red: #71000f;
+    --rainbow-orange: #734c01;
+    --rainbow-yellow: #807a00;
+    --rainbow-green: #00541c;
+    --rainbow-blue: #003966;
+    --rainbow-purple: #3b0057;
+
+    /* https://commons.wikimedia.org/wiki/File:Gay_Pride_Flag.svg */
+    --lighten: 3;
+    --l-25: calc(100% - ((100% - 25%) / var(--lighten)));
+    --l-28: calc(100% - ((100% - 28%) / var(--lighten)));
+    --l-45: calc(100% - ((100% - 45%) / var(--lighten)));
+    --l-50: calc(100% - ((100% - 50%) / var(--lighten)));
+    --darken: 2;
+    --l-25: calc(25% / var(--darken));
+    --l-28: calc(28% / var(--darken));
+    --l-45: calc(45% / var(--darken));
+    --l-50: calc(50% / var(--darken));
+    --rainbow-red: HSL(0, 97%, var(--l-45));
+    --rainbow-orange: HSL(33, 100%, var(--l-50));
+    --rainbow-yellow: HSL(56, 100%, var(--l-50));
+    --rainbow-green: HSL(138, 100%, var(--l-25));
+    --rainbow-blue: HSL(222, 100%, var(--l-50));
+    --rainbow-purple: HSL(292, 90%, var(--l-28));
+
+    background: repeating-linear-gradient(
+        0.375turn,
+        var(--rainbow-red), 10px,
+        var(--rainbow-orange) 10px, 20px,
+        var(--rainbow-yellow) 20px, 30px,
+        var(--rainbow-green) 30px, 40px,
+        var(--rainbow-blue) 40px, 50px,
+        var(--rainbow-purple) 50px, var(--rainbow-purple) 60px
+    );
+}
+
+.nav-item, .navbar-text {
+    --shadow: rgba(0, 0, 0, 50%);
+    text-shadow: 0px -1px var(--shadow),
+                 1px -1px var(--shadow),
+                 1px 0px var(--shadow),
+                 1px 1px var(--shadow),
+                 0px 1px var(--shadow),
+                 -1px 1px var(--shadow),
+                 -1px 0px var(--shadow),
+                 -1px -1px var(--shadow);
+}
