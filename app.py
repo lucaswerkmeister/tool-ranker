@@ -277,7 +277,6 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         statement_ids,
         rank,
         {property_id: statements},
-        property_id,
     )
 
     edited_entity = build_entity(entity_id, statement_groups)
@@ -313,7 +312,6 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     statement_groups, edited_statements = statements_increment_rank(
         statement_ids,
         {property_id: statements},
-        property_id,
     )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
@@ -676,60 +674,52 @@ def increment_rank(rank: str) -> str:
 
 def statements_set_rank_to(statement_ids: Container[str],
                            rank: str,
-                           statements: Dict[str, List[dict]],
-                           property_id: Optional[str] = None) \
+                           statements: Dict[str, List[dict]]) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Set the rank of certain statements to a constant value.
 
     statement_ids specifies the statements to edit, and rank the target rank.
     statements is a mapping from property IDs to statement groups.
-    If property_id is given, only statements for that property are checked
-    (i.e. the other statements are not inspected, as an optimization).
 
-    Returns a dict of edited statement groups
+    Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
     and the number of edited statements."""
-    if property_id is None:
-        statement_groups = statements
-    else:
-        statement_groups = {property_id: statements.get(property_id, [])}
+    edited_statement_groups: Dict[str, List[dict]] = {}
     edited_statements = 0
-    for statement_group in statement_groups.values():
+    for property_id, statement_group in statements.items():
         for statement in statement_group:
             if statement['id'] in statement_ids and statement['rank'] != rank:
                 statement['rank'] = rank
+                edited_statement_groups.setdefault(property_id, [])\
+                                       .append(statement)
                 edited_statements += 1
-    return statement_groups, edited_statements
+    return edited_statement_groups, edited_statements
 
 
 def statements_increment_rank(statement_ids: Container[str],
-                              statements: Dict[str, List[dict]],
-                              property_id: Optional[str] = None) \
+                              statements: Dict[str, List[dict]]) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Increment the rank of certain statements.
 
     statement_ids specifies the statements to edit.
     statements is a mapping from property IDs to statement groups.
-    If property_id is given, only statements for that property are checked
-    (i.e. the other statements are not inspected, as an optimization).
 
-    Returns a dict of edited statement groups
+    Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
     and the number of edited statements."""
-    if property_id is None:
-        statement_groups = statements
-    else:
-        statement_groups = {property_id: statements.get(property_id, [])}
+    edited_statement_groups: Dict[str, List[dict]] = {}
     edited_statements = 0
-    for statement_group in statement_groups.values():
+    for property_id, statement_group in statements.items():
         for statement in statement_group:
             if statement['id'] in statement_ids:
                 rank = statement['rank']
                 incremented_rank = increment_rank(rank)
                 if incremented_rank != rank:
                     statement['rank'] = incremented_rank
+                    edited_statement_groups.setdefault(property_id, [])\
+                                           .append(statement)
                     edited_statements += 1
-    return statement_groups, edited_statements
+    return edited_statement_groups, edited_statements
 
 
 def statements_edit_rank(commands: Dict[str, str],
