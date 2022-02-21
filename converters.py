@@ -143,5 +143,5 @@ class WikiWithoutQueryServiceException(BadRequest):
     def __init__(self, wikis_with_query_service: Set[str], wiki: str):
         super().__init__()
         supported_wikis = ", ".join(wikis_with_query_service)
-        self.description = (f'Wiki {wiki} has no query service, '
+        self.description = (f'Wiki {wiki} has no usable query service, '
                             f'supported wikis are: {supported_wikis}')
