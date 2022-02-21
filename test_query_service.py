@@ -60,13 +60,11 @@ def test_query_wiki():
 def test_wikis_with_query_service():
     assert query_service.wikis_with_query_service() == {
         'www.wikidata.org',
-        'commons.wikimedia.org',
     }
 
 
 @pytest.mark.parametrize('wiki, expected', [
     ('www.wikidata.org', 'Wikidata Query Service'),
-    ('commons.wikimedia.org', 'Wikimedia Commons Query Service'),
 ])
 def test_query_service_name(wiki: str, expected: str):
     assert query_service.query_service_name(wiki) == expected
@@ -74,7 +72,6 @@ def test_query_service_name(wiki: str, expected: str):
 
 @pytest.mark.parametrize('wiki, expected', [
     ('www.wikidata.org', 'https://query.wikidata.org/'),
-    ('commons.wikimedia.org', 'https://wcqs-beta.wmflabs.org/'),
 ])
 def test_query_service_url(wiki: str, expected: str):
     assert query_service.query_service_url(wiki) == expected

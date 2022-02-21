@@ -38,7 +38,7 @@ def test_csrf_token_load():
 
 @pytest.mark.parametrize('wiki, has_query_service', [
     ('www.wikidata.org', True),
-    ('commons.wikimedia.org', True),
+    ('commons.wikimedia.org', False),
     ('test.wikidata.org', False),
     ('test-commons.wikimedia.org', False),
 ])

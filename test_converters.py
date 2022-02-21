@@ -124,7 +124,6 @@ def test_WikiConverter_invalid(wiki):
 
 @pytest.mark.parametrize('wiki', [
     'www.wikidata.org',
-    'commons.wikimedia.org',
 ])
 def test_WikiWithQueryServiceConverter_valid(wiki):
     converter = WikiWithQueryServiceConverter(Map())

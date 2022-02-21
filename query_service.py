@@ -7,10 +7,6 @@ _query_services = {
         'query.wikidata.org',
         'Wikidata Query Service',
     ),
-    'commons.wikimedia.org': (
-        'wcqs-beta.wmflabs.org',
-        'Wikimedia Commons Query Service',
-    ),
 }
 
 
