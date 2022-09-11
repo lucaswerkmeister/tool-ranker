@@ -51,7 +51,7 @@ def test_index_redirect(client):
                            data={'wiki': 'www.wikidata.org',
                                  'entity_id': 'Q4115189',
                                  'property_id': 'P361'})
-    expected_redirect = 'http://localhost/edit/www.wikidata.org/Q4115189/P361/'
+    expected_redirect = '/edit/www.wikidata.org/Q4115189/P361/'
     assert response.headers['location'] == expected_redirect
 
 
@@ -60,8 +60,7 @@ def test_index_redirect_mediainfo(client):
                            data={'wiki': 'commons.wikimedia.org',
                                  'entity_id': 'File:DSC 0484 2-01.jpg',
                                  'property_id': 'P180'})
-    expected_redirect = ('http://localhost/edit'
-                         '/commons.wikimedia.org/M79869096/P180/')
+    expected_redirect = '/edit/commons.wikimedia.org/M79869096/P180/'
     assert response.headers['location'] == expected_redirect
 
 

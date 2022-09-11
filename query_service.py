@@ -1,4 +1,4 @@
-from typing import Collection
+from typing import Collection, cast
 from SPARQLWrapper import SPARQLWrapper, JSON  # type: ignore
 
 
@@ -15,7 +15,7 @@ def query_wiki(wiki: str, query: str, user_agent: str) -> dict:
     sparql = SPARQLWrapper(f'https://{query_service}/sparql', agent=user_agent)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-    return sparql.query().convert()
+    return cast(dict, sparql.query().convert())
 
 
 def wikis_with_query_service() -> Collection[str]:

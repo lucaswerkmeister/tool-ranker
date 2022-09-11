@@ -1,0 +1,17 @@
+cachetools
+decorator
+flake8
+Flask >= 2.0.2
+mwapi
+mwoauth
+pytest
+mypy
+PyYAML
+requests
+requests_oauthlib
+SPARQLWrapper
+toolforge
+types-cachetools
+types-decorator
+types-requests
+types-PyYAML
