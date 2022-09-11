@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import cachetools
 import flask
 import json
@@ -12,8 +13,14 @@ def format_value(session: mwapi.Session,
     response = session.get(action='wbformatvalue',
                            datavalue=json.dumps(value),
                            property=property_id,
-                           generate='text/plain')
-    return flask.Markup.escape(response['result'])
+                           generate='text/html')
+    html = BeautifulSoup(response['result'], features='html.parser')
+    # turn links into spans – clicking the value should toggle the checkbox,
+    # and also the hrefs returned by Wikibase are relative anyways (T218646)
+    for link in html.find_all('a'):
+        link.name = 'span'
+        del link['href']
+    return flask.Markup(html)
 
 
 format_entity_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore

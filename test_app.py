@@ -64,11 +64,12 @@ def test_index_redirect_mediainfo(client):
     assert response.headers['location'] == expected_redirect
 
 
+@pytest.mark.filterwarnings('ignore::bs4.MarkupResemblesLocatorWarning')
 def test_format_value_escapes_html():
     value = {'value': '<script>alert("!Mediengruppe Bitnik");</script>',
              'type': 'string'}
-    expected = flask.Markup(r'&lt;script&gt;alert(&#34;!Mediengruppe'
-                            r' Bitnik&#34;);&lt;/script&gt;')
+    expected = flask.Markup(r'&lt;script&gt;alert("!Mediengruppe'
+                            r' Bitnik");&lt;/script&gt;')
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
