@@ -1,5 +1,5 @@
 import flask
-import pytest  # type: ignore
+import pytest
 from typing import Optional
 
 import app as ranker

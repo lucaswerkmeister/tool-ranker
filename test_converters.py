@@ -1,4 +1,4 @@
-import pytest  # type: ignore
+import pytest
 from werkzeug.routing import Map, ValidationError
 
 from converters import EntityIdConverter, PropertyIdConverter, \
