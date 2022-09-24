@@ -48,7 +48,7 @@
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <input name="base_revision_id" type="hidden" value="{{ base_revision_id }}">
   {% for statement in statements %}
-  <div class="form-check statement-{{ statement.rank }}">
+  <div class="form-check statement statement-{{ statement.rank }}">
     <input type="checkbox" class="form-check-input" id="{{ statement.id }}" name="{{ statement.id }}">
     <label for="{{ statement.id }}">
       <div class="mainsnak">{{ format_snak(wiki, property_id, statement.mainsnak) }}</div>
@@ -56,7 +56,15 @@
       <ul class="qualifiers-list">
         {% for qualifier_property_id in statement.qualifiers %}
         <li>
-          {{ format_entity(wiki, qualifier_property_id) }}:
+          {% if qualifier_property_id == (wiki | wiki_reason_preferred_property) %}
+          {% set qualifier_property_classes = 'rank-reason-preferred' %}
+          {% elif qualifier_property_id == (wiki | wiki_reason_deprecated_property) %}
+          {% set qualifier_property_classes = 'rank-reason-deprecated' %}
+          {% else %}
+          {% set qualifier_property_classes = '' %}
+          {% endif %}
+          <span class="qualifier-property {{ qualifier_property_classes }}">
+            {{ format_entity(wiki, qualifier_property_id) }}</span>:
           <ul class="snak-list" data-property-id="{{ qualifier_property_id }}">
             {% for qualifier_snak in statement.qualifiers[qualifier_property_id] -%}
             <li>{{ format_snak(wiki, qualifier_property_id, qualifier_snak) }}</li>

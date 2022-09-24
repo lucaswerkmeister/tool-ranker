@@ -154,6 +154,20 @@ def format_query_service(wiki: str) -> flask.Markup:
             flask.Markup(r'</a>'))
 
 
+@app.template_filter()
+def wiki_reason_preferred_property(wiki: str) -> Optional[str]:
+    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+        return 'P7452'
+    return None
+
+
+@app.template_filter()
+def wiki_reason_deprecated_property(wiki: str) -> Optional[str]:
+    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+        return 'P2241'
+    return None
+
+
 def anonymous_session(wiki: str) -> mwapi.Session:
     return mwapi.Session('https://' + wiki,
                          user_agent=user_agent)

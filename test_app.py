@@ -46,6 +46,26 @@ def test_has_query_service(wiki: str, has_query_service: bool):
     assert ranker.has_query_service(wiki) == has_query_service
 
 
+@pytest.mark.parametrize('wiki, property_id', [
+    ('www.wikidata.org', 'P7452'),
+    ('commons.wikimedia.org', 'P7452'),
+    ('test.wikidata.org', None),
+    ('test-commons.wikimedia.org', None),
+])
+def test_wiki_reason_preferred_property(wiki: str, property_id: Optional[str]):
+    assert ranker.wiki_reason_preferred_property(wiki) == property_id
+
+
+@pytest.mark.parametrize('wiki, property_id', [
+    ('www.wikidata.org', 'P2241'),
+    ('commons.wikimedia.org', 'P2241'),
+    ('test.wikidata.org', None),
+    ('test-commons.wikimedia.org', None),
+])
+def test_wiki_reason_deprecated_property(wiki: str, property_id: Optional[str]):  # noqa: E501
+    assert ranker.wiki_reason_deprecated_property(wiki) == property_id
+
+
 def test_index_redirect(client):
     response = client.post('/',
                            data={'wiki': 'www.wikidata.org',

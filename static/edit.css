@@ -14,6 +14,24 @@
     color: #ac6600; /* Yellow30 */
 }
 
+/*
+ * highlight “reason for preferred / deprecated rank” qualifiers,
+ * when they match the statement’s rank…
+ */
+.statement.statement-preferred .rank-reason-preferred a,
+.statement.statement-deprecated .rank-reason-deprecated a {
+    font-weight: bold;
+}
+
+/*
+ * …and even more so when they don’t
+ */
+.statement:not(.statement-preferred) .rank-reason-preferred a,
+.statement:not(.statement-deprecated) .rank-reason-deprecated a {
+    background: #b32424; /* Red30 */
+    color: #fff; /* Base100 */
+}
+
 .qualifiers-list {
     margin-bottom: 0;
 }
