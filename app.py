@@ -291,6 +291,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         statement_ids,
         rank,
         {property_id: statements},
+        wiki,
     )
 
     edited_entity = build_entity(entity_id, statement_groups)
@@ -326,6 +327,7 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
     statement_groups, edited_statements = statements_increment_rank(
         statement_ids,
         {property_id: statements},
+        wiki,
     )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
@@ -688,7 +690,8 @@ def increment_rank(rank: str) -> str:
 
 def statements_set_rank_to(statement_ids: Container[str],
                            rank: str,
-                           statements: Dict[str, List[dict]]) \
+                           statements: Dict[str, List[dict]],
+                           wiki: str) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Set the rank of certain statements to a constant value.
 
@@ -696,6 +699,7 @@ def statements_set_rank_to(statement_ids: Container[str],
     controlling which of the given statements are actually edited.
     rank is the target rank,
     and statements is a mapping from property IDs to statement groups.
+    wiki specifies the wiki the statements belong to.
 
     Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
@@ -706,6 +710,7 @@ def statements_set_rank_to(statement_ids: Container[str],
         for statement in statement_group:
             if statement['id'] in statement_ids and statement['rank'] != rank:
                 statement['rank'] = rank
+                statement_remove_reasons(statement, wiki)
                 edited_statement_groups.setdefault(property_id, [])\
                                        .append(statement)
                 edited_statements += 1
@@ -713,13 +718,15 @@ def statements_set_rank_to(statement_ids: Container[str],
 
 
 def statements_increment_rank(statement_ids: Container[str],
-                              statements: Dict[str, List[dict]]) \
+                              statements: Dict[str, List[dict]],
+                              wiki: str) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Increment the rank of certain statements.
 
     statement_ids is a container (e.g. a set) of statement IDs,
     controlling which of the given statements are actually edited.
     statements is a mapping from property IDs to statement groups.
+    wiki specifies the wiki the statements belong to.
 
     Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
@@ -733,6 +740,7 @@ def statements_increment_rank(statement_ids: Container[str],
                 incremented_rank = increment_rank(rank)
                 if incremented_rank != rank:
                     statement['rank'] = incremented_rank
+                    statement_remove_reasons(statement, wiki)
                     edited_statement_groups.setdefault(property_id, [])\
                                            .append(statement)
                     edited_statements += 1
@@ -740,12 +748,14 @@ def statements_increment_rank(statement_ids: Container[str],
 
 
 def statements_edit_rank(commands: Dict[str, str],
-                         statements: Dict[str, List[dict]]) \
+                         statements: Dict[str, List[dict]],
+                         wiki: str) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Edit the rank of certain statements.
 
     commands maps statement IDs to the rank they should have.
     statements is a mapping from property IDs to statement groups.
+    wiki specifies the wiki the statements belong to.
 
     Returns the edited statements in the same format
     (in fact, it returns unedited statements too,
@@ -758,8 +768,17 @@ def statements_edit_rank(commands: Dict[str, str],
                 edited_rank = commands[statement['id']]
                 if edited_rank != statement['rank']:
                     statement['rank'] = edited_rank
+                    statement_remove_reasons(statement, wiki)
                     edited_statements += 1
     return statements, edited_statements
+
+
+def statement_remove_reasons(statement: dict, wiki: str):
+    """Remove any reason for preferred / deprecated rank
+    qualifiers from the statement."""
+    if qualifiers := statement.get('qualifiers', {}):
+        qualifiers.pop(wiki_reason_preferred_property(wiki), None)
+        qualifiers.pop(wiki_reason_deprecated_property(wiki), None)
 
 
 def build_entity(entity_id: str,
@@ -876,9 +895,12 @@ def batch_set_rank_and_show_results(
     for entity_id, statement_ids in statement_ids_by_entity_id.items():
         entity = entities[entity_id]
         statements = entity_statements(entity)
-        statements, edited_statements = statements_set_rank_to(statement_ids,
-                                                               rank,
-                                                               statements)
+        statements, edited_statements = statements_set_rank_to(
+            statement_ids,
+            rank,
+            statements,
+            wiki,
+        )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_set_rank(edited_statements,
                                        rank,
@@ -916,6 +938,7 @@ def batch_increment_rank_and_show_results(
         statements, edited_statements = statements_increment_rank(
             statement_ids,
             statements,
+            wiki,
         )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_increment_rank(edited_statements,
@@ -950,8 +973,11 @@ def batch_edit_rank_and_show_results(
     for entity_id, commands in commands_by_entity_id.items():
         entity = entities[entity_id]
         statements = entity_statements(entity)
-        statements, edited_statements = statements_edit_rank(commands,
-                                                             statements)
+        statements, edited_statements = statements_edit_rank(
+            commands,
+            statements,
+            wiki,
+        )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_edit_rank(edited_statements,
                                         custom_summary)
