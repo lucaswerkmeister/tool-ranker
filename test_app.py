@@ -310,23 +310,30 @@ def test_statements_set_rank_to():
         rank,
         statements,
         wiki,
+        'reason',
     )
 
     assert edited_statements == 1
     assert property_id in statements
     assert edited_statement in statements[property_id]
     assert edited_statement['rank'] == 'preferred'
-    assert not edited_statement['qualifiers']
+    assert 'P2241' not in edited_statement['qualifiers']
+    assert edited_statement['qualifiers']['P7452'][0]\
+        ['datavalue']['value']['id'] == 'reason'  # noqa: E211
     assert unedited_statement['rank'] == 'preferred'
     assert unedited_statement['qualifiers']['P2241']
+    assert 'P7452' not in unedited_statement['qualifiers']
     assert unselected_statement['rank'] == 'normal'
     assert unselected_statement['qualifiers']['P2241']
+    assert 'P7452' not in unselected_statement['qualifiers']
     assert unrelated_statement['rank'] == 'normal'
     assert unrelated_statement['qualifiers']['P2241']
+    assert 'P7452' not in unrelated_statement['qualifiers']
     assert statements == {property_id: [edited_statement]}
 
 
-def test_statements_increment_rank():
+@pytest.mark.parametrize('empty_reason', [None, ''])
+def test_statements_increment_rank(empty_reason):
     def reason():
         return {'qualifiers': {'P2241': ['reason for deprecated rank']}}
     unrelated_statement = {'id': 'X', 'rank': 'normal', **reason()}
@@ -352,6 +359,7 @@ def test_statements_increment_rank():
         statement_ids,
         statements,
         wiki,
+        empty_reason,
     )
 
     assert edited_statements == 1
@@ -366,6 +374,21 @@ def test_statements_increment_rank():
     assert unrelated_statement['rank'] == 'normal'
     assert unrelated_statement['qualifiers']['P2241']
     assert statements == {property_id: [edited_statement]}
+
+
+def test_statements_increment_rank_unsupported():
+    statement_ids = {'a'}
+    statements = {'P1': [{'id': 'a', 'rank': 'normal'}]}
+    wiki = 'www.wikidata.org'
+    reason = 'reason'
+
+    with pytest.raises(Exception, match='not supported'):
+        ranker.statements_increment_rank(
+            statement_ids,
+            statements,
+            wiki,
+            reason,
+        )
 
 
 def test_statements_edit_rank():
@@ -461,6 +484,75 @@ def test_statement_remove_reasons(statement, wiki, expected):
     assert statement == expected
 
 
+@pytest.mark.parametrize('statement, rank, wiki, expected', [
+    (
+        {'id': 'X'},
+        'preferred',
+        'www.wikidata.org',
+        {'id': 'X', 'qualifiers': {'P7452': [{
+            'snaktype': 'value',
+            'property': 'P7452',
+            'datatype': 'wikibase-item',
+            'datavalue': {
+                'type': 'wikibase-entityid',
+                'value': {
+                    'entity-type': 'item',
+                    'id': 'reason',
+                },
+            },
+        }]}},
+    ),
+    (
+        {'id': 'Y', 'qualifiers': {'P642': ['existing-qualifier']}},
+        'deprecated',
+        'commons.wikimedia.org',
+        {'id': 'Y', 'qualifiers': {
+            'P642': ['existing-qualifier'],
+            'P2241': [{
+                'snaktype': 'value',
+                'property': 'P2241',
+                'datatype': 'wikibase-item',
+                'datavalue': {
+                    'type': 'wikibase-entityid',
+                    'value': {
+                        'entity-type': 'item',
+                        'id': 'reason',
+                    },
+                },
+            }],
+        }},
+    ),
+])
+def test_statement_set_reason(statement, rank, wiki, expected):
+    ranker.statement_set_reason(statement, rank, wiki, 'reason')
+    assert statement == expected
+
+
+@pytest.mark.parametrize('reason', [None, ''])
+def test_statement_set_reason_noop(reason):
+    statement = {'id': 'X'}
+    rank = 'preferred'
+    wiki = 'www.wikidata.org'
+
+    ranker.statement_set_reason(statement, rank, wiki, reason)
+    assert statement == {'id': 'X'}
+
+
+@pytest.mark.parametrize('rank, wiki', [
+    ('preferred', 'test.wikidata.org'),
+    ('normal', 'test.wikidata.org'),
+    ('deprecated', 'test.wikidata.org'),
+    ('preferred', 'test-commons.wikimedia.org'),
+    ('normal', 'test-commons.wikimedia.org'),
+    ('deprecated', 'test-commons.wikimedia.org'),
+    ('normal', 'www.wikidata.org'),
+    ('normal', 'commons.wikimedia.org'),
+])
+def test_statement_set_reason_unsupported(rank, wiki):
+    with pytest.raises(Exception, match='Cannot set a reason'):
+        ranker.statement_set_reason({}, rank, wiki, 'reason')
+
+
 @pytest.mark.parametrize('s, expected', [
     (None, None),
     ('', ''),
@@ -482,8 +574,30 @@ def test_get_summary_set_rank(edited_statements: int,
                               rank: str,
                               custom_summary: Optional[str],
                               expected: str):
+    wiki = 'www.wikidata.org'
+    reason = ''
     assert expected == ranker.get_summary_set_rank(edited_statements,
                                                    rank,
+                                                   wiki,
+                                                   reason,
+                                                   custom_summary)
+
+
+@pytest.mark.parametrize('wiki, reason, expected', [
+    ('www.wikidata.org', 'Q1', 'reason: [[Q1]]'),
+    ('commons.wikimedia.org', 'Q2', 'reason: [[d:Special:EntityPage/Q2]]'),
+    ('test.wikidata.org', 'Q3', 'reason: [[Q3]]'),
+    ('test-commons.wikimedia.org', 'Q4', 'reason: [[testwikidata:Special:EntityPage/Q4]]'),  # noqa: E501
+])
+def test_get_summary_set_rank_reason(wiki: str, reason: str, expected: str):
+    edited_statements = 1
+    rank = 'preferred'
+    custom_summary = None
+    expected = 'Set rank of 1 statement to preferred (' + expected + ')'
+    assert expected == ranker.get_summary_set_rank(edited_statements,
+                                                   rank,
+                                                   wiki,
+                                                   reason,
                                                    custom_summary)
 
 

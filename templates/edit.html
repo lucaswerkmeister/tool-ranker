@@ -1,3 +1,4 @@
+{% from "reason.html" import reason_input %}
 {% extends "base.html" %}
 
 {% block head %}
@@ -77,6 +78,7 @@
     </label>
   </div>
   {% endfor %}
+  {{ reason_input(wiki) }}
   <div class="form-group">
     <label for="summary">Edit summary (optional):</label>
     <input name="summary" type="text" id="summary" class="form-control">

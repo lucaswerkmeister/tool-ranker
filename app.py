@@ -280,6 +280,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         return 'not logged in', 401  # TODO better error
 
     statement_ids = flask.request.form
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
@@ -292,11 +293,14 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
         rank,
         {property_id: statements},
         wiki,
+        reason,
     )
 
     edited_entity = build_entity(entity_id, statement_groups)
     summary = get_summary_set_rank(edited_statements,
                                    rank,
+                                   wiki,
+                                   reason,
                                    custom_summary)
 
     return save_entity_and_redirect(edited_entity,
@@ -317,6 +321,7 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
         return 'not logged in', 401  # TODO better error
 
     statement_ids = flask.request.form
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
     base_revision_id = flask.request.form['base_revision_id']
     response = requests.get(f'https://{wiki}/wiki/Special:EntityData/'
@@ -328,6 +333,7 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
         statement_ids,
         {property_id: statements},
         wiki,
+        reason,
     )
 
     edited_entity = build_entity(entity_id, {property_id: statements})
@@ -358,6 +364,7 @@ def batch_list_set_rank(wiki: str, rank: str) \
         return 'not logged in', 401  # TODO better error
 
     statement_ids_list = flask.request.form.get('statement_ids', '')
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
 
     statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
@@ -365,6 +372,7 @@ def batch_list_set_rank(wiki: str, rank: str) \
     return batch_set_rank_and_show_results(wiki,
                                            statement_ids_by_entity_id,
                                            rank,
+                                           reason,
                                            session,
                                            custom_summary)
 
@@ -381,12 +389,14 @@ def batch_list_increment_rank(wiki: str) \
         return 'not logged in', 401  # TODO better error
 
     statement_ids_list = flask.request.form.get('statement_ids', '')
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
 
     statement_ids_by_entity_id = parse_statement_ids_list(statement_ids_list)
 
     return batch_increment_rank_and_show_results(wiki,
                                                  statement_ids_by_entity_id,
+                                                 reason,
                                                  session,
                                                  custom_summary)
 
@@ -409,6 +419,7 @@ def batch_query_set_rank(wiki: str, rank: str) \
         return 'not logged in', 401  # TODO better error
 
     query = flask.request.form.get('query', '')
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
 
     statement_ids_by_entity_id = query_statement_ids(wiki, query)
@@ -416,6 +427,7 @@ def batch_query_set_rank(wiki: str, rank: str) \
     return batch_set_rank_and_show_results(wiki,
                                            statement_ids_by_entity_id,
                                            rank,
+                                           reason,
                                            session,
                                            custom_summary)
 
@@ -432,12 +444,14 @@ def batch_query_increment_rank(wiki: str) \
         return 'not logged in', 401  # TODO better error
 
     query = flask.request.form.get('query', '')
+    reason = flask.request.form.get('reason')
     custom_summary = flask.request.form.get('summary')
 
     statement_ids_by_entity_id = query_statement_ids(wiki, query)
 
     return batch_increment_rank_and_show_results(wiki,
                                                  statement_ids_by_entity_id,
+                                                 reason,
                                                  session,
                                                  custom_summary)
 
@@ -691,7 +705,8 @@ def increment_rank(rank: str) -> str:
 def statements_set_rank_to(statement_ids: Container[str],
                            rank: str,
                            statements: Dict[str, List[dict]],
-                           wiki: str) \
+                           wiki: str,
+                           reason: Optional[str]) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Set the rank of certain statements to a constant value.
 
@@ -699,7 +714,9 @@ def statements_set_rank_to(statement_ids: Container[str],
     controlling which of the given statements are actually edited.
     rank is the target rank,
     and statements is a mapping from property IDs to statement groups.
-    wiki specifies the wiki the statements belong to.
+    wiki specifies the wiki the statements belong to,
+    and reason is an optional reason for preferred or deprecated rank
+    (an exception is raised if a reason is given for normal rank).
 
     Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
@@ -711,6 +728,7 @@ def statements_set_rank_to(statement_ids: Container[str],
             if statement['id'] in statement_ids and statement['rank'] != rank:
                 statement['rank'] = rank
                 statement_remove_reasons(statement, wiki)
+                statement_set_reason(statement, rank, wiki, reason)
                 edited_statement_groups.setdefault(property_id, [])\
                                        .append(statement)
                 edited_statements += 1
@@ -719,7 +737,8 @@ def statements_set_rank_to(statement_ids: Container[str],
 
 def statements_increment_rank(statement_ids: Container[str],
                               statements: Dict[str, List[dict]],
-                              wiki: str) \
+                              wiki: str,
+                              reason: Optional[str]) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Increment the rank of certain statements.
 
@@ -727,6 +746,8 @@ def statements_increment_rank(statement_ids: Container[str],
     controlling which of the given statements are actually edited.
     statements is a mapping from property IDs to statement groups.
     wiki specifies the wiki the statements belong to.
+    reason is mainly included for consistency with statements_set_rank_to,
+    an exception is raised whenever it is specified.
 
     Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
@@ -741,6 +762,10 @@ def statements_increment_rank(statement_ids: Container[str],
                 if incremented_rank != rank:
                     statement['rank'] = incremented_rank
                     statement_remove_reasons(statement, wiki)
+                    if reason:
+                        description = ('Specifying a reason when incrementing '
+                                       'rank is not supported')
+                        flask.abort(400, description=description)
                     edited_statement_groups.setdefault(property_id, [])\
                                            .append(statement)
                     edited_statements += 1
@@ -769,6 +794,7 @@ def statements_edit_rank(commands: Dict[str, str],
                 if edited_rank != statement['rank']:
                     statement['rank'] = edited_rank
                     statement_remove_reasons(statement, wiki)
+                    # TODO statement_set_reason()
                     edited_statements += 1
     return statements, edited_statements
 
@@ -779,6 +805,47 @@ def statement_remove_reasons(statement: dict, wiki: str):
     if qualifiers := statement.get('qualifiers', {}):
         qualifiers.pop(wiki_reason_preferred_property(wiki), None)
         qualifiers.pop(wiki_reason_deprecated_property(wiki), None)
+
+
+def statement_set_reason(
+        statement: dict,
+        rank: str,
+        wiki: str,
+        reason: Optional[str],
+):
+    """Set a reason for preferred / deprecated rank on the statement.
+
+    statement is the statement to be edited and is updated in place.
+    rank is rank that the statement is being set to, determining the property.
+    wiki specifies the wiki the statement belongs to.
+    reason is an item ID; if None or empty, nothing is done."""
+    if not reason:
+        return
+    if rank == 'preferred':
+        property_id = wiki_reason_preferred_property(wiki)
+    elif rank == 'deprecated':
+        property_id = wiki_reason_deprecated_property(wiki)
+    else:
+        property_id = None
+    if property_id is None:
+        description = flask.Markup('Cannot set a reason for {} rank on {}')\
+            .format(rank, wiki)
+        flask.abort(400, description=description)
+    qualifiers = statement.setdefault('qualifiers', {})
+    assert property_id not in qualifiers, \
+        'existing reasons should have been removed already'
+    qualifiers[property_id] = [{
+        'snaktype': 'value',
+        'property': property_id,
+        'datatype': 'wikibase-item',
+        'datavalue': {
+            'type': 'wikibase-entityid',
+            'value': {
+                'entity-type': 'item',
+                'id': reason,
+            },
+        },
+    }]
 
 
 def build_entity(entity_id: str,
@@ -796,11 +863,16 @@ def str_strip_optional(s: Optional[str]) -> Optional[str]:
 
 def get_summary_set_rank(edited_statements: int,
                          rank: str,
+                         wiki: str,
+                         reason: Optional[str],
                          custom_summary: Optional[str]) -> str:
     if edited_statements == 1:
         summary = f'Set rank of 1 statement to {rank}'
     else:
         summary = f'Set rank of {edited_statements} statements to {rank}'
+    if reason:
+        prefix = wiki_reason_summary_prefix(wiki)
+        summary += ' (reason: [[' + prefix + reason + ']])'
     custom_summary = str_strip_optional(custom_summary)
     if custom_summary:
         summary += ': ' + custom_summary
@@ -829,6 +901,15 @@ def get_summary_edit_rank(edited_statements: int,
     if custom_summary:
         summary += ': ' + custom_summary
     return summary
+
+
+def wiki_reason_summary_prefix(wiki: str) -> str:
+    if wiki == 'commons.wikimedia.org':
+        return 'd:Special:EntityPage/'
+    elif wiki == 'test-commons.wikimedia.org':
+        return 'testwikidata:Special:EntityPage/'
+    else:
+        return ''
 
 
 def edit_token(session: mwapi.Session) -> str:
@@ -885,6 +966,7 @@ def batch_set_rank_and_show_results(
         wiki: str,
         statement_ids_by_entity_id: Dict[str, List[str]],
         rank: str,
+        reason: Optional[str],
         session: mwapi.Session,
         custom_summary: Optional[str],
 ) -> str:
@@ -900,10 +982,13 @@ def batch_set_rank_and_show_results(
             rank,
             statements,
             wiki,
+            reason,
         )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_set_rank(edited_statements,
                                        rank,
+                                       wiki,
+                                       reason,
                                        custom_summary)
         try:
             edits[entity_id] = save_entity(edited_entity,
@@ -925,6 +1010,7 @@ def batch_set_rank_and_show_results(
 def batch_increment_rank_and_show_results(
         wiki: str,
         statement_ids_by_entity_id: Dict[str, List[str]],
+        reason: Optional[str],
         session: mwapi.Session,
         custom_summary: Optional[str],
 ) -> str:
@@ -939,6 +1025,7 @@ def batch_increment_rank_and_show_results(
             statement_ids,
             statements,
             wiki,
+            reason,
         )
         edited_entity = build_entity(entity_id, statements)
         summary = get_summary_increment_rank(edited_statements,
