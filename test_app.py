@@ -93,6 +93,16 @@ def test_format_value_escapes_html():
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 
+@pytest.mark.parametrize('uri, wiki, item_id', [
+    ('http://www.wikidata.org/entity/Q1', 'www.wikidata.org', 'Q1'),
+    ('http://www.wikidata.org/entity/Q2', 'commons.wikimedia.org', 'Q2'),
+    ('http://test.wikidata.org/entity/Q3', 'test.wikidata.org', 'Q3'),
+    ('http://test.wikidata.org/entity/Q4', 'test-commons.wikimedia.org', 'Q4'),
+])
+def test_item_id_from_uri(uri: str, wiki: str, item_id: str):
+    assert ranker.item_id_from_uri(uri, wiki) == item_id
+
+
 @pytest.mark.parametrize('uri, wiki, statement_id', [
     ('http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa:E501
      'www.wikidata.org',
@@ -175,54 +185,126 @@ P3$123|preferred|
 def test_query_statement_ids_with_ranks_and_reasons(monkeypatch):
     test_wiki = 'www.wikidata.org'
     test_query = '''
-SELECT ?rank ?item ?statement ?value WHERE {
-  VALUES (?item ?num) {
-    (wd:Q474472 1)
-    (wd:Q3841190 2)
+SELECT
+    ?statement
+    ?rank
+    ?reason
+    ?reasonForPreferredRank
+    ?reasonForDeprecatedRank
+WHERE {
+  hint:Query hint:optimizer "None".
+  {
+    SELECT ?statement (1 AS ?num) WHERE {
+      wd:Q474472 p:P18 ?statement.
+    }
+  } UNION {
+    SELECT ?statement (wd:Q71533355 AS ?reason) ?num WHERE {
+      VALUES (?item ?num) {
+        (wd:Q3841190 2)
+        (wd:Q843864 3)
+      }
+      ?item p:P18 ?statement.
+    }
+  } UNION {
+    SELECT
+        ?statement
+        (wd:Q71536040 AS ?reasonForPreferredRank)
+        (wd:Q41755623 AS ?reasonForDeprecatedRank)
+        ?num
+    WHERE {
+      VALUES (?rank ?num) {
+        (wikibase:PreferredRank 4)
+        (wikibase:DeprecatedRank 5)
+      }
+      wd:Q12567 p:P18 ?statement.
+      ?statement wikibase:rank ?rank.
+    }
   }
-  ?item p:P18 ?statement.
-  ?statement wikibase:rank ?rank;
-             ps:P18 ?value.
+  ?statement wikibase:rank ?rank.
 }
 ORDER BY ?num
 '''.strip()
     test_query_results = {
-        'head': {'vars': ['rank', 'item', 'statement', 'value']},
+        'head': {'vars': [
+            'statement',
+            'rank',
+            'reason',
+            'reasonForPreferredRank',
+            'reasonForDeprecatedRank',
+        ]},
         'results': {'bindings': [
             {
-                'item': {
-                    'type': 'uri',
-                    'value': 'http://www.wikidata.org/entity/Q474472',
-                },
-                'statement': {
-                    'type': 'uri',
-                    'value': 'http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa:E501
-                },
-                'value': {
-                    'type': 'uri',
-                    'value': 'http://commons.wikimedia.org/wiki/Special:FilePath/Earth%20as%20a%20%22Pale%20Blue%20Dot%22%20photographed%20by%20Voyager%201%20-%2019900606.tif',  # noqa:E501
-                },
                 'rank': {
                     'type': 'uri',
                     'value': 'http://wikiba.se/ontology#NormalRank',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa: E501
                 },
             },
             {
-                'item': {
-                    'type': 'uri',
-                    'value': 'http://www.wikidata.org/entity/Q3841190',
-                },
-                'statement': {
-                    'type': 'uri',
-                    'value': 'http://www.wikidata.org/entity/statement/Q3841190-dbcf6be8-41c0-5955-d618-2d06ab241344',  # noqa:E501
-                },
-                'value': {
-                    'type': 'uri',
-                    'value': 'http://commons.wikimedia.org/wiki/Special:FilePath/Black%20hole%20-%20Messier%2087.jpg',  # noqa:E501
-                },
                 'rank': {
                     'type': 'uri',
                     'value': 'http://wikiba.se/ontology#NormalRank',
+                },
+                'reason': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q71533355',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q3841190-dbcf6be8-41c0-5955-d618-2d06ab241344',  # noqa: E501
+                },
+            },
+            {
+                'rank': {
+                    'type': 'uri',
+                    'value': 'http://wikiba.se/ontology#NormalRank',
+                },
+                'reason': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q71533355',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q843864-27BF8D25-B1A9-4488-94BF-9564EE2A5776',  # noqa: E501
+                },
+            },
+            {
+                'rank': {
+                    'type': 'uri',
+                    'value': 'http://wikiba.se/ontology#PreferredRank',
+                },
+                'reasonForDeprecatedRank': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q41755623',
+                },
+                'reasonForPreferredRank': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q71536040',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q12567-0688176e-463d-ec87-4a0e-5ef10e47112a',  # noqa: E501
+                },
+            },
+            {
+                'rank': {
+                    'type': 'uri',
+                    'value': 'http://wikiba.se/ontology#DeprecatedRank',
+                },
+                'reasonForDeprecatedRank': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q41755623',
+                },
+                'reasonForPreferredRank': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/Q71536040',
+                },
+                'statement': {
+                    'type': 'uri',
+                    'value': 'http://www.wikidata.org/entity/statement/Q12567-cfae68c3-49ab-99be-85f5-d99272d780d1',  # noqa: E501
                 },
             },
         ]},
@@ -246,7 +328,14 @@ ORDER BY ?num
             'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac': ('normal', ''),
         },
         'Q3841190': {
-            'Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344': ('normal', ''),
+            'Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344': ('normal', 'Q71533355'),  # noqa: E501
+        },
+        'Q843864': {
+            'Q843864$27BF8D25-B1A9-4488-94BF-9564EE2A5776': ('normal', 'Q71533355'),  # noqa: E501
+        },
+        'Q12567': {
+            'Q12567$0688176e-463d-ec87-4a0e-5ef10e47112a': ('preferred', 'Q71536040'),  # noqa: E501
+            'Q12567$cfae68c3-49ab-99be-85f5-d99272d780d1': ('deprecated', 'Q41755623'),  # noqa: E501
         },
     }
 

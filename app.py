@@ -598,13 +598,25 @@ def deny_frame(response: flask.Response) -> flask.Response:
     return response
 
 
+def item_id_from_uri(uri: str, wiki: str) -> str:
+    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+        item_wiki = 'www.wikidata.org'
+    else:
+        item_wiki = 'test.wikidata.org'
+    prefix = f'http://{item_wiki}/entity/'
+    if uri.startswith(prefix):
+        return uri[len(prefix):]
+    else:
+        raise ValueError(f'URI {uri} does not belong to item wiki {item_wiki}')
+
+
 def statement_id_from_uri(uri: str, wiki: str) -> str:
     for protocol in ['http', 'https']:
         prefix = f'{protocol}://{wiki}/entity/statement/'
         if uri.startswith(prefix):
             break
     else:
-        raise ValueError('URI {uri} does not belong to wiki {wiki}')
+        raise ValueError(f'URI {uri} does not belong to wiki {wiki}')
     entity_id, _, guid = uri[len(prefix):].partition('-')
     return f'{entity_id}${guid}'
 
@@ -678,7 +690,17 @@ def query_statement_ids_with_ranks_and_reasons(wiki: str, query: str) \
                                              wiki)
         entity_id = entity_id_from_statement_id(statement_id)
         rank = rank_from_uri(result['rank']['value'])
-        reason = ''  # TODO
+        reason_uri = None
+        if rank == 'preferred':
+            reason_uri = result.get('reasonForPreferredRank', {}).get('value')
+        elif rank == 'deprecated':
+            reason_uri = result.get('reasonForDeprecatedRank', {}).get('value')
+        if not reason_uri:
+            reason_uri = result.get('reason', {}).get('value')
+        if reason_uri:
+            reason = item_id_from_uri(reason_uri, wiki)
+        else:
+            reason = ''
         commands_by_entity_id.setdefault(entity_id, {})\
             [statement_id] = rank, reason  # noqa: E211
     return commands_by_entity_id
