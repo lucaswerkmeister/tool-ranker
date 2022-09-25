@@ -475,7 +475,9 @@ def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
     commands_list = flask.request.form.get('commands', '')
     custom_summary = flask.request.form.get('summary')
 
-    commands_by_entity_id = parse_statement_ids_with_ranks(commands_list)
+    commands_by_entity_id = parse_statement_ids_with_ranks_and_reasons(
+        commands_list,
+    )
 
     return batch_edit_rank_and_show_results(wiki,
                                             commands_by_entity_id,
@@ -503,7 +505,10 @@ def batch_query_edit_rank(wiki: str) \
     query = flask.request.form.get('query', '')
     custom_summary = flask.request.form.get('summary')
 
-    commands_by_entity_id = query_statement_ids_with_ranks(wiki, query)
+    commands_by_entity_id = query_statement_ids_with_ranks_and_reasons(
+        wiki,
+        query,
+    )
 
     return batch_edit_rank_and_show_results(wiki,
                                             commands_by_entity_id,
@@ -641,24 +646,29 @@ def query_statement_ids(wiki: str, query: str) -> Dict[str, List[str]]:
     return statement_ids_by_entity_id
 
 
-def parse_statement_ids_with_ranks(input: str) \
-        -> Dict[str, Dict[str, str]]:
+def parse_statement_ids_with_ranks_and_reasons(input: str) \
+        -> Dict[str, Dict[str, Tuple[str, str]]]:
     commands = input.splitlines()
-    commands_by_entity_id: Dict[str, Dict[str, str]] = {}
+    commands_by_entity_id: Dict[str, Dict[str, Tuple[str, str]]] = {}
     for command in commands:
-        statement_id, rank = re.split('[|\t]', command, maxsplit=1)
+        statement_id, rank, reason, _ = re.split(
+            r'[|\t]',
+            command + '||',  # ensure we can unpack reason even if not given
+            maxsplit=3,
+        )
         entity_id = entity_id_from_statement_id(statement_id)
-        commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
+        commands_by_entity_id.setdefault(entity_id, {})\
+            [statement_id] = rank, reason  # noqa: E211
     return commands_by_entity_id
 
 
-def query_statement_ids_with_ranks(wiki: str, query: str) \
-        -> Dict[str, Dict[str, str]]:
+def query_statement_ids_with_ranks_and_reasons(wiki: str, query: str) \
+        -> Dict[str, Dict[str, Tuple[str, str]]]:
     results = query_wiki(wiki, query, user_agent)
     # TODO better error handling
     assert 'statement' in results['head']['vars']
     assert 'rank' in results['head']['vars']
-    commands_by_entity_id: Dict[str, Dict[str, str]] = {}
+    commands_by_entity_id: Dict[str, Dict[str, Tuple[str, str]]] = {}
     for result in results['results']['bindings']:
         if result['statement']['type'] != 'uri':
             continue
@@ -668,7 +678,9 @@ def query_statement_ids_with_ranks(wiki: str, query: str) \
                                              wiki)
         entity_id = entity_id_from_statement_id(statement_id)
         rank = rank_from_uri(result['rank']['value'])
-        commands_by_entity_id.setdefault(entity_id, {})[statement_id] = rank
+        reason = ''  # TODO
+        commands_by_entity_id.setdefault(entity_id, {})\
+            [statement_id] = rank, reason  # noqa: E211
     return commands_by_entity_id
 
 
@@ -772,13 +784,14 @@ def statements_increment_rank(statement_ids: Container[str],
     return edited_statement_groups, edited_statements
 
 
-def statements_edit_rank(commands: Dict[str, str],
+def statements_edit_rank(commands: Dict[str, Tuple[str, str]],
                          statements: Dict[str, List[dict]],
                          wiki: str) \
         -> Tuple[Dict[str, List[dict]], int]:
     """Edit the rank of certain statements.
 
-    commands maps statement IDs to the rank they should have.
+    commands maps statement IDs to a tuple of
+    the rank they should have and the reason for it (optional, may be empty).
     statements is a mapping from property IDs to statement groups.
     wiki specifies the wiki the statements belong to.
 
@@ -790,11 +803,11 @@ def statements_edit_rank(commands: Dict[str, str],
     for statement_group in statements.values():
         for statement in statement_group:
             if statement['id'] in commands:
-                edited_rank = commands[statement['id']]
-                if edited_rank != statement['rank']:
-                    statement['rank'] = edited_rank
+                rank, reason = commands[statement['id']]
+                if rank != statement['rank']:
+                    statement['rank'] = rank
                     statement_remove_reasons(statement, wiki)
-                    # TODO statement_set_reason()
+                    statement_set_reason(statement, rank, wiki, reason)
                     edited_statements += 1
     return statements, edited_statements
 
@@ -1049,7 +1062,7 @@ def batch_increment_rank_and_show_results(
 
 def batch_edit_rank_and_show_results(
         wiki: str,
-        commands_by_entity_id: Dict[str, Dict[str, str]],
+        commands_by_entity_id: Dict[str, Dict[str, Tuple[str, str]]],
         session: mwapi.Session,
         custom_summary: Optional[str],
 ) -> str:

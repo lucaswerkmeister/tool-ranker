@@ -8,12 +8,12 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="commands">Statement IDs and ranks (one per line, separated by tab or pipe characters):</label>
+    <label for="commands">Statement IDs, ranks, and optional reasons for the rank (one per line, separated by tab or pipe characters):</label>
     <textarea
       class="form-control"
       id="commands"
       name="commands"
-      placeholder="Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac|normal&#xa;Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344|preferred&#xa;Q843864$27BF8D25-B1A9-4488-94BF-9564EE2A5776|deprecated"
+      placeholder="Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac|normal&#xa;Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344|preferred&#xa;Q843864$27BF8D25-B1A9-4488-94BF-9564EE2A5776|deprecated|Q21441764"
       required
       rows="10"
       ></textarea>

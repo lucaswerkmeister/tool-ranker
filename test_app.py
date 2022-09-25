@@ -157,22 +157,22 @@ def test_query_statement_ids(monkeypatch):
     }
 
 
-def test_parse_statement_ids_with_ranks():
+def test_parse_statement_ids_with_ranks_and_reasons():
     input = '''
 Q1$123|normal
-Q2$123|deprecated
-Q1$456\tpreferred
-q2$456\tnormal
-P3$123|preferred
+Q2$123|deprecated|Q123
+Q1$456\tpreferred\tQ456
+q2$456\tnormal|Q789
+P3$123|preferred|
 '''.strip()
-    assert ranker.parse_statement_ids_with_ranks(input) == {
-        'Q1': {'Q1$123': 'normal', 'Q1$456': 'preferred'},
-        'Q2': {'Q2$123': 'deprecated', 'q2$456': 'normal'},
-        'P3': {'P3$123': 'preferred'},
+    assert ranker.parse_statement_ids_with_ranks_and_reasons(input) == {
+        'Q1': {'Q1$123': ('normal', ''), 'Q1$456': ('preferred', 'Q456')},
+        'Q2': {'Q2$123': ('deprecated', 'Q123'), 'q2$456': ('normal', 'Q789')},
+        'P3': {'P3$123': ('preferred', '')},
     }
 
 
-def test_query_statement_ids_with_ranks(monkeypatch):
+def test_query_statement_ids_with_ranks_and_reasons(monkeypatch):
     test_wiki = 'www.wikidata.org'
     test_query = '''
 SELECT ?rank ?item ?statement ?value WHERE {
@@ -237,12 +237,16 @@ ORDER BY ?num
     monkeypatch.setattr(ranker, 'query_wiki', query_wiki)
     monkeypatch.setattr(query_service, 'query_wiki', query_wiki)
 
-    assert ranker.query_statement_ids_with_ranks(test_wiki, test_query) == {
+    actual = ranker.query_statement_ids_with_ranks_and_reasons(
+        test_wiki,
+        test_query,
+    )
+    assert actual == {
         'Q474472': {
-            'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac': 'normal',
+            'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac': ('normal', ''),
         },
         'Q3841190': {
-            'Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344': 'normal',
+            'Q3841190$dbcf6be8-41c0-5955-d618-2d06ab241344': ('normal', ''),
         },
     }
 
@@ -397,7 +401,7 @@ def test_statements_edit_rank():
     unselected_statement = {'id': 'Y', 'rank': 'normal', **reason()}
     unedited_statement = {'id': 'a', 'rank': 'preferred', **reason()}
     edited_statement = {'id': 'b', 'rank': 'normal', **reason()}
-    commands = {'a': 'preferred', 'b': 'preferred'}
+    commands = {'a': ('preferred', 'reason A'), 'b': ('preferred', 'reason B')}
     statements = {
         'P1': [
             unselected_statement,
@@ -417,11 +421,15 @@ def test_statements_edit_rank():
     assert 'P1' in statements
     assert edited_statement in statements['P1']
     assert edited_statement['rank'] == 'preferred'
-    assert not edited_statement['qualifiers']
+    assert 'P2241' not in edited_statement['qualifiers']
+    assert edited_statement['qualifiers']['P7452'][0]\
+        ['datavalue']['value']['id'] == 'reason B'  # noqa: E211
     assert unedited_statement['rank'] == 'preferred'
     assert unedited_statement['qualifiers']['P2241']
+    assert 'P7452' not in unedited_statement['qualifiers']
     assert unselected_statement['rank'] == 'normal'
     assert unselected_statement['qualifiers']['P2241']
+    assert 'P7452' not in unselected_statement['qualifiers']
 
 
 @pytest.mark.parametrize('statement, wiki, expected', [
