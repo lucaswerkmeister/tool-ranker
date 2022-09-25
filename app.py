@@ -742,6 +742,15 @@ def statements_increment_rank(statement_ids: Container[str],
 def statements_edit_rank(commands: Dict[str, str],
                          statements: Dict[str, List[dict]]) \
         -> Tuple[Dict[str, List[dict]], int]:
+    """Edit the rank of certain statements.
+
+    commands maps statement IDs to the rank they should have.
+    statements is a mapping from property IDs to statement groups.
+
+    Returns the edited statements in the same format
+    (in fact, it returns unedited statements too,
+    though I don’t remember if this is intentional or not),
+    and the number of edited statements."""
     edited_statements = 0
     for statement_group in statements.values():
         for statement in statement_group:
