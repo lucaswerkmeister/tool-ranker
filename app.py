@@ -692,8 +692,10 @@ def statements_set_rank_to(statement_ids: Container[str],
         -> Tuple[Dict[str, List[dict]], int]:
     """Set the rank of certain statements to a constant value.
 
-    statement_ids specifies the statements to edit, and rank the target rank.
-    statements is a mapping from property IDs to statement groups.
+    statement_ids is a container (e.g. a set) of statement IDs,
+    controlling which of the given statements are actually edited.
+    rank is the target rank,
+    and statements is a mapping from property IDs to statement groups.
 
     Returns a dict of statement groups of edited statements
     (though the lists in the statements parameter are also edited in-place),
@@ -715,7 +717,8 @@ def statements_increment_rank(statement_ids: Container[str],
         -> Tuple[Dict[str, List[dict]], int]:
     """Increment the rank of certain statements.
 
-    statement_ids specifies the statements to edit.
+    statement_ids is a container (e.g. a set) of statement IDs,
+    controlling which of the given statements are actually edited.
     statements is a mapping from property IDs to statement groups.
 
     Returns a dict of statement groups of edited statements
