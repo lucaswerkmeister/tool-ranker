@@ -13,6 +13,19 @@
   {% endfor %}
 </ul>
 {% endif %}
+{% if noops %}
+<p>
+  There was nothing to do for the following entities (no change):
+</p>
+<ul>
+  {% for entity_id, base_revision_id in noops.items() %}
+  <li>
+    {{ format_entity(wiki, entity_id) }}
+    (<a href="https://{{ wiki }}/w/index.php?oldid={{ base_revision_id }}">permalink</a>)
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
 {% if errors %}
 <p>
   The following entities could not be edited due to errors:
