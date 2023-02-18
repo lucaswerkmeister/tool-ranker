@@ -983,9 +983,17 @@ def save_entity(entity_data: dict,
                                 data=json.dumps(entity_data),
                                 summary=summary,
                                 baserevid=base_revision_id,
-                                token=token)
-    revision_id = api_response['entity']['lastrevid']
+                                token=token,
+                                formatversion=2)
+    if api_response['entity'].get('nochange', False):
+        print('WARNING: The API returned that no change was made,',
+              'so save_entity() should not have been called;',
+              f'we edited {entity_data["id"]} as of {base_revision_id},',
+              'with the following data:',
+              entity_data,
+              file=sys.stderr)
 
+    revision_id = api_response['entity']['lastrevid']
     return revision_id
 
 
