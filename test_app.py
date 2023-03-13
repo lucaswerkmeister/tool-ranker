@@ -1,6 +1,7 @@
 import flask
 import pytest
 from typing import Optional
+import werkzeug
 
 import app as ranker
 import query_service
@@ -137,6 +138,16 @@ def test_rank_from_uri(uri: str, rank: str):
 ])
 def test_entity_id_from_statement_id(statement_id: str, entity_id: str):
     assert ranker.entity_id_from_statement_id(statement_id) == entity_id
+
+
+@pytest.mark.parametrize('statement_id', [
+    'Q1-123',
+    'p1-123',
+    'L1-S1-123',
+])
+def test_entity_id_from_statement_id_invalid(statement_id: str):
+    with pytest.raises(werkzeug.exceptions.BadRequest):
+        ranker.entity_id_from_statement_id(statement_id)
 
 
 def test_parse_statement_ids_list():

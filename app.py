@@ -637,7 +637,13 @@ def rank_from_uri(uri: str) -> str:
 
 
 def entity_id_from_statement_id(statement_id: str) -> str:
-    return statement_id.split('$', 1)[0].upper()
+    try:
+        dollar_index = statement_id.index('$')
+    except ValueError:
+        flask.abort(400, f'{statement_id} does not look like a statement ID'
+                    ' (does not contain a dollar sign)')
+    else:
+        return statement_id[:dollar_index].upper()
 
 
 def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
