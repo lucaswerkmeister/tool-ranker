@@ -107,6 +107,12 @@ def test_item_id_from_uri(uri: str, wiki: str, item_id: str):
     ('http://www.wikidata.org/entity/statement/Q474472-dcf39f47-4275-6529-96f5-94808c2a81ac',  # noqa:E501
      'www.wikidata.org',
      'Q474472$dcf39f47-4275-6529-96f5-94808c2a81ac'),
+    ('http://www.wikidata.org/entity/statement/L1-S1-b5a7d210-4269-b5ec-68ea-9d56b8a73f46',  # noqa:E501
+     'www.wikidata.org',
+     'L1-S1$b5a7d210-4269-b5ec-68ea-9d56b8a73f46'),
+    ('http://www.wikidata.org/entity/statement/L1-F1-0fbbfd13-4840-be9b-fe4e-66af032ff452',  # noqa:E501
+     'www.wikidata.org',
+     'L1-F1$0fbbfd13-4840-be9b-fe4e-66af032ff452'),
     ('https://commons.wikimedia.org/entity/statement/M80857538-e33a73d7-4567-a029-a6e6-14eb3bab8a65',  # noqa:E501
      'commons.wikimedia.org',
      'M80857538$e33a73d7-4567-a029-a6e6-14eb3bab8a65')

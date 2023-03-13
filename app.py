@@ -623,7 +623,8 @@ def statement_id_from_uri(uri: str, wiki: str) -> str:
             break
     else:
         raise ValueError(f'URI {uri} does not belong to wiki {wiki}')
-    entity_id, _, guid = uri[len(prefix):].partition('-')
+    dashed_statement_id = uri[len(prefix):]
+    entity_id, guid = dashed_statement_id[:-37], dashed_statement_id[-36:]
     return f'{entity_id}${guid}'
 
 
