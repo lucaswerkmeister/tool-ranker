@@ -3,6 +3,7 @@
 import decorator
 import flask
 import json
+from markupsafe import Markup
 import mwapi  # type: ignore
 import mwoauth  # type: ignore
 import os
@@ -89,34 +90,34 @@ def csrf_token() -> str:
 
 
 @app.template_filter()
-def user_link(user_name: str) -> flask.Markup:
+def user_link(user_name: str) -> Markup:
     user_href = 'https://www.wikidata.org/wiki/User:'
-    return (flask.Markup(r'<a href="' + user_href) +
-            flask.Markup.escape(user_name.replace(' ', '_')) +
-            flask.Markup(r'">') +
-            flask.Markup(r'<bdi>') +
-            flask.Markup.escape(user_name) +
-            flask.Markup(r'</bdi>') +
-            flask.Markup(r'</a>'))
+    return (Markup(r'<a href="' + user_href) +
+            Markup.escape(user_name.replace(' ', '_')) +
+            Markup(r'">') +
+            Markup(r'<bdi>') +
+            Markup.escape(user_name) +
+            Markup(r'</bdi>') +
+            Markup(r'</a>'))
 
 
 @app.template_global()
-def authentication_area() -> flask.Markup:
+def authentication_area() -> Markup:
     if 'OAUTH' not in app.config:
-        return flask.Markup()
+        return Markup()
 
     session = authenticated_session('www.wikidata.org')
     if session is None:
-        return (flask.Markup(r'<a id="login" class="navbar-text" href="') +
-                flask.Markup.escape(flask.url_for('login')) +
-                flask.Markup(r'">Log in</a>'))
+        return (Markup(r'<a id="login" class="navbar-text" href="') +
+                Markup.escape(flask.url_for('login')) +
+                Markup(r'">Log in</a>'))
 
     userinfo = session.get(action='query',
                            meta='userinfo')['query']['userinfo']
 
-    return (flask.Markup(r'<span class="navbar-text">Logged in as ') +
+    return (Markup(r'<span class="navbar-text">Logged in as ') +
             user_link(userinfo['name']) +
-            flask.Markup(r'</span>'))
+            Markup(r'</span>'))
 
 
 @app.template_global()
@@ -136,22 +137,22 @@ def has_query_service(wiki: str) -> bool:
 
 
 @app.template_global()
-def format_value(wiki: str, property_id: str, value: dict) -> flask.Markup:
+def format_value(wiki: str, property_id: str, value: dict) -> Markup:
     return wbformat.format_value(anonymous_session(wiki), property_id, value)
 
 
 @app.template_global()
-def format_entity(wiki: str, entity_id: str) -> flask.Markup:
+def format_entity(wiki: str, entity_id: str) -> Markup:
     return wbformat.format_entity(anonymous_session(wiki), entity_id)
 
 
 @app.template_filter()
-def format_query_service(wiki: str) -> flask.Markup:
-    return (flask.Markup(r'<a href="') +
-            flask.Markup.escape(query_service_url(wiki)) +
-            flask.Markup(r'">') +
-            flask.Markup.escape(query_service_name(wiki)) +
-            flask.Markup(r'</a>'))
+def format_query_service(wiki: str) -> Markup:
+    return (Markup(r'<a href="') +
+            Markup.escape(query_service_url(wiki)) +
+            Markup(r'">') +
+            Markup.escape(query_service_name(wiki)) +
+            Markup(r'</a>'))
 
 
 @app.template_filter()
@@ -876,7 +877,7 @@ def statement_set_reason(
     else:
         property_id = None
     if property_id is None:
-        description = flask.Markup('Cannot set a reason for {} rank on {}')\
+        description = Markup('Cannot set a reason for {} rank on {}')\
             .format(rank, wiki)
         flask.abort(400, description=description)
     qualifiers = statement.setdefault('qualifiers', {})

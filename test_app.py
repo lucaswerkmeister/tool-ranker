@@ -1,4 +1,4 @@
-import flask
+from markupsafe import Markup
 import pytest
 from typing import Optional
 import werkzeug
@@ -89,8 +89,8 @@ def test_index_redirect_mediainfo(client):
 def test_format_value_escapes_html():
     value = {'value': '<script>alert("!Mediengruppe Bitnik");</script>',
              'type': 'string'}
-    expected = flask.Markup(r'&lt;script&gt;alert("!Mediengruppe'
-                            r' Bitnik");&lt;/script&gt;')
+    expected = Markup(r'&lt;script&gt;alert("!Mediengruppe'
+                      r' Bitnik");&lt;/script&gt;')
     assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
 
 

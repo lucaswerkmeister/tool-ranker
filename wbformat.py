@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import cachetools
-import flask
 import json
+from markupsafe import Markup
 import mwapi  # type: ignore
 import threading
 from typing import AbstractSet, List, Tuple
@@ -9,7 +9,7 @@ from typing import AbstractSet, List, Tuple
 
 def format_value(session: mwapi.Session,
                  property_id: str,
-                 value: dict) -> flask.Markup:
+                 value: dict) -> Markup:
     response = session.get(action='wbformatvalue',
                            datavalue=json.dumps(value),
                            property=property_id,
@@ -20,7 +20,7 @@ def format_value(session: mwapi.Session,
     for link in html.find_all('a'):
         link.name = 'span'
         del link['href']
-    return flask.Markup(html)
+    return Markup(html)
 
 
 format_entity_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
@@ -37,11 +37,11 @@ def format_entity_key(session: mwapi.Session,
                    key=format_entity_key,
                    lock=format_entity_cache_lock)
 def format_entity(session: mwapi.Session,
-                  entity_id: str) -> flask.Markup:
+                  entity_id: str) -> Markup:
     response = session.get(action='wbformatentities',
                            ids=[entity_id],
                            formatversion=2)
-    return flask.Markup(response['wbformatentities'][entity_id])
+    return Markup(response['wbformatentities'][entity_id])
 
 
 def prefetch_entities(session: mwapi.Session,
@@ -66,5 +66,5 @@ def prefetch_entities(session: mwapi.Session,
                                    formatversion=2)['wbformatentities']
             for entity_id in response:
                 key = format_entity_key(session, entity_id)
-                value = flask.Markup(response[entity_id])
+                value = Markup(response[entity_id])
                 format_entity_cache[key] = value
