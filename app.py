@@ -2,6 +2,7 @@
 
 import decorator
 import flask
+from flask.typing import ResponseReturnValue as RRV
 import json
 from markupsafe import Markup
 import mwapi  # type: ignore
@@ -190,7 +191,7 @@ def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
 
 
 @app.route('/')
-def index() -> str:
+def index() -> RRV:
     args = flask.request.args
     return flask.render_template('index.html',
                                  wiki=args.get('wiki'),
@@ -199,7 +200,7 @@ def index() -> str:
 
 
 @app.route('/', methods=['POST'])
-def redirect_edit() -> werkzeug.Response:
+def redirect_edit() -> RRV:
     form = flask.request.form
     wiki = form['wiki']
     entity_id = form['entity_id']
@@ -221,32 +222,31 @@ def redirect_edit() -> werkzeug.Response:
 
 
 @app.route('/batch/list/collective/', methods=['POST'])
-def redirect_batch_list_collective() -> werkzeug.Response:
+def redirect_batch_list_collective() -> RRV:
     return flask.redirect(flask.url_for('show_batch_list_collective_form',
                                         wiki=flask.request.form['wiki']))
 
 
 @app.route('/batch/list/individual/', methods=['POST'])
-def redirect_batch_list_individual() -> werkzeug.Response:
+def redirect_batch_list_individual() -> RRV:
     return flask.redirect(flask.url_for('show_batch_list_individual_form',
                                         wiki=flask.request.form['wiki']))
 
 
 @app.route('/batch/query/collective/', methods=['POST'])
-def redirect_batch_query_collective() -> werkzeug.Response:
+def redirect_batch_query_collective() -> RRV:
     return flask.redirect(flask.url_for('show_batch_query_collective_form',
                                         wiki=flask.request.form['wiki']))
 
 
 @app.route('/batch/query/individual/', methods=['POST'])
-def redirect_batch_query_individual() -> werkzeug.Response:
+def redirect_batch_query_individual() -> RRV:
     return flask.redirect(flask.url_for('show_batch_query_individual_form',
                                         wiki=flask.request.form['wiki']))
 
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
-def show_edit_form(wiki: str, entity_id: str, property_id: str) \
-        -> str | Tuple[str, int]:
+def show_edit_form(wiki: str, entity_id: str, property_id: str) -> RRV:
     session = anonymous_session(wiki)
     entity = get_entities(session, [entity_id])[entity_id]
     if 'missing' in entity:
@@ -272,7 +272,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) \
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/set/<rank:rank>',  # noqa:E501
            methods=['POST'])
 def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
-        -> werkzeug.Response | Tuple[str, int]:
+        -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -315,8 +315,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/increment',
            methods=['POST'])
-def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
-        -> werkzeug.Response | Tuple[str, int]:
+def edit_increment_rank(wiki: str, entity_id: str, property_id: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -354,15 +353,14 @@ def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
 
 
 @app.route('/batch/list/collective/<wiki:wiki>/')
-def show_batch_list_collective_form(wiki: str) -> str:
+def show_batch_list_collective_form(wiki: str) -> RRV:
     return flask.render_template('batch-list-collective.html',
                                  wiki=wiki)
 
 
 @app.route('/batch/list/collective/<wiki:wiki>/set/<rank:rank>',
            methods=['POST'])
-def batch_list_set_rank(wiki: str, rank: str) \
-        -> str | Tuple[str, int]:
+def batch_list_set_rank(wiki: str, rank: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -386,8 +384,7 @@ def batch_list_set_rank(wiki: str, rank: str) \
 
 @app.route('/batch/list/collective/<wiki:wiki>/increment',
            methods=['POST'])
-def batch_list_increment_rank(wiki: str) \
-        -> str | Tuple[str, int]:
+def batch_list_increment_rank(wiki: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -409,15 +406,14 @@ def batch_list_increment_rank(wiki: str) \
 
 
 @app.route('/batch/query/collective/<wwqs:wiki>/')
-def show_batch_query_collective_form(wiki: str) -> str:
+def show_batch_query_collective_form(wiki: str) -> RRV:
     return flask.render_template('batch-query-collective.html',
                                  wiki=wiki)
 
 
 @app.route('/batch/query/collective/<wwqs:wiki>/set/<rank:rank>',
            methods=['POST'])
-def batch_query_set_rank(wiki: str, rank: str) \
-        -> str | Tuple[str, int]:
+def batch_query_set_rank(wiki: str, rank: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -441,8 +437,7 @@ def batch_query_set_rank(wiki: str, rank: str) \
 
 @app.route('/batch/query/collective/<wwqs:wiki>/increment',
            methods=['POST'])
-def batch_query_increment_rank(wiki: str) \
-        -> str | Tuple[str, int]:
+def batch_query_increment_rank(wiki: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -464,14 +459,14 @@ def batch_query_increment_rank(wiki: str) \
 
 
 @app.route('/batch/list/individual/<wiki:wiki>/')
-def show_batch_list_individual_form(wiki: str) -> str:
+def show_batch_list_individual_form(wiki: str) -> RRV:
     return flask.render_template('batch-list-individual.html',
                                  wiki=wiki)
 
 
 @app.route('/batch/list/individual/<wiki:wiki>/',
            methods=['POST'])
-def batch_list_edit_rank(wiki: str) -> str | Tuple[str, int]:
+def batch_list_edit_rank(wiki: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -493,15 +488,14 @@ def batch_list_edit_rank(wiki: str) -> str | Tuple[str, int]:
 
 
 @app.route('/batch/query/individual/<wwqs:wiki>/')
-def show_batch_query_individual_form(wiki: str) -> str:
+def show_batch_query_individual_form(wiki: str) -> RRV:
     return flask.render_template('batch-query-individual.html',
                                  wiki=wiki)
 
 
 @app.route('/batch/query/individual/<wwqs:wiki>/',
            methods=['POST'])
-def batch_query_edit_rank(wiki: str) \
-        -> str | Tuple[str, int]:
+def batch_query_edit_rank(wiki: str) -> RRV:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -524,7 +518,7 @@ def batch_query_edit_rank(wiki: str) \
 
 
 @app.route('/login')
-def login() -> werkzeug.Response:
+def login() -> RRV:
     redirect, request_token = mwoauth.initiate(index_php,
                                                consumer_token,
                                                user_agent=user_agent)
@@ -537,7 +531,7 @@ def login() -> werkzeug.Response:
 
 
 @app.route('/oauth/callback')
-def oauth_callback() -> werkzeug.Response | str:
+def oauth_callback() -> RRV:
     oauth_request_token = flask.session.pop('oauth_request_token', None)
     if oauth_request_token is None:
         already_logged_in = 'oauth_access_token' in flask.session
@@ -560,7 +554,7 @@ def oauth_callback() -> werkzeug.Response | str:
 
 
 @app.route('/logout')
-def logout() -> werkzeug.Response:
+def logout() -> RRV:
     flask.session.pop('oauth_access_token', None)
     return flask.redirect(flask.url_for('index'))
 
