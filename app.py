@@ -16,7 +16,7 @@ import string
 import sys
 import toolforge
 from typing import Any, Callable, Container, Dict, \
-    Iterable, List, Optional, Tuple, Union
+    Iterable, List, Optional, Tuple
 import werkzeug
 import yaml
 
@@ -246,7 +246,7 @@ def redirect_batch_query_individual() -> werkzeug.Response:
 
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/')
 def show_edit_form(wiki: str, entity_id: str, property_id: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     session = anonymous_session(wiki)
     entity = get_entities(session, [entity_id])[entity_id]
     if 'missing' in entity:
@@ -272,7 +272,7 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) \
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/set/<rank:rank>',  # noqa:E501
            methods=['POST'])
 def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
-        -> Union[werkzeug.Response, Tuple[str, int]]:
+        -> werkzeug.Response | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -316,7 +316,7 @@ def edit_set_rank(wiki: str, entity_id: str, property_id: str, rank: str) \
 @app.route('/edit/<wiki:wiki>/<eid:entity_id>/<pid:property_id>/increment',
            methods=['POST'])
 def edit_increment_rank(wiki: str, entity_id: str, property_id: str) \
-        -> Union[werkzeug.Response, Tuple[str, int]]:
+        -> werkzeug.Response | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -362,7 +362,7 @@ def show_batch_list_collective_form(wiki: str) -> str:
 @app.route('/batch/list/collective/<wiki:wiki>/set/<rank:rank>',
            methods=['POST'])
 def batch_list_set_rank(wiki: str, rank: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -387,7 +387,7 @@ def batch_list_set_rank(wiki: str, rank: str) \
 @app.route('/batch/list/collective/<wiki:wiki>/increment',
            methods=['POST'])
 def batch_list_increment_rank(wiki: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -417,7 +417,7 @@ def show_batch_query_collective_form(wiki: str) -> str:
 @app.route('/batch/query/collective/<wwqs:wiki>/set/<rank:rank>',
            methods=['POST'])
 def batch_query_set_rank(wiki: str, rank: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -442,7 +442,7 @@ def batch_query_set_rank(wiki: str, rank: str) \
 @app.route('/batch/query/collective/<wwqs:wiki>/increment',
            methods=['POST'])
 def batch_query_increment_rank(wiki: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -471,7 +471,7 @@ def show_batch_list_individual_form(wiki: str) -> str:
 
 @app.route('/batch/list/individual/<wiki:wiki>/',
            methods=['POST'])
-def batch_list_edit_rank(wiki: str) -> Union[str, Tuple[str, int]]:
+def batch_list_edit_rank(wiki: str) -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -501,7 +501,7 @@ def show_batch_query_individual_form(wiki: str) -> str:
 @app.route('/batch/query/individual/<wwqs:wiki>/',
            methods=['POST'])
 def batch_query_edit_rank(wiki: str) \
-        -> Union[str, Tuple[str, int]]:
+        -> str | Tuple[str, int]:
     if not submitted_request_valid():
         return 'CSRF error', 400  # TODO better error
 
@@ -537,7 +537,7 @@ def login() -> werkzeug.Response:
 
 
 @app.route('/oauth/callback')
-def oauth_callback() -> Union[werkzeug.Response, str]:
+def oauth_callback() -> werkzeug.Response | str:
     oauth_request_token = flask.session.pop('oauth_request_token', None)
     if oauth_request_token is None:
         already_logged_in = 'oauth_access_token' in flask.session
@@ -981,7 +981,7 @@ def edit_token(session: mwapi.Session) -> str:
 
 def save_entity(entity_data: dict,
                 summary: str,
-                base_revision_id: Union[int, str],
+                base_revision_id: int | str,
                 session: mwapi.Session) -> int:
 
     token = edit_token(session)
@@ -1007,7 +1007,7 @@ def save_entity(entity_data: dict,
 
 def save_entity_and_redirect(entity_data: dict,
                              summary: str,
-                             base_revision_id: Union[int, str],
+                             base_revision_id: int | str,
                              session: mwapi.Session) -> werkzeug.Response:
 
     revision_id = save_entity(entity_data,
@@ -1019,7 +1019,7 @@ def save_entity_and_redirect(entity_data: dict,
 
 
 def redirect(session: mwapi.Session,
-             base_revision_id: Union[int, str],
+             base_revision_id: int | str,
              revision_id: Optional[int] = None) -> werkzeug.Response:
     """Redirect to the given edit.
 
