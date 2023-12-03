@@ -10,10 +10,15 @@ from typing import AbstractSet, List, Tuple
 def format_value(session: mwapi.Session,
                  property_id: str,
                  value: dict) -> Markup:
-    response = session.get(action='wbformatvalue',
-                           datavalue=json.dumps(value),
-                           property=property_id,
-                           generate='text/html')
+    response = session.get(
+        action='wbformatvalue',
+        datavalue=json.dumps(value),
+        property=property_id,
+        generate='text/html',
+        # force English, all the tool is in English
+        # and we don’t split the cache by language
+        uselang='en',
+    )
     html = BeautifulSoup(response['result'], features='html.parser')
     # turn links into spans – clicking the value should toggle the checkbox,
     # and also the hrefs returned by Wikibase are relative anyways (T218646)
@@ -38,9 +43,13 @@ def format_entity_key(session: mwapi.Session,
                    lock=format_entity_cache_lock)
 def format_entity(session: mwapi.Session,
                   entity_id: str) -> Markup:
-    response = session.get(action='wbformatentities',
-                           ids=[entity_id],
-                           formatversion=2)
+    response = session.get(
+        action='wbformatentities',
+        ids=[entity_id],
+        # force English (see above)
+        uselang='en',
+        formatversion=2,
+    )
     return Markup(response['wbformatentities'][entity_id])
 
 
@@ -61,9 +70,13 @@ def prefetch_entities(session: mwapi.Session,
                 else:
                     last_chunk.append(entity_id)
         for entity_id_chunk in entity_id_chunks:
-            response = session.get(action='wbformatentities',
-                                   ids=entity_id_chunk,
-                                   formatversion=2)['wbformatentities']
+            response = session.get(
+                action='wbformatentities',
+                ids=entity_id_chunk,
+                # force English (see above)
+                uselang='en',
+                formatversion=2,
+            )['wbformatentities']
             for entity_id in response:
                 key = format_entity_key(session, entity_id)
                 value = Markup(response[entity_id])
