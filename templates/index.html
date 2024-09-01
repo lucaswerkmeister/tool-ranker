@@ -6,10 +6,9 @@
 {% endblock head %}
 
 {% block main %}
-<h1>Ranker</h1>
+<h1>{{ message('tool-name') }}</h1>
 <p>
-  This tool lets you edit the rank of multiple statements at once.
-  <!-- TODO more details -->
+  {{ message('index-paragraph-1') }}
 </p>
 <form method="post" action="{{ url_for('redirect_edit') }}">
   <div class="form-group">

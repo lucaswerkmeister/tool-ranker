@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html {{ push_html_lang( g.interface_language_code ) }}>
   <head>
     {% block head %}
     <meta charset="utf-8">
-    <title>{% block title %}Ranker{% endblock title %}</title>
+    <title>{% block title %}{{ message('tool-name') | striptags }}{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     {% endblock head %}
   </head>
   <body>
-    <a href="#main" class="sr-only sr-only-focusable">Skip to main content</a>
+    <a href="#main" class="sr-only sr-only-focusable">{{ message('skip-to-main-content') }}</a>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <a href="{{ url_for('index') }}" class="navbar-brand">Ranker</a>
+      <a href="{{ url_for('index') }}" class="navbar-brand">{{ message('tool-name') }}</a>
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item"><a href="https://www.wikidata.org/wiki/User:Lucas_Werkmeister/Ranker" class="nav-link">Documentation</a></li>
-        <li class="nav-item"><a href="https://tools.wmflabs.org/" class="nav-link">Wikimedia Toolforge</a></li>
-        <li class="nav-item"><a href="https://gitlab.wikimedia.org/toolforge-repos/ranker" class="nav-link">Source code</a></li>
+        <li class="nav-item"><a href="https://www.wikidata.org/wiki/User:Lucas_Werkmeister/Ranker" class="nav-link">{{ message('nav-documentation') }}</a></li>
+        <li class="nav-item"><a href="https://tools.wmflabs.org/" class="nav-link">{{ message('nav-toolforge') }}</a></li>
+        <li class="nav-item"><a href="https://gitlab.wikimedia.org/toolforge-repos/ranker" class="nav-link">{{ message('nav-source-code') }}</a></li>
       </ul>
       {{ authentication_area() }}
     </nav>
@@ -25,4 +25,4 @@
       {% endblock main %}
     </main>
   </body>
-</html>
+</html{{ pop_html_lang( g.interface_language_code ) }}>

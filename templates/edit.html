@@ -27,17 +27,24 @@
 {% endif %}
 <p>
   {% if can_edit() %}
-  You
+  {{
+    message(
+     'edit-paragraph-1-logged-in',
+     num_statements=statements | length,
+     formatted_entity_id=format_entity(wiki, entity_id),
+     formatted_property_id=format_entity(wiki, property_id),
+    )
+  }}
   {% else %}
-  Once you log in, you
+  {{
+    message(
+     'edit-paragraph-1-logged-out',
+     num_statements=statements | length,
+     formatted_entity_id=format_entity(wiki, entity_id),
+     formatted_property_id=format_entity(wiki, property_id),
+    )
+  }}
   {% endif %}
-  can edit the rank of the following {{ format_entity(wiki, property_id) }}
-  {% if statements | length > 1 %}
-  statements
-  {% else %}
-  statement
-  {% endif %}
-  on {{ format_entity(wiki, entity_id) }}:
 </p>
 <div id="selection_buttons">
   <noscript>

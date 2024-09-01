@@ -13,6 +13,7 @@ requests
 requests_oauthlib
 SPARQLWrapper
 toolforge
+toolforge_i18n[Flask]
 types-beautifulsoup4
 types-cachetools
 types-decorator

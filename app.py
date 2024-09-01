@@ -16,6 +16,7 @@ import stat
 import string
 import sys
 import toolforge
+from toolforge_i18n import ToolforgeI18n, message
 from typing import Any, Callable, Container, Dict, \
     Iterable, List, Optional, Tuple
 import werkzeug
@@ -29,6 +30,7 @@ import wbformat
 
 
 app = flask.Flask(__name__)
+i18n = ToolforgeI18n(app)
 
 user_agent = toolforge.set_user_agent(
     'ranker',
@@ -111,13 +113,19 @@ def authentication_area() -> Markup:
     if session is None:
         return (Markup(r'<a id="login" class="navbar-text" href="') +
                 Markup.escape(flask.url_for('login')) +
-                Markup(r'">Log in</a>'))
+                Markup(r'">') +
+                message('nav-login') +
+                Markup(r'</a>'))
 
     userinfo = session.get(action='query',
                            meta='userinfo')['query']['userinfo']
 
-    return (Markup(r'<span class="navbar-text">Logged in as ') +
-            user_link(userinfo['name']) +
+    user_name = userinfo['name']
+    logged_in_message = message('nav-logged-in',
+                                user_name=user_name,
+                                user_link=user_link(user_name))
+    return (Markup(r'<span class="navbar-text">') +
+            logged_in_message +
             Markup(r'</span>'))
 
 
