@@ -4,9 +4,9 @@
 #
 #    pip-compile
 #
-aiohappyeyeballs==2.4.0
+aiohappyeyeballs==2.4.3
     # via aiohttp
-aiohttp==3.10.5
+aiohttp==3.10.10
     # via mwapi
 aiosignal==1.3.1
     # via aiohttp
@@ -20,7 +20,7 @@ cachetools==5.5.0
     # via -r requirements.in
 certifi==2024.8.30
     # via requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via flask
@@ -30,30 +30,30 @@ flake8==7.1.1
     # via -r requirements.in
 flask==3.0.3
     # via -r requirements.in
-frozenlist==1.4.1
+frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-idna==3.8
+html5lib-modern==1.2
+    # via rdflib
+idna==3.10
     # via
     #   requests
     #   yarl
 iniconfig==2.0.0
     # via pytest
-isodate==0.6.1
-    # via rdflib
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.4
     # via flask
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via
     #   -r requirements.in
     #   jinja2
     #   werkzeug
 mccabe==0.7.0
     # via flake8
-multidict==6.0.5
+multidict==6.1.0
     # via
     #   aiohttp
     #   yarl
@@ -61,7 +61,7 @@ mwapi==0.6.1
     # via -r requirements.in
 mwoauth==0.4.0
     # via -r requirements.in
-mypy==1.11.2
+mypy==1.13.0
     # via -r requirements.in
 mypy-extensions==1.0.0
     # via mypy
@@ -73,6 +73,8 @@ packaging==24.1
     # via pytest
 pluggy==1.5.0
     # via pytest
+propcache==0.2.0
+    # via yarl
 pycodestyle==2.12.1
     # via flake8
 pyflakes==3.2.0
@@ -81,13 +83,13 @@ pyjwt==2.9.0
     # via mwoauth
 pymysql==1.1.1
     # via toolforge
-pyparsing==3.1.4
+pyparsing==3.2.0
     # via rdflib
-pytest==8.3.2
+pytest==8.3.3
     # via -r requirements.in
 pyyaml==6.0.2
     # via -r requirements.in
-rdflib==7.0.0
+rdflib==7.1.0
     # via sparqlwrapper
 requests==2.32.3
     # via
@@ -100,33 +102,31 @@ requests-oauthlib==2.0.0
     # via
     #   -r requirements.in
     #   mwoauth
-six==1.16.0
-    # via isodate
 soupsieve==2.6
     # via beautifulsoup4
 sparqlwrapper==2.0.0
     # via -r requirements.in
 toolforge==6.0.0
     # via -r requirements.in
-types-beautifulsoup4==4.12.0.20240511
+types-beautifulsoup4==4.12.0.20241020
     # via -r requirements.in
 types-cachetools==5.5.0.20240820
     # via -r requirements.in
 types-decorator==5.1.8.20240310
     # via -r requirements.in
-types-html5lib==1.1.11.20240806
+types-html5lib==1.1.11.20241018
     # via types-beautifulsoup4
-types-pyyaml==6.0.12.20240808
+types-pyyaml==6.0.12.20240917
     # via -r requirements.in
-types-requests==2.32.0.20240712
+types-requests==2.32.0.20241016
     # via -r requirements.in
 typing-extensions==4.12.2
     # via mypy
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   requests
     #   types-requests
-werkzeug==3.0.4
+werkzeug==3.0.6
     # via flask
-yarl==1.9.6
+yarl==1.16.0
     # via aiohttp
