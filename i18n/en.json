@@ -29,5 +29,6 @@
 	"index-batch-row-collective": "same action for all statements",
 	"index-batch-row-individual": "specify rank for each statement",
 	"edit-paragraph-1-logged-in": "You can edit the rank of the following $3 {{PLURAL:$1|statement|statements}} on $2:",
-	"edit-paragraph-1-logged-out": "Once you log in, you can edit the rank of the following $3 {{PLURAL:$1|statement|statements}} on $2:"
+	"edit-paragraph-1-logged-out": "Once you log in, you can edit the rank of the following $3 {{PLURAL:$1|statement|statements}} on $2:",
+	"error-no-such-entity": "No entity with the ID $1 exists on $2."
 }

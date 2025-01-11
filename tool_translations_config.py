@@ -25,6 +25,10 @@ config = TranslationsConfig(
             'formatted_entity_id',
             'formatted_property_id',
         ],
+        'error-no-such-entity': [
+            'entity_id',
+            'wiki',
+        ],
     },
     check_translations=False,
 )
