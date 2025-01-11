@@ -21,7 +21,7 @@
   </div>
   {{ reason_input(wiki) }}
   <div class="form-group">
-    <label for="summary">Edit summary (optional):</label>
+    <label for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}
@@ -34,28 +34,28 @@
     class="btn btn-primary"
     formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='preferred') }}"
     {{ disabled_attrs }}>
-    Set to preferred rank
+    {{ message('edit-button-preferred') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='normal') }}"
     {{ disabled_attrs }}>
-    Set to normal rank
+    {{ message('edit-button-normal') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_list_set_rank', wiki=wiki, rank='deprecated') }}"
     {{ disabled_attrs }}>
-    Set to deprecated rank
+    {{ message('edit-button-deprecated') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_list_increment_rank', wiki=wiki) }}"
     {{ disabled_attrs }}>
-    Increment rank
+    {{ message('edit-button-increment') }}
   </button>
 </form>
 <p class="mt-3">
