@@ -28,6 +28,10 @@ config = TranslationsConfig(
             'formatted_entity_id',
             'formatted_property_id',
         ],
+        'edit-no-statements': [
+            'entity',
+            'property',
+        ],
         'error-no-such-entity': [
             'entity_id',
             'wiki',

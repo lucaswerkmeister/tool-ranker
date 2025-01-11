@@ -91,7 +91,7 @@
   {% endfor %}
   {{ reason_input(wiki) }}
   <div class="form-group">
-    <label for="summary">Edit summary (optional):</label>
+    <label for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}
@@ -105,9 +105,9 @@
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='preferred') }}"
     {{ disabled_attrs }}>
     {% if is_mediainfo %}
-    Mark as prominent
+    {{ message('edit-button-prominent') }}
     {% else %}
-    Set to preferred rank
+    {{ message('edit-button-preferred') }}
     {% endif %}
   </button>
   <button
@@ -116,9 +116,9 @@
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='normal') }}"
     {{ disabled_attrs }}>
     {% if is_mediainfo %}
-    Mark as not prominent
+    {{ message('edit-button-not-prominent') }}
     {% else %}
-    Set to normal rank
+    {{ message('edit-button-normal') }}
     {% endif %}
   </button>
   {%  if not is_mediainfo %}
@@ -126,18 +126,24 @@
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='deprecated') }}"
-    {{ disabled_attrs }}>Set to deprecated rank</button>
+    {{ disabled_attrs }}>
+    {{ message('edit-button-deprecated') }}
+  </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_increment_rank', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
-    {{ disabled_attrs }}>Increment rank</button>
+    {{ disabled_attrs }}>
+    {{ message('edit-button-increment') }}
+  </button>
   {% endif %}
 </form>
 {% else %}
 <p class="alert alert-info" role="alert">
-  {{ format_entity(wiki, entity_id) }} has no statements for {{ format_entity(wiki, property_id) }}.
-  <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">Return to main page</a>
+  {{ message('edit-no-statements', entity=format_entity(wiki, entity_id), property=format_entity(wiki, property_id)) }}
+  <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">
+    {{ message('edit-return') }}
+  </a>
 </p>
 {% endif %}
 {% endblock %}

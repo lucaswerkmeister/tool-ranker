@@ -35,5 +35,14 @@
 	"edit-select-none": "Label for a button to unselect all statements.",
 	"edit-invert-selection": "Label for a button to invert the selected statements (select the unselected ones and unselect the selected ones).",
 	"edit-noscript": "Hint that is shown on the edit page to users who have JavaScript disabled. The mentioned button labels should match {{msg-wm|ranker-edit-select-all}}, {{msg-wm|ranker-edit-select-none}} and {{msg-wm|ranker-edit-invert-selection}}, but (at least in English) lowercased.",
+	"edit-label-summary": "Label for an optional form input to enter a summary for the edit.",
+	"edit-button-preferred": "Label for a button to set the rank of the selected statement(s) to preferred ({{msg-mw|wikibase-statementview-rank-preferred}}).",
+	"edit-button-normal": "Label for a button to set the rank of the selected statement(s) to normal ({{msg-mw|wikibase-statementview-rank-normal}}).",
+	"edit-button-deprecated": "Label for a button to set the rank of the selected statement(s) to deprecated ({{msg-mw|wikibase-statementview-rank-deprecated}}).",
+	"edit-button-prominent": "Label for a button to set the rank of the selected statement(s) to prominent ({{msg-mw|wikibasemediainfo-statements-item-mark-as-prominent}}).",
+	"edit-button-not-prominent": "Label for a button to set the rank of the selected statement(s) to not prominent (the opposite of {{msg-mw|wikibasemediainfo-statements-item-mark-as-prominent}}).",
+	"edit-button-increment": "Label for a button to increment the rank of the selected statement(s), i.e. change normal to preferred and deprecated to normal.",
+	"edit-no-statements": "Message shown when the user selected an entity and property ID that had no matching statements.\n\nParameters:\n* $1 - the selected entity (formatted)\n* $2 - the selected property (formatted)",
+	"edit-return": "Label for a button shown when the user selected an entity and property ID that had no matching statements, to return to the main page and select different inputs.",
 	"error-no-such-entity": "Error message shown when the user entered an entity ID that doesn’t exist.\n\nParameters:\n* $1 - the missing entity ID\n* $2 - the selected wiki"
 }

@@ -35,5 +35,14 @@
 	"edit-select-none": "Select none",
 	"edit-invert-selection": "Invert selection",
 	"edit-noscript": "Enable JavaScript for “select all”, “select none” and “invert selection” buttons. (The rest of the tool works without JavaScript, if you can’t enable it.)",
+	"edit-label-summary": "Edit summary (optional):",
+	"edit-button-preferred": "Set to preferred rank",
+	"edit-button-normal": "Set to normal rank",
+	"edit-button-deprecated": "Set to deprecated rank",
+	"edit-button-prominent": "Mark as prominent",
+	"edit-button-not-prominent": "Mark as not prominent",
+	"edit-button-increment": "Increment rank",
+	"edit-no-statements": "$1 has no statements for $2.",
+	"edit-return": "Return to main page",
 	"error-no-such-entity": "No entity with the ID $1 exists on $2."
 }
