@@ -31,5 +31,9 @@
 	"edit-must-log-in": "Message shown on several edit pages when editing is disabled because the user is not logged in.\n\nParameters:\n* $1 - the URL for the login link",
 	"edit-paragraph-1-logged-in": "First paragraph on the page to edit the rank of a set of statements, if the user is logged in. (See also {{msg-wm|ranker-edit-paragraph-1-logged-out}} if the user is not logged in.)\n\nParameters:\n* $1 - the number of statements to be edited.\n* $2 - the label of the entity (e.g. a Wikidata item or Wikimedia Commons file) whose statements are being edited.\n* $3 - the label of the Wikidata property selecting the statements to edit (e.g. “instance of”).",
 	"edit-paragraph-1-logged-out": "First paragraph on the page to edit the rank of a set of statements, if the user is not logged in. (See also {{msg-wm|ranker-edit-paragraph-1-logged-in}} if the user is logged in.)\n\nParameters:\n* $1 - the number of statements to be edited.\n* $2 - the label of the entity (e.g. a Wikidata item or Wikimedia Commons file) whose statements are being edited.\n* $3 - the label of the Wikidata property selecting the statements to edit (e.g. “instance of”).",
+	"edit-select-all": "Label for a button to select all statements.",
+	"edit-select-none": "Label for a button to unselect all statements.",
+	"edit-invert-selection": "Label for a button to invert the selected statements (select the unselected ones and unselect the selected ones).",
+	"edit-noscript": "Hint that is shown on the edit page to users who have JavaScript disabled. The mentioned button labels should match {{msg-wm|ranker-edit-select-all}}, {{msg-wm|ranker-edit-select-none}} and {{msg-wm|ranker-edit-invert-selection}}, but (at least in English) lowercased.",
 	"error-no-such-entity": "Error message shown when the user entered an entity ID that doesn’t exist.\n\nParameters:\n* $1 - the missing entity ID\n* $2 - the selected wiki"
 }

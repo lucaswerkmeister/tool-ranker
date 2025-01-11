@@ -4,9 +4,9 @@ window.addEventListener('DOMContentLoaded', () => {
           invertSelectionButton = document.createElement('button'),
           buttonsContainer = document.getElementById('selection_buttons');
 
-    selectAllButton.innerText = 'Select all';
-    selectNoneButton.innerText = 'Select none';
-    invertSelectionButton.innerText = 'Invert selection';
+    selectAllButton.innerText = buttonsContainer.dataset.selectAll;
+    selectNoneButton.innerText = buttonsContainer.dataset.selectNone;
+    invertSelectionButton.innerText = buttonsContainer.dataset.invertSelection;
 
     selectAllButton.addEventListener('click', () => {
         document.querySelectorAll('input[type=checkbox]').forEach( checkbox => {

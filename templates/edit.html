@@ -46,10 +46,14 @@
   }}
   {% endif %}
 </p>
-<div id="selection_buttons">
+<div
+  id="selection_buttons"
+  data-select-all="{{ message('edit-select-all') }}"
+  data-select-none="{{ message('edit-select-none') }}"
+  data-invert-selection="{{ message('edit-invert-selection') }}"
+  >
   <noscript>
-    Enable JavaScript for “select all”, “select none” and “invert selection” buttons.
-    (The rest of the tool works without JavaScript, if you can’t enable it.)
+    {{ message('edit-noscript') }}
   </noscript>
 </div>
 <form method="post">
