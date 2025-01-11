@@ -3,7 +3,7 @@
 {% block main %}
 {% if not can_edit() %}
 <div class="alert alert-warning" role="alert">
-  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  {{ message('edit-must-log-in', url=url_for('login')) }}
 </div>
 {% endif %}
 <form method="post">
@@ -30,7 +30,7 @@
   {% if can_edit() %}
   {% set disabled_attrs = '' %}
   {% else %}
-  {% set disabled_attrs = 'disabled title="You must log in to make edits."' | safe %}
+  {% set disabled_attrs %}disabled title="{{ message('edit-must-log-in', url='') | striptags }}"{% endset %}
   {% endif %}
   <button
     type="submit"

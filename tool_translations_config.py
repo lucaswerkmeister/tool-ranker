@@ -15,6 +15,9 @@ config = TranslationsConfig(
             'mediainfo_id',
             'file_title',
         ],
+        'edit-must-log-in': [
+            'url',
+        ],
         'edit-paragraph-1-logged-in': [
             'num_statements',
             'formatted_entity_id',

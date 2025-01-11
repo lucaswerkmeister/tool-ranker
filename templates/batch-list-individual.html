@@ -2,7 +2,7 @@
 {% block main %}
 {% if not can_edit() %}
 <div class="alert alert-warning" role="alert">
-  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  {{ message('edit-must-log-in', url=url_for('login')) }}
 </div>
 {% endif %}
 <form method="post">
@@ -28,7 +28,7 @@
     formaction="{{ url_for('batch_list_edit_rank', wiki=wiki) }}"
     {% if not can_edit() %}
     disabled
-    title="You must log in to make edits."
+    title="{{ message('edit-must-log-in', url='') | striptags }}"
     {% endif %}
     >
     Edit rank of statements
