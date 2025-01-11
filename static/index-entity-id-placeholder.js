@@ -10,11 +10,11 @@ window.addEventListener('DOMContentLoaded', () => {
         switch (wikiSelect.value) {
         case 'www.wikidata.org':
         case 'test.wikidata.org':
-            entityIdInput.placeholder = 'Q42, P31, L99…';
+            entityIdInput.placeholder = entityIdInput.dataset.placeholderWikidata;
             break;
         case 'commons.wikimedia.org':
         case 'test-commons.wikimedia.org':
-            entityIdInput.placeholder = 'M79869096 or File:DSC 0484 2-01.jpg';
+            entityIdInput.placeholder = entityIdInput.dataset.placeholderCommons;
             break;
         }
     }

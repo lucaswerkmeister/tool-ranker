@@ -12,32 +12,35 @@
 </p>
 <form method="post" action="{{ url_for('redirect_edit') }}">
   <div class="form-group">
-    <label for="wiki">Wiki</label>
+    <label for="wiki">{{ message('index-label-wiki') }}</label>
     <select class="form-control" id="wiki" name="wiki">
-      <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>Wikidata</option>
-      <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>Wikimedia Commons</option>
-      <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>Test Wikidata</option>
-      <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>Test Wikimedia Commons</option>
+      <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>{{ message('index-option-wikidatawiki') }}</option>
+      <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-commonswiki') }}</option>
+      <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>{{ message('index-option-testwikidatawiki') }}</option>
+      <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-testcommonswiki') }}</option>
     </select>
   </div>
   <div class="form-group">
-    <label for="entity_id">Entity ID</label>
+    <label for="entity_id">{{ message('index-label-entity-id') }}</label>
+    {% set placeholder_entity_id_wikidata = message('index-placeholder-entity-id-wikidata', item_id='Q42', property_id='P31', lexeme_id='L99') %}
+    {% set placeholder_entity_id_commons = message('index-placeholder-entity-id-commons', mediainfo_id='M79869096', file_title='File:DSC 0484 2-01.jpg') %}
     <input
       id="entity_id" class="form-control"
       type="text" name="entity_id"
       required
       pattern="^(?:[QPM][1-9][0-9]*)|(?:L[1-9][0-9]*(?:-[SF][1-9][0-9]*)?)|(?:File:.*)$"
-      {# these placeholders are also in static/index-entity-id-placeholder.js #}
+      data-placeholder-wikidata="{{ placeholder_entity_id_wikidata }}"
+      data-placeholder-commons="{{ placeholder_entity_id_commons }}"
       {% if wiki == "www.wikidata.org" or wiki == "test.wikidata.org" or not wiki %}
-      placeholder="Q42, P31, L99…"
+      placeholder="{{ placeholder_entity_id_wikidata }}"
       {% elif wiki == "commons.wikimedia.org" or wiki == "test-commons.wikimedia.org" %}
-      placeholder="M79869096 or File:DSC 0484 2-01.jpg"
+      placeholder="{{ placeholder_entity_id_commons }}"
       {% endif %}
       {% if entity_id %}value="{{ entity_id }}" {% endif %}
       >
   </div>
   <div class="form-group">
-    <label for="property_id">Property ID</label>
+    <label for="property_id">{{ message('index-label-property-id') }}</label>
     <input
       id="property_id" class="form-control"
       type="text" name="property_id"
@@ -47,14 +50,11 @@
       {% if property_id %}value="{{ property_id }}" {% endif %}
       >
   </div>
-  <button type="submit" class="btn btn-primary">Select statements</button>
+  <button type="submit" class="btn btn-primary">{{ message('index-button-submit') }}</button>
 </form>
-<h2 class="mt-3">Batch mode</h2>
+<h2 class="mt-3">{{ message('index-batch-heading') }}</h2>
 <p>
-  Several batch modes are also available.
-  You can provide the statements as a list or select them with a SPARQL query,
-  and you can perform the same action (set or increment rank) for all statements or specify a rank for each individual statement.
-  Please select below which batch mode you want to use.
+  {{ message('index-batch-paragraph-1') }}
 </p>
 <form method="post">
   <table class="table table-bordered">
@@ -65,19 +65,19 @@
     </colgroup>
     <tr>
       <td>
-        <label for="batch-wiki" class="sr-only">Wiki</label>
+        <label for="batch-wiki" class="sr-only">{{ message('index-label-wiki') }}</label>
         <select class="form-control" id="batch-wiki" name="wiki">
-          <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>Wikidata</option>
-          <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>Wikimedia Commons</option>
-          <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>Test Wikidata</option>
-          <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>Test Wikimedia Commons</option>
+      <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>{{ message('index-option-wikidatawiki') }}</option>
+      <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-commonswiki') }}</option>
+      <option value="test.wikidata.org" {% if wiki == "test.wikidata.org" %}selected{% endif %}>{{ message('index-option-testwikidatawiki') }}</option>
+      <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-testcommonswiki') }}</option>
         </select>
       </td>
-      <th scope="col">list statements</th>
-      <th scope="col">query statements</th>
+      <th scope="col">{{ message('index-batch-col-list') }}</th>
+      <th scope="col">{{ message('index-batch-col-query') }}</th>
     </tr>
     <tr>
-      <th scope="row">same action for all statements</th>
+      <th scope="row">{{ message('index-batch-row-collective') }}</th>
       <td>
         <button
           type="submit"
@@ -96,7 +96,7 @@
       </td>
     </tr>
     <tr>
-      <th scope="row">specify rank for each statement</th>
+      <th scope="row">{{ message('index-batch-row-individual') }}</th>
       <td>
         <button
           type="submit"
