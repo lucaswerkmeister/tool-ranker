@@ -48,9 +48,9 @@
 </p>
 <div
   id="selection_buttons"
-  data-select-all="{{ message('edit-select-all') }}"
-  data-select-none="{{ message('edit-select-none') }}"
-  data-invert-selection="{{ message('edit-invert-selection') }}"
+  data-select-all="{{ message('edit-select-all') | striptags }}"
+  data-select-none="{{ message('edit-select-none') | striptags }}"
+  data-invert-selection="{{ message('edit-invert-selection') | striptags }}"
   >
   <noscript>
     {{ message('edit-noscript') }}
