@@ -44,5 +44,9 @@
 	"edit-button-increment": "Increment rank",
 	"edit-no-statements": "$1 has no statements for $2.",
 	"edit-return": "Return to main page",
+	"batch-list-collective-input": "Statement IDs (one per line):",
+	"batch-list-individual-input": "Statement IDs, ranks, and optional reasons for the rank (one per line, separated by tab or pipe characters):",
+	"batch-query-collective-input-wdqs": "[$1 Wikidata Query Service] query, selecting a <code>?statement</code> variable:",
+	"batch-query-individual-input-wdqs": "[$1 Wikidata Query Service] query, selecting <code>?statement</code> and <code>?rank</code> variables (and optionally <code>?reason</code>, <code>?reasonForPreferredRank</code> and <code>?reasonForDeprecatedRank</code> as well, with the latter two taking precedence over the former):",
 	"error-no-such-entity": "No entity with the ID $1 exists on $2."
 }

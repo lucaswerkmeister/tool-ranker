@@ -9,10 +9,7 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="query">
-      {{ wiki | format_query_service }} query,
-      selecting a <code>?statement</code> variable:
-    </label>
+    <label for="query">{{ batch_query_collective_message(wiki) }}</label>
     <textarea
       class="form-control text-monospace"
       id="query"

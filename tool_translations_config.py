@@ -32,10 +32,19 @@ config = TranslationsConfig(
             'entity',
             'property',
         ],
+        'batch-query-collective-input-wdqs': [
+            'url',
+        ],
+        'batch-query-individual-input-wdqs': [
+            'url',
+        ],
         'error-no-such-entity': [
             'entity_id',
             'wiki',
         ],
+    },
+    allowed_html_elements={
+        'code': set(),
     },
     check_translations=False,
 )

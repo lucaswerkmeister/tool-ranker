@@ -9,7 +9,7 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="statement_ids">Statement IDs (one per line):</label>
+    <label for="statement_ids">{{ message('batch-list-collective-input') }}</label>
     <textarea
       class="form-control"
       id="statement_ids"

@@ -25,7 +25,8 @@ import yaml
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter, WikiWithQueryServiceConverter, \
     WikiWithoutQueryServiceException
-from query_service import query_wiki, query_service_name, query_service_url
+from query_service import query_wiki, \
+    query_service_id, query_service_url
 import wbformat
 
 
@@ -160,13 +161,16 @@ def format_entity(wiki: str, entity_id: str) -> Markup:
                                   entity_id)
 
 
-@app.template_filter()
-def format_query_service(wiki: str) -> Markup:
-    return (Markup(r'<a href="') +
-            Markup.escape(query_service_url(wiki)) +
-            Markup(r'">') +
-            Markup.escape(query_service_name(wiki)) +
-            Markup(r'</a>'))
+@app.template_global()
+def batch_query_collective_message(wiki: str) -> Markup:
+    message_key = f'batch-query-collective-input-{query_service_id(wiki)}'
+    return message(message_key, url=query_service_url(wiki))
+
+
+@app.template_global()
+def batch_query_individual_message(wiki: str) -> Markup:
+    message_key = f'batch-query-individual-input-{query_service_id(wiki)}'
+    return message(message_key, url=query_service_url(wiki))
 
 
 @app.template_filter()

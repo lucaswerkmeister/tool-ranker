@@ -8,14 +8,7 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="query">
-      {{ wiki | format_query_service }} query,
-      selecting <code>?statement</code> and <code>?rank</code> variables
-      (and optionally <code>?reason</code>,
-      <code>?reasonForPreferredRank</code>
-      and <code>?reasonForDeprecatedRank</code> as well,
-      with the latter two taking precedence over the former):
-    </label>
+    <label for="query">{{ batch_query_individual_message(wiki) }}</label>
     <textarea
       class="form-control text-monospace"
       id="query"

@@ -8,7 +8,7 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="commands">Statement IDs, ranks, and optional reasons for the rank (one per line, separated by tab or pipe characters):</label>
+    <label for="commands">{{ message('batch-list-individual-input') }}</label>
     <textarea
       class="form-control"
       id="commands"
