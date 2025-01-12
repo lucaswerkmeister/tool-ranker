@@ -35,11 +35,10 @@
   </button>
 </form>
 <p class="mt-3">
-  You can also
-  <a href="{{ url_for('show_batch_list_collective_form', wiki=wiki) }}">
-    perform the same action for each statement</a>{% if has_query_service(wiki) %}
-  or
-  <a href="{{ url_for('show_batch_query_individual_form', wiki=wiki) }}">
-    select the statements and ranks using a SPARQL query</a>{% endif %}.
+  {% if has_query_service(wiki) %}
+  {{ message('batch-list-individual-links-with-qs', url_collective=url_for('show_batch_list_collective_form', wiki=wiki), url_query=url_for('show_batch_query_individual_form', wiki=wiki)) }}
+  {% else %}
+  {{ message('batch-list-individual-links', url_collective=url_for('show_batch_list_collective_form', wiki=wiki)) }}
+  {% endif %}
 </p>
 {% endblock %}

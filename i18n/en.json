@@ -49,5 +49,11 @@
 	"batch-query-collective-input-wdqs": "[$1 Wikidata Query Service] query, selecting a <code>?statement</code> variable:",
 	"batch-query-individual-input-wdqs": "[$1 Wikidata Query Service] query, selecting <code>?statement</code> and <code>?rank</code> variables (and optionally <code>?reason</code>, <code>?reasonForPreferredRank</code> and <code>?reasonForDeprecatedRank</code> as well, with the latter two taking precedence over the former):",
 	"batch-individual-button-submit": "Edit rank of statements",
+	"batch-list-collective-links": "You can also [$1 provide the rank for each statement individually].",
+	"batch-list-collective-links-with-qs": "You can also [$1 provide the rank for each statement individually] or [$2 select the statements using a SPARQL query].",
+	"batch-list-individual-links": "You can also [$1 perform the same action for each statement].",
+	"batch-list-individual-links-with-qs": "You can also [$1 perform the same action for each statement] or [$2 select the statements and ranks using a SPARQL query].",
+	"batch-query-collective-links": "You can also [$1 select the rank for each statement individually] or [$2 provide a list of statement IDs].",
+	"batch-query-individual-links": "You can also [$1 perform the same action for each statement] or [$2 provide the statement IDs and ranks as a list].",
 	"error-no-such-entity": "No entity with the ID $1 exists on $2."
 }

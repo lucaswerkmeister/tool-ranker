@@ -35,12 +35,6 @@
   </button>
 </form>
 <p class="mt-3">
-  You can also
-  <a href="{{ url_for('show_batch_query_collective_form', wiki=wiki) }}">
-    perform the same action for each statement
-  </a>
-  or
-  <a href="{{ url_for('show_batch_list_individual_form', wiki=wiki) }}">
-    provide the statement IDs and ranks as a list</a>.
+  {{ message('batch-query-individual-links', url_collective=url_for('show_batch_query_collective_form', wiki=wiki), url_list=url_for('show_batch_list_individual_form', wiki=wiki)) }}
 </p>
 {% endblock %}

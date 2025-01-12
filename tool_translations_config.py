@@ -38,6 +38,28 @@ config = TranslationsConfig(
         'batch-query-individual-input-wdqs': [
             'url',
         ],
+        'batch-list-collective-links': [
+            'url_individual',
+        ],
+        'batch-list-collective-links-with-qs': [
+            'url_individual',
+            'url_query',
+        ],
+        'batch-list-individual-links': [
+            'url_collective',
+        ],
+        'batch-list-individual-links-with-qs': [
+            'url_collective',
+            'url_query',
+        ],
+        'batch-query-collective-links': [
+            'url_individual',
+            'url_list',
+        ],
+        'batch-query-individual-links': [
+            'url_collective',
+            'url_list',
+        ],
         'error-no-such-entity': [
             'entity_id',
             'wiki',
