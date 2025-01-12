@@ -147,12 +147,17 @@ def has_query_service(wiki: str) -> bool:
 
 @app.template_global()
 def format_value(wiki: str, property_id: str, value: dict) -> Markup:
-    return wbformat.format_value(anonymous_session(wiki), property_id, value)
+    return wbformat.format_value(anonymous_session(wiki),
+                                 flask.g.interface_language_code,
+                                 property_id,
+                                 value)
 
 
 @app.template_global()
 def format_entity(wiki: str, entity_id: str) -> Markup:
-    return wbformat.format_entity(anonymous_session(wiki), entity_id)
+    return wbformat.format_entity(anonymous_session(wiki),
+                                  flask.g.interface_language_code,
+                                  entity_id)
 
 
 @app.template_filter()
@@ -267,7 +272,9 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> RRV:
     prefetch_entity_ids = {entity_id, property_id}
     for statement in statements:
         prefetch_entity_ids.update(statement.get('qualifiers', {}).keys())
-    wbformat.prefetch_entities(session, prefetch_entity_ids)
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               prefetch_entity_ids)
 
     return flask.render_template('edit.html',
                                  wiki=wiki,
@@ -1079,7 +1086,9 @@ def batch_set_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               statement_ids_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
@@ -1125,7 +1134,9 @@ def batch_increment_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               statement_ids_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
@@ -1169,7 +1180,9 @@ def batch_edit_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               commands_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,

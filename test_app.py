@@ -1,3 +1,4 @@
+import flask
 from markupsafe import Markup
 import pytest
 from typing import Optional
@@ -91,7 +92,10 @@ def test_format_value_escapes_html():
              'type': 'string'}
     expected = Markup(r'&lt;script&gt;alert("!Mediengruppe'
                       r' Bitnik");&lt;/script&gt;')
-    assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
+    with ranker.app.test_request_context():
+        flask.g.interface_language_code = 'en'
+        actual = ranker.format_value('test.wikidata.org', 'P95', value)
+        assert actual == expected
 
 
 @pytest.mark.parametrize('uri, wiki, item_id', [
