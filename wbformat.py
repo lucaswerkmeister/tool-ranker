@@ -85,13 +85,14 @@ def prefetch_entities(session: mwapi.Session,
                     entity_id_chunks.append([entity_id])
                 else:
                     last_chunk.append(entity_id)
-        for entity_id_chunk in entity_id_chunks:
-            response = session.get(
-                action='wbformatentities',
-                ids=entity_id_chunk,
-                uselang=lang,
-                formatversion=2,
-            )['wbformatentities']
+    for entity_id_chunk in entity_id_chunks:
+        response = session.get(
+            action='wbformatentities',
+            ids=entity_id_chunk,
+            uselang=lang,
+            formatversion=2,
+        )['wbformatentities']
+        with format_entity_cache_lock:
             for entity_id in response:
                 key = format_entity_key(session, lang, entity_id)
                 value = Markup(response[entity_id])
