@@ -7,6 +7,21 @@ import threading
 from typing import AbstractSet, List, Tuple
 
 
+format_value_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
+                                         ttl=60 * 60)
+format_value_cache_lock = threading.RLock()
+
+
+def format_value_key(session: mwapi.Session,
+                     lang: str,
+                     property_id: str,
+                     value: dict) -> Tuple[str, str, str, str]:
+    return (session.host, lang, property_id, json.dumps(value))
+
+
+@cachetools.cached(cache=format_value_cache,
+                   key=format_value_key,
+                   lock=format_value_cache_lock)
 def format_value(session: mwapi.Session,
                  lang: str,
                  property_id: str,
