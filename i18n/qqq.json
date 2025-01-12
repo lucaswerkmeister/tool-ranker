@@ -48,5 +48,6 @@
 	"batch-list-individual-input": "Label for the input text area on one of the batch pages. Here, the input contains statement IDs, ranks for those statements, and optional reasons for those ranks. The ranks must be specified as <code>normal</code>, <code>preferred</code> or <code>deprecated</code> (i.e. in English); this shown in the placeholder of the text area, but it might be worth pointing out in translations of this message too.",
 	"batch-query-collective-input-wdqs": "Label for the input text area on one of the batch pages. Here, the input is a SPARQL query against the Wikidata Query Service, which should select one variable with a hard-coded name (do not translate <code>?statement</code>).",
 	"batch-query-individual-input-wdqs": "Label for the input text area on one of the batch pages. Here, the input is a SPARQL query against the Wikidata Query Service, which should select at least two variables with hard-coded names, and possibly additional variables as well. (Do not translate the variable names.)",
+	"batch-individual-button-submit": "Label for a button on some of the batch pages, where the specific actions to take are specified individually for each statement.",
 	"error-no-such-entity": "Error message shown when the user entered an entity ID that doesn’t exist.\n\nParameters:\n* $1 - the missing entity ID\n* $2 - the selected wiki"
 }
