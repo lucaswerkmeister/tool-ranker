@@ -55,5 +55,10 @@
 	"batch-list-individual-links-with-qs": "Version of {{msg-wm|ranker-batch-list-individual-links}} for wikis with a query service, including one more link than before.\n\nParameters:\n* $1 - URL for the alternative with the same action for each statement.\n* $2 - URL for the query service version.",
 	"batch-query-collective-links": "Message at the bottom of one of the batch pages, linking to other available batch pages.\n\nParameters:\n* $1 - URL for the alternative with per-statement rank.\n* $2 - URL for the list version.",
 	"batch-query-individual-links": "Message at the bottom of one of the batch pages, linking to other available batch pages.\n\nParameters:\n* $1 - URL for the alternative with the same action for each statement.\n* $2 - URL for the list version.",
+	"reason-label-preferred-or-deprecated": "Label for an input field to enter or select a reason for the statement’s rank (on wikis where both preferred and deprecated statements can have a reason assigned).",
+	"reason-label-preferred": "Label for an input field to enter or select a reason for the statement’s rank (on wikis where only preferred statements can have a reason assigned).",
+	"reason-label-deprecated": "Label for an input field to enter or select a reason for the statement’s rank (on wikis where only deprecated statements can have a reason assigned).",
+	"reason-label-optgroup-preferred": "Label for the group of suggested preferred reasons. This is probably not actually shown by any browser, so don’t sweat it about this translation ;)",
+	"reason-label-optgroup-deprecated": "Label for the group of suggested deprecation reasons. This is probably not actually shown by any browser, so don’t sweat it about this translation ;)",
 	"error-no-such-entity": "Error message shown when the user entered an entity ID that doesn’t exist.\n\nParameters:\n* $1 - the missing entity ID\n* $2 - the selected wiki"
 }

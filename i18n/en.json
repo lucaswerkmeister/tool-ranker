@@ -55,5 +55,10 @@
 	"batch-list-individual-links-with-qs": "You can also [$1 perform the same action for each statement] or [$2 select the statements and ranks using a SPARQL query].",
 	"batch-query-collective-links": "You can also [$1 select the rank for each statement individually] or [$2 provide a list of statement IDs].",
 	"batch-query-individual-links": "You can also [$1 perform the same action for each statement] or [$2 provide the statement IDs and ranks as a list].",
+	"reason-label-preferred-or-deprecated": "Reason for preferred / deprecated rank (if applicable; optional)",
+	"reason-label-preferred": "Reason for preferred rank (if applicable; optional)",
+	"reason-label-deprecated": "Reason for deprecated rank (if applicable; optional)",
+	"reason-label-optgroup-preferred": "preferred",
+	"reason-label-optgroup-deprecated": "deprecated",
 	"error-no-such-entity": "No entity with the ID $1 exists on $2."
 }
