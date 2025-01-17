@@ -53,6 +53,16 @@ def test_has_query_service(wiki: str, has_query_service: bool):
     assert ranker.has_query_service(wiki) == has_query_service
 
 
+@pytest.mark.parametrize('wiki, expected', [
+    ('www.wikidata.org', 'www.wikidata.org'),
+    ('commons.wikimedia.org', 'www.wikidata.org'),
+    ('test.wikidata.org', 'test.wikidata.org'),
+    ('test-commons.wikimedia.org', 'test.wikidata.org'),
+])
+def test_wiki_reason_wiki(wiki: str, expected: str) -> None:
+    assert ranker.wiki_reason_wiki(wiki) == expected
+
+
 @pytest.mark.parametrize('wiki', [
     'www.wikidata.org',
     'commons.wikimedia.org',
@@ -60,6 +70,9 @@ def test_has_query_service(wiki: str, has_query_service: bool):
     'test-commons.wikimedia.org',
 ])
 def test_wiki_reasons_preferred_exist(wiki: str) -> None:
+    if ranker.wiki_reason_wiki(wiki) != wiki:
+        # covered by another parametrized test instance
+        return
     reasons = ranker.wiki_reasons_preferred(wiki)
     assert isinstance(reasons, list)
     if not reasons:

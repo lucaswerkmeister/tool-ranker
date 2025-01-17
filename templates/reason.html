@@ -17,18 +17,18 @@
 <datalist id="reasons">
   {% set preferred_reasons = wiki | wiki_reasons_preferred %}
   {% set deprecated_reasons = wiki | wiki_reasons_deprecated %}
-  {% set _ = prefetch_entities(wiki, preferred_reasons + deprecated_reasons) %}
+  {% set _ = prefetch_entities(wiki | wiki_reason_wiki, preferred_reasons + deprecated_reasons) %}
   {% if preferred_reasons %}
   <optgroup label="preferred">
     {% for preferred_reason in preferred_reasons %}
-    <option value="{{ preferred_reason }}">{{ format_entity(wiki, preferred_reason) }}</option>
+    <option value="{{ preferred_reason }}">{{ format_entity(wiki | wiki_reason_wiki, preferred_reason) }}</option>
     {% endfor %}
   </optgroup>
   {% endif %}
   {% if deprecated_reasons %}
   <optgroup label="deprecated">
     {% for deprecated_reason in deprecated_reasons %}
-    <option value="{{ deprecated_reason }}">{{ format_entity(wiki, deprecated_reason) }}</option>
+    <option value="{{ deprecated_reason }}">{{ format_entity(wiki | wiki_reason_wiki, deprecated_reason) }}</option>
     {% endfor %}
   </optgroup>
   {% endif %}

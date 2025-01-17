@@ -174,8 +174,19 @@ def batch_query_individual_message(wiki: str) -> Markup:
 
 
 @app.template_filter()
+def wiki_reason_wiki(wiki: str) -> str:
+    """The wiki which contains the deprecation reasons for the given wiki."""
+    return {
+        'www.wikidata.org': 'www.wikidata.org',
+        'commons.wikimedia.org': 'www.wikidata.org',
+        'test.wikidata.org': 'test.wikidata.org',
+        'test-commons.wikimedia.org': 'test.wikidata.org',
+    }[wiki]
+
+
+@app.template_filter()
 def wiki_reasons_preferred(wiki: str) -> list[str]:
-    if wiki_reason_preferred_property(wiki) == 'P7452':
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return [
             'Q71533355',  # most recent value
             'Q71536040',  # most precise value
@@ -187,7 +198,7 @@ def wiki_reasons_preferred(wiki: str) -> list[str]:
 
 @app.template_filter()
 def wiki_reasons_deprecated(wiki: str) -> list[str]:
-    if wiki_reason_deprecated_property(wiki) == 'P2241':
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return [
             'Q25895909',  # cannot be confirmed by other sources
             'Q21655367',  # not been able to confirm this claim
@@ -203,14 +214,14 @@ def wiki_reasons_deprecated(wiki: str) -> list[str]:
 
 @app.template_filter()
 def wiki_reason_preferred_property(wiki: str) -> Optional[str]:
-    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return 'P7452'
     return None
 
 
 @app.template_filter()
 def wiki_reason_deprecated_property(wiki: str) -> Optional[str]:
-    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return 'P2241'
     return None
 
