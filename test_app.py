@@ -1,5 +1,6 @@
 import flask
 from markupsafe import Markup
+import mwapi  # type: ignore
 import pytest
 from typing import Optional
 import werkzeug
@@ -8,6 +9,10 @@ import app as ranker
 import query_service
 
 import test_query_service
+
+
+test_user_agent = ('ranker test (https://ranker.toolforge.org/; '
+                   'mail@lucaswerkmeister.de)')
 
 
 @pytest.fixture
@@ -46,6 +51,36 @@ def test_csrf_token_load():
 ])
 def test_has_query_service(wiki: str, has_query_service: bool):
     assert ranker.has_query_service(wiki) == has_query_service
+
+
+@pytest.mark.parametrize('wiki', [
+    'www.wikidata.org',
+    'commons.wikimedia.org',
+    'test.wikidata.org',
+    'test-commons.wikimedia.org',
+])
+def test_wiki_reasons_preferred_exist(wiki: str) -> None:
+    reasons = ranker.wiki_reasons_preferred(wiki)
+    assert isinstance(reasons, list)
+    if not reasons:
+        return
+    # this test fetches all the reasons in one request;
+    # if we ever *really* want to have >50 *suggested* reasons,
+    # update the test then to do the usual chunking I guess :P
+    assert len(reasons) <= 50
+    session = mwapi.Session(f'https://{wiki}', user_agent=test_user_agent)
+    result = session.get(action='wbgetentities',
+                         ids=reasons,
+                         redirects='no',
+                         props=[])
+    missing_reasons = set()
+    for entity_id, entity in result['entities'].items():
+        if 'missing' in entity:
+            missing_reasons.add(entity_id)
+    for reason in reasons:
+        if reason not in result['entities']:
+            missing_reasons.add(reason)
+    assert not missing_reasons
 
 
 @pytest.mark.parametrize('wiki, property_id', [

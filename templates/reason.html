@@ -15,28 +15,21 @@
   <input name="reason" pattern="^Q[1-9][0-9]*$" list="reasons" type="text" id="reason" class="form-control">
 </div>
 <datalist id="reasons">
-  {% if wiki | wiki_reason_preferred_property %}
+  {% set preferred_reasons = wiki | wiki_reasons_preferred %}
+  {% set deprecated_reasons = wiki | wiki_reasons_deprecated %}
+  {% set _ = prefetch_entities(wiki, preferred_reasons + deprecated_reasons) %}
+  {% if preferred_reasons %}
   <optgroup label="preferred">
-    {% if (wiki | wiki_reason_preferred_property) == 'P7452' %}
-    <option value="Q71533355">Q71533355 (most recent value)</option>
-    <option value="Q71536040">Q71536040 (most precise value)</option>
-    <option value="Q98386534">Q98386534 (best referenced value)</option>
-    <option value="Q71536244">Q71536244 (currently valid value)</option>
-    {% endif %}
+    {% for preferred_reason in preferred_reasons %}
+    <option value="{{ preferred_reason }}">{{ format_entity(wiki, preferred_reason) }}</option>
+    {% endfor %}
   </optgroup>
   {% endif %}
-  {% if wiki | wiki_reason_deprecated_property %}
+  {% if deprecated_reasons %}
   <optgroup label="deprecated">
-    {% if (wiki | wiki_reason_deprecated_property) == 'P2241' %}
-    <option value="Q25895909">Q25895909 (cannot be confirmed by other sources)</option>
-    <option value="Q21655367">Q21655367 (not been able to confirm this claim)</option>
-    <option value="Q14946528">Q14946528 (conflation)</option>
-    <option value="Q41755623">Q41755623 (incorrect value)</option>
-    <option value="Q21441764">Q21441764 (withdrawn identifier value)</option>
-    <option value="Q54975531">Q54975531 (incorrect identifier value)</option>
-    <option value="Q54976355">Q54976355 (unrecognized identifier value)</option>
-    <option value="Q1193907">Q1193907 (link rot)</option>
-    {% endif %}
+    {% for deprecated_reason in deprecated_reasons %}
+    <option value="{{ deprecated_reason }}">{{ format_entity(wiki, deprecated_reason) }}</option>
+    {% endfor %}
   </optgroup>
   {% endif %}
 </datalist>

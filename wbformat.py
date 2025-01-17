@@ -1,10 +1,11 @@
 from bs4 import BeautifulSoup
 import cachetools
+from collections.abc import Collection
 import json
 from markupsafe import Markup
 import mwapi  # type: ignore
 import threading
-from typing import AbstractSet, List, Tuple
+from typing import List, Tuple
 
 
 format_value_cache = cachetools.TTLCache(maxsize=1000,  # type: ignore
@@ -70,7 +71,7 @@ def format_entity(session: mwapi.Session,
 
 def prefetch_entities(session: mwapi.Session,
                       lang: str,
-                      entity_ids: AbstractSet[str]):
+                      entity_ids: Collection[str]):
     with format_entity_cache_lock:
         entity_id_chunks: List[List[str]] = []
         for entity_id in entity_ids:

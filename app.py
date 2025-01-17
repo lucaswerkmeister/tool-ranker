@@ -174,6 +174,34 @@ def batch_query_individual_message(wiki: str) -> Markup:
 
 
 @app.template_filter()
+def wiki_reasons_preferred(wiki: str) -> list[str]:
+    if wiki_reason_preferred_property(wiki) == 'P7452':
+        return [
+            'Q71533355',  # most recent value
+            'Q71536040',  # most precise value
+            'Q98386534',  # best referenced value
+            'Q71536244',  # currently valid value
+        ]
+    return []
+
+
+@app.template_filter()
+def wiki_reasons_deprecated(wiki: str) -> list[str]:
+    if wiki_reason_deprecated_property(wiki) == 'P2241':
+        return [
+            'Q25895909',  # cannot be confirmed by other sources
+            'Q21655367',  # not been able to confirm this claim
+            'Q14946528',  # conflation
+            'Q41755623',  # incorrect value
+            'Q21441764',  # withdrawn identifier value
+            'Q54975531',  # incorrect identifier value
+            'Q54976355',  # unrecognized identifier value
+            'Q1193907',  # link rot
+        ]
+    return []
+
+
+@app.template_filter()
 def wiki_reason_preferred_property(wiki: str) -> Optional[str]:
     if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
         return 'P7452'
@@ -185,6 +213,13 @@ def wiki_reason_deprecated_property(wiki: str) -> Optional[str]:
     if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
         return 'P2241'
     return None
+
+
+@app.template_global()
+def prefetch_entities(wiki: str, entity_ids: list[str]) -> None:
+    wbformat.prefetch_entities(anonymous_session(wiki),
+                               flask.g.interface_language_code,
+                               entity_ids)
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
