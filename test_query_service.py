@@ -64,10 +64,10 @@ def test_wikis_with_query_service():
 
 
 @pytest.mark.parametrize('wiki, expected', [
-    ('www.wikidata.org', 'Wikidata Query Service'),
+    ('www.wikidata.org', 'wdqs'),
 ])
-def test_query_service_name(wiki: str, expected: str):
-    assert query_service.query_service_name(wiki) == expected
+def test_query_service_id(wiki: str, expected: str):
+    assert query_service.query_service_id(wiki) == expected
 
 
 @pytest.mark.parametrize('wiki, expected', [

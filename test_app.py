@@ -1,4 +1,6 @@
+import flask
 from markupsafe import Markup
+import mwapi  # type: ignore
 import pytest
 from typing import Optional
 import werkzeug
@@ -7,6 +9,10 @@ import app as ranker
 import query_service
 
 import test_query_service
+
+
+test_user_agent = ('ranker test (https://ranker.toolforge.org/; '
+                   'mail@lucaswerkmeister.de)')
 
 
 @pytest.fixture
@@ -45,6 +51,49 @@ def test_csrf_token_load():
 ])
 def test_has_query_service(wiki: str, has_query_service: bool):
     assert ranker.has_query_service(wiki) == has_query_service
+
+
+@pytest.mark.parametrize('wiki, expected', [
+    ('www.wikidata.org', 'www.wikidata.org'),
+    ('commons.wikimedia.org', 'www.wikidata.org'),
+    ('test.wikidata.org', 'test.wikidata.org'),
+    ('test-commons.wikimedia.org', 'test.wikidata.org'),
+])
+def test_wiki_reason_wiki(wiki: str, expected: str) -> None:
+    assert ranker.wiki_reason_wiki(wiki) == expected
+
+
+@pytest.mark.parametrize('wiki', [
+    'www.wikidata.org',
+    'commons.wikimedia.org',
+    'test.wikidata.org',
+    'test-commons.wikimedia.org',
+])
+def test_wiki_reasons_preferred_exist(wiki: str) -> None:
+    if ranker.wiki_reason_wiki(wiki) != wiki:
+        # covered by another parametrized test instance
+        return
+    reasons = ranker.wiki_reasons_preferred(wiki)
+    assert isinstance(reasons, list)
+    if not reasons:
+        return
+    # this test fetches all the reasons in one request;
+    # if we ever *really* want to have >50 *suggested* reasons,
+    # update the test then to do the usual chunking I guess :P
+    assert len(reasons) <= 50
+    session = mwapi.Session(f'https://{wiki}', user_agent=test_user_agent)
+    result = session.get(action='wbgetentities',
+                         ids=reasons,
+                         redirects='no',
+                         props=[])
+    missing_reasons = set()
+    for entity_id, entity in result['entities'].items():
+        if 'missing' in entity:
+            missing_reasons.add(entity_id)
+    for reason in reasons:
+        if reason not in result['entities']:
+            missing_reasons.add(reason)
+    assert not missing_reasons
 
 
 @pytest.mark.parametrize('wiki, property_id', [
@@ -91,7 +140,10 @@ def test_format_value_escapes_html():
              'type': 'string'}
     expected = Markup(r'&lt;script&gt;alert("!Mediengruppe'
                       r' Bitnik");&lt;/script&gt;')
-    assert ranker.format_value('test.wikidata.org', 'P95', value) == expected
+    with ranker.app.test_request_context():
+        flask.g.interface_language_code = 'en'
+        actual = ranker.format_value('test.wikidata.org', 'P95', value)
+        assert actual == expected
 
 
 @pytest.mark.parametrize('uri, wiki, item_id', [

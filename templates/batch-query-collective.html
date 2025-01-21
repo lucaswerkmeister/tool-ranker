@@ -3,16 +3,13 @@
 {% block main %}
 {% if not can_edit() %}
 <div class="alert alert-warning" role="alert">
-  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  {{ message('edit-must-log-in', url=url_for('login')) }}
 </div>
 {% endif %}
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="query">
-      {{ wiki | format_query_service }} query,
-      selecting a <code>?statement</code> variable:
-    </label>
+    <label for="query">{{ batch_query_collective_message(wiki) }}</label>
     <textarea
       class="form-control text-monospace"
       id="query"
@@ -24,50 +21,44 @@
   </div>
   {{ reason_input(wiki) }}
   <div class="form-group">
-    <label for="summary">Edit summary (optional):</label>
+    <label for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}
   {% set disabled_attrs = '' %}
   {% else %}
-  {% set disabled_attrs = 'disabled title="You must log in to make edits."' | safe %}
+  {% set disabled_attrs %}disabled title="{{ message('edit-must-log-in', url='') | striptags }}"{% endset %}
   {% endif %}
   <button
     type="submit"
     class="btn btn-primary"
     formaction="{{ url_for('batch_query_set_rank', wiki=wiki, rank='preferred') }}"
     {{ disabled_attrs }}>
-    Set to preferred rank
+    {{ message('edit-button-preferred') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_query_set_rank', wiki=wiki, rank='normal') }}"
     {{ disabled_attrs }}>
-    Set to normal rank
+    {{ message('edit-button-normal') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_query_set_rank', wiki=wiki, rank='deprecated') }}"
     {{ disabled_attrs }}>
-    Set to deprecated rank
+    {{ message('edit-button-deprecated') }}
   </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('batch_query_increment_rank', wiki=wiki) }}"
     {{ disabled_attrs }}>
-    Increment rank
+    {{ message('edit-button-increment') }}
   </button>
 </form>
 <p class="mt-3">
-  You can also
-  <a href="{{ url_for('show_batch_query_individual_form', wiki=wiki) }}">
-    select the rank for each statement individually
-  </a>
-  or
-  <a href="{{ url_for('show_batch_list_collective_form', wiki=wiki) }}">
-    provide a list of statement IDs</a>.
+  {{ message('batch-query-collective-links', url_individual=url_for('show_batch_query_individual_form', wiki=wiki), url_list=url_for('show_batch_list_collective_form', wiki=wiki)) }}
 </p>
 {% endblock %}

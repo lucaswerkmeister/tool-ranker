@@ -5,7 +5,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON  # type: ignore
 _query_services = {
     'www.wikidata.org': (
         'query.wikidata.org',
-        'Wikidata Query Service',
+        'wdqs',
     ),
 }
 
@@ -22,7 +22,8 @@ def wikis_with_query_service() -> Collection[str]:
     return _query_services.keys()
 
 
-def query_service_name(wiki: str) -> str:
+def query_service_id(wiki: str) -> str:
+    """Return a short identifier of the query service, for message keys."""
     return _query_services[wiki][1]
 
 

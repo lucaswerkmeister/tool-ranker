@@ -2,13 +2,13 @@
 {% block main %}
 {% if not can_edit() %}
 <div class="alert alert-warning" role="alert">
-  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  {{ message('edit-must-log-in', url=url_for('login')) }}
 </div>
 {% endif %}
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="form-group">
-    <label for="commands">Statement IDs, ranks, and optional reasons for the rank (one per line, separated by tab or pipe characters):</label>
+    <label for="commands">{{ message('batch-list-individual-input') }}</label>
     <textarea
       class="form-control"
       id="commands"
@@ -19,7 +19,7 @@
       ></textarea>
   </div>
   <div class="form-group">
-    <label for="summary">Edit summary (optional):</label>
+    <label for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   <button
@@ -28,18 +28,17 @@
     formaction="{{ url_for('batch_list_edit_rank', wiki=wiki) }}"
     {% if not can_edit() %}
     disabled
-    title="You must log in to make edits."
+    title="{{ message('edit-must-log-in', url='') | striptags }}"
     {% endif %}
     >
-    Edit rank of statements
+    {{ message('batch-individual-button-submit') }}
   </button>
 </form>
 <p class="mt-3">
-  You can also
-  <a href="{{ url_for('show_batch_list_collective_form', wiki=wiki) }}">
-    perform the same action for each statement</a>{% if has_query_service(wiki) %}
-  or
-  <a href="{{ url_for('show_batch_query_individual_form', wiki=wiki) }}">
-    select the statements and ranks using a SPARQL query</a>{% endif %}.
+  {% if has_query_service(wiki) %}
+  {{ message('batch-list-individual-links-with-qs', url_collective=url_for('show_batch_list_collective_form', wiki=wiki), url_query=url_for('show_batch_query_individual_form', wiki=wiki)) }}
+  {% else %}
+  {{ message('batch-list-individual-links', url_collective=url_for('show_batch_list_collective_form', wiki=wiki)) }}
+  {% endif %}
 </p>
 {% endblock %}

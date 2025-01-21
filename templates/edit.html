@@ -22,27 +22,38 @@
 {% if statements %}
 {% if not can_edit() %}
 <div class="alert alert-warning" role="alert">
-  You must <a href="{{ url_for('login') }}">log in</a> to make edits.
+  {{ message('edit-must-log-in', url=url_for('login')) }}
 </div>
 {% endif %}
 <p>
   {% if can_edit() %}
-  You
+  {{
+    message(
+     'edit-paragraph-1-logged-in',
+     num_statements=statements | length,
+     formatted_entity_id=format_entity(wiki, entity_id),
+     formatted_property_id=format_entity(wiki, property_id),
+    )
+  }}
   {% else %}
-  Once you log in, you
+  {{
+    message(
+     'edit-paragraph-1-logged-out',
+     num_statements=statements | length,
+     formatted_entity_id=format_entity(wiki, entity_id),
+     formatted_property_id=format_entity(wiki, property_id),
+    )
+  }}
   {% endif %}
-  can edit the rank of the following {{ format_entity(wiki, property_id) }}
-  {% if statements | length > 1 %}
-  statements
-  {% else %}
-  statement
-  {% endif %}
-  on {{ format_entity(wiki, entity_id) }}:
 </p>
-<div id="selection_buttons">
+<div
+  id="selection_buttons"
+  data-select-all="{{ message('edit-select-all') | striptags }}"
+  data-select-none="{{ message('edit-select-none') | striptags }}"
+  data-invert-selection="{{ message('edit-invert-selection') | striptags }}"
+  >
   <noscript>
-    Enable JavaScript for “select all”, “select none” and “invert selection” buttons.
-    (The rest of the tool works without JavaScript, if you can’t enable it.)
+    {{ message('edit-noscript') }}
   </noscript>
 </div>
 <form method="post">
@@ -80,13 +91,13 @@
   {% endfor %}
   {{ reason_input(wiki) }}
   <div class="form-group">
-    <label for="summary">Edit summary (optional):</label>
+    <label for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}
   {% set disabled_attrs = '' %}
   {% else %}
-  {% set disabled_attrs = 'disabled title="You must log in to make edits."' | safe %}
+  {% set disabled_attrs %}disabled title="{{ message('edit-must-log-in', url='') | striptags }}"{% endset %}
   {% endif %}
   <button
     type="submit"
@@ -94,9 +105,9 @@
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='preferred') }}"
     {{ disabled_attrs }}>
     {% if is_mediainfo %}
-    Mark as prominent
+    {{ message('edit-button-prominent') }}
     {% else %}
-    Set to preferred rank
+    {{ message('edit-button-preferred') }}
     {% endif %}
   </button>
   <button
@@ -105,9 +116,9 @@
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='normal') }}"
     {{ disabled_attrs }}>
     {% if is_mediainfo %}
-    Mark as not prominent
+    {{ message('edit-button-not-prominent') }}
     {% else %}
-    Set to normal rank
+    {{ message('edit-button-normal') }}
     {% endif %}
   </button>
   {%  if not is_mediainfo %}
@@ -115,18 +126,24 @@
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_set_rank', wiki=wiki, entity_id=entity_id, property_id=property_id, rank='deprecated') }}"
-    {{ disabled_attrs }}>Set to deprecated rank</button>
+    {{ disabled_attrs }}>
+    {{ message('edit-button-deprecated') }}
+  </button>
   <button
     type="submit"
     class="btn btn-secondary"
     formaction="{{ url_for('edit_increment_rank', wiki=wiki, entity_id=entity_id, property_id=property_id) }}"
-    {{ disabled_attrs }}>Increment rank</button>
+    {{ disabled_attrs }}>
+    {{ message('edit-button-increment') }}
+  </button>
   {% endif %}
 </form>
 {% else %}
 <p class="alert alert-info" role="alert">
-  {{ format_entity(wiki, entity_id) }} has no statements for {{ format_entity(wiki, property_id) }}.
-  <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">Return to main page</a>
+  {{ message('edit-no-statements', entity=format_entity(wiki, entity_id), property=format_entity(wiki, property_id)) }}
+  <a class="btn btn-primary" href="{{ url_for('index', wiki=wiki, entity_id=entity_id, property_id=property_id) }}">
+    {{ message('edit-return') }}
+  </a>
 </p>
 {% endif %}
 {% endblock %}

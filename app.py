@@ -16,6 +16,7 @@ import stat
 import string
 import sys
 import toolforge
+from toolforge_i18n import ToolforgeI18n, message
 from typing import Any, Callable, Container, Dict, \
     Iterable, List, Optional, Tuple
 import werkzeug
@@ -24,11 +25,13 @@ import yaml
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter, WikiWithQueryServiceConverter, \
     WikiWithoutQueryServiceException
-from query_service import query_wiki, query_service_name, query_service_url
+from query_service import query_wiki, \
+    query_service_id, query_service_url
 import wbformat
 
 
 app = flask.Flask(__name__)
+i18n = ToolforgeI18n(app)
 
 user_agent = toolforge.set_user_agent(
     'ranker',
@@ -111,13 +114,19 @@ def authentication_area() -> Markup:
     if session is None:
         return (Markup(r'<a id="login" class="navbar-text" href="') +
                 Markup.escape(flask.url_for('login')) +
-                Markup(r'">Log in</a>'))
+                Markup(r'">') +
+                message('nav-login') +
+                Markup(r'</a>'))
 
     userinfo = session.get(action='query',
                            meta='userinfo')['query']['userinfo']
 
-    return (Markup(r'<span class="navbar-text">Logged in as ') +
-            user_link(userinfo['name']) +
+    user_name = userinfo['name']
+    logged_in_message = message('nav-logged-in',
+                                user_name=user_name,
+                                user_link=user_link(user_name))
+    return (Markup(r'<span class="navbar-text">') +
+            logged_in_message +
             Markup(r'</span>'))
 
 
@@ -139,35 +148,89 @@ def has_query_service(wiki: str) -> bool:
 
 @app.template_global()
 def format_value(wiki: str, property_id: str, value: dict) -> Markup:
-    return wbformat.format_value(anonymous_session(wiki), property_id, value)
+    return wbformat.format_value(anonymous_session(wiki),
+                                 flask.g.interface_language_code,
+                                 property_id,
+                                 value)
 
 
 @app.template_global()
 def format_entity(wiki: str, entity_id: str) -> Markup:
-    return wbformat.format_entity(anonymous_session(wiki), entity_id)
+    return wbformat.format_entity(anonymous_session(wiki),
+                                  flask.g.interface_language_code,
+                                  entity_id)
+
+
+@app.template_global()
+def batch_query_collective_message(wiki: str) -> Markup:
+    message_key = f'batch-query-collective-input-{query_service_id(wiki)}'
+    return message(message_key, url=query_service_url(wiki))
+
+
+@app.template_global()
+def batch_query_individual_message(wiki: str) -> Markup:
+    message_key = f'batch-query-individual-input-{query_service_id(wiki)}'
+    return message(message_key, url=query_service_url(wiki))
 
 
 @app.template_filter()
-def format_query_service(wiki: str) -> Markup:
-    return (Markup(r'<a href="') +
-            Markup.escape(query_service_url(wiki)) +
-            Markup(r'">') +
-            Markup.escape(query_service_name(wiki)) +
-            Markup(r'</a>'))
+def wiki_reason_wiki(wiki: str) -> str:
+    """The wiki which contains the deprecation reasons for the given wiki."""
+    return {
+        'www.wikidata.org': 'www.wikidata.org',
+        'commons.wikimedia.org': 'www.wikidata.org',
+        'test.wikidata.org': 'test.wikidata.org',
+        'test-commons.wikimedia.org': 'test.wikidata.org',
+    }[wiki]
+
+
+@app.template_filter()
+def wiki_reasons_preferred(wiki: str) -> list[str]:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
+        return [
+            'Q71533355',  # most recent value
+            'Q71536040',  # most precise value
+            'Q98386534',  # best referenced value
+            'Q71536244',  # currently valid value
+        ]
+    return []
+
+
+@app.template_filter()
+def wiki_reasons_deprecated(wiki: str) -> list[str]:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
+        return [
+            'Q25895909',  # cannot be confirmed by other sources
+            'Q21655367',  # not been able to confirm this claim
+            'Q14946528',  # conflation
+            'Q41755623',  # incorrect value
+            'Q21441764',  # withdrawn identifier value
+            'Q54975531',  # incorrect identifier value
+            'Q54976355',  # unrecognized identifier value
+            'Q1193907',  # link rot
+        ]
+    return []
 
 
 @app.template_filter()
 def wiki_reason_preferred_property(wiki: str) -> Optional[str]:
-    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return 'P7452'
     return None
 
 
 @app.template_filter()
 def wiki_reason_deprecated_property(wiki: str) -> Optional[str]:
-    if wiki in {'www.wikidata.org', 'commons.wikimedia.org'}:
+    if wiki_reason_wiki(wiki) == 'www.wikidata.org':
         return 'P2241'
     return None
+
+
+@app.template_global()
+def prefetch_entities(wiki: str, entity_ids: list[str]) -> None:
+    wbformat.prefetch_entities(anonymous_session(wiki),
+                               flask.g.interface_language_code,
+                               entity_ids)
 
 
 def anonymous_session(wiki: str) -> mwapi.Session:
@@ -259,7 +322,9 @@ def show_edit_form(wiki: str, entity_id: str, property_id: str) -> RRV:
     prefetch_entity_ids = {entity_id, property_id}
     for statement in statements:
         prefetch_entity_ids.update(statement.get('qualifiers', {}).keys())
-    wbformat.prefetch_entities(session, prefetch_entity_ids)
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               prefetch_entity_ids)
 
     return flask.render_template('edit.html',
                                  wiki=wiki,
@@ -1071,7 +1136,9 @@ def batch_set_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               statement_ids_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
@@ -1117,7 +1184,9 @@ def batch_increment_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, statement_ids_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               statement_ids_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
@@ -1161,7 +1230,9 @@ def batch_edit_rank_and_show_results(
             print('caught error in batch mode:', e, file=sys.stderr)
             errors[entity_id] = e
 
-    wbformat.prefetch_entities(session, commands_by_entity_id.keys())
+    wbformat.prefetch_entities(session,
+                               flask.g.interface_language_code,
+                               commands_by_entity_id.keys())
 
     return flask.render_template('batch-results.html',
                                  wiki=wiki,
