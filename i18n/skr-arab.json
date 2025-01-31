@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saraiki",
+			"Umar Shahid"
+		]
+	},
+	"skip-to-main-content": "مرکزی مواد تے ونڄو۔",
+	"nav-login": "لاگ ان تھیوو",
+	"index-label-wiki": "وکی",
+	"index-option-wikidatawiki": "وکی ڈیٹا",
+	"index-option-commonswiki": "وِکیمیڈیا کامنز",
+	"index-label-entity-id": "ہستی دی شناخت",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 یا $2",
+	"index-button-submit": "بیانات منتخب کرو",
+	"index-batch-col-query": "استفسار دے بیانات",
+	"index-batch-row-collective": "یکے بیاناں کیتے ہک ہی کارروائی",
+	"edit-must-log-in": "ترمیم کرݨ کیتے آپ کو [$1 لاگ ان] کرݨا ہوسی۔",
+	"edit-select-all": "سبھ چݨو",
+	"edit-invert-selection": "انتخاب کوں الٹ ݙیوو۔",
+	"edit-label-summary": "خلاصہ وچ ترمیم کرو (اختیاری):",
+	"edit-button-normal": "نارمل رینک تے سیٹ کرو۔",
+	"edit-button-deprecated": "فرسودہ رینک تے سیٹ کرو",
+	"batch-list-individual-input": "اسٹیٹمنٹ IDs، درجے، تے درجہ دی اختیاری وجوہات (ہک فی لائن، ٹیب یا پائپ حروف کنوں وکھ):",
+	"batch-query-individual-links": "تساں [$1 ہر ہک بیان کیتے ہک ہی عمل انجام ݙے سڳدو] یا [$2 اسٹیٹمنٹ IDs اَتے رینک بطور فہرست فراہم کر سڳدو]۔",
+	"reason-label-preferred-or-deprecated": "ترجیحی / فرسودہ درجہ دی وجہ ( جے قابل اطلاق ہووے؛ اختیاری)"
+}

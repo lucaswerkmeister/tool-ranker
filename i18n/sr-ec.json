@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Milicevic01"
+		]
+	},
+	"nav-documentation": "Документација",
+	"nav-source-code": "Изворни код",
+	"nav-login": "Пријави ме",
+	"nav-logged-in": "{{GENDER:$2|Пријављени сте}} као $1",
+	"index-label-wiki": "Вики",
+	"index-option-wikidatawiki": "Википодаци",
+	"index-option-commonswiki": "Викимедијина остава",
+	"index-option-testwikidatawiki": "Тестирај Википодатке",
+	"index-option-testcommonswiki": "Тестирај Оставу",
+	"index-label-entity-id": "ID ентитета",
+	"index-placeholder-entity-id-commons": "$1 или $2",
+	"index-label-property-id": "ID својства",
+	"index-button-submit": "Избор изјава",
+	"edit-must-log-in": "Морате се [$1 пријавити] да би уређивали.",
+	"edit-select-all": "Изабери све",
+	"edit-select-none": "Изабери ништа",
+	"edit-invert-selection": "Обрни избор",
+	"edit-label-summary": "Опис измене (необавезно):",
+	"edit-no-statements": "$1 нема изјаве за $2.",
+	"edit-return": "Назад на главну страницу",
+	"error-no-such-entity": "Ентитет са ID $1 не постоји на $2."
+}

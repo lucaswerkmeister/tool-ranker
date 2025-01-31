@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Volvox"
+		]
+	},
+	"nav-documentation": "Dokumentatioun",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "Quellcode",
+	"nav-login": "Aloggen",
+	"nav-logged-in": "{{GENDER:$2|Ageloggt}} als $1",
+	"index-label-wiki": "Wiki",
+	"index-option-wikidatawiki": "Wikidata",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-option-testwikidatawiki": "Test-Wikidata",
+	"index-option-testcommonswiki": "Test-Wikimedia-Commons",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 oder $2",
+	"edit-select-all": "Alles uwielen",
+	"edit-invert-selection": "Auswiel ëmdréinen",
+	"edit-no-statements": "$1 huet keng Aussoe fir $2.",
+	"batch-individual-button-submit": "Bewäertung vun der Ausso änneren"
+}
