@@ -22,8 +22,8 @@
   </div>
   <div class="form-group">
     <label for="entity_id">{{ message('index-label-entity-id') }}</label>
-    {% set placeholder_entity_id_wikidata = message('index-placeholder-entity-id-wikidata', item_id='Q42', property_id='P31', lexeme_id='L99') %}
-    {% set placeholder_entity_id_commons = message('index-placeholder-entity-id-commons', mediainfo_id='M79869096', file_title='File:DSC 0484 2-01.jpg') %}
+    {% set placeholder_entity_id_wikidata = message('index-placeholder-entity-id-wikidata', item_id='Q42', property_id='P31', lexeme_id='L99') | striptags %}
+    {% set placeholder_entity_id_commons = message('index-placeholder-entity-id-commons', mediainfo_id='M79869096', file_title='File:DSC 0484 2-01.jpg') | striptags %}
     <input
       id="entity_id" class="form-control"
       type="text" name="entity_id"
