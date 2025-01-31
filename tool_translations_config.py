@@ -1,4 +1,16 @@
-from toolforge_i18n import TranslationsConfig
+from toolforge_i18n import TranslationsConfig, language_code_to_babel
+
+
+def _language_code_to_babel(code: str) -> str:
+    mapped = language_code_to_babel(code)
+    if mapped != code:
+        return mapped
+    return {
+        # skr-arab (Saraiki) is not in Babel;
+        # ur (Urdu) is the MediaWiki fallback and its .text_direction matches
+        'skr-arab': 'ur',
+    }.get(code, code.partition('-')[0])
+
 
 config = TranslationsConfig(
     variables={
@@ -68,5 +80,6 @@ config = TranslationsConfig(
     allowed_html_elements={
         'code': set(),
     },
+    language_code_to_babel=_language_code_to_babel,
     check_translations=False,
 )

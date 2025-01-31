@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ykhwong"
+		]
+	},
+	"skip-to-main-content": "본문 내용으로 건너뛰기",
+	"nav-documentation": "설명문서",
+	"nav-toolforge": "위키미디어 툴포지",
+	"nav-source-code": "소스 코드",
+	"nav-login": "로그인",
+	"nav-logged-in": "$1님으로 {{GENDER:$2|로그인함}}",
+	"index-label-wiki": "위키",
+	"index-option-wikidatawiki": "위키데이터",
+	"index-option-commonswiki": "위키미디어 공용",
+	"index-option-testwikidatawiki": "테스트 위키데이터",
+	"index-option-testcommonswiki": "테스트 위키미디어 공용",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 또는 $2",
+	"index-label-property-id": "속성 ID",
+	"edit-select-all": "모두 선택",
+	"edit-select-none": "선택 없음",
+	"edit-invert-selection": "선택 반전",
+	"edit-label-summary": "편집 요약 (선택사항):"
+}
