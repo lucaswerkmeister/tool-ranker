@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Robby",
 			"Volvox"
 		]
 	},
@@ -18,6 +19,11 @@
 	"index-placeholder-entity-id-commons": "$1 oder $2",
 	"edit-select-all": "Alles uwielen",
 	"edit-invert-selection": "Auswiel ëmdréinen",
+	"edit-button-prominent": "Als prominent markéieren",
+	"edit-button-not-prominent": "Als net prominent markéieren",
 	"edit-no-statements": "$1 huet keng Aussoe fir $2.",
-	"batch-individual-button-submit": "Bewäertung vun der Ausso änneren"
+	"edit-return": "Zréck op d'Haaptsäit",
+	"batch-individual-button-submit": "Bewäertung vun der Ausso änneren",
+	"reason-label-optgroup-preferred": "preferéiert",
+	"reason-label-optgroup-deprecated": "vereelzt"
 }
