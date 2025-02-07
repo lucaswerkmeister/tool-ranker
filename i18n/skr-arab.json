@@ -6,6 +6,7 @@
 		]
 	},
 	"skip-to-main-content": "مرکزی مواد تے ونڄو۔",
+	"nav-source-code": "سورس کوڈ",
 	"nav-login": "لاگ ان تھیوو",
 	"index-label-wiki": "وکی",
 	"index-option-wikidatawiki": "وکی ڈیٹا",
@@ -24,5 +25,6 @@
 	"edit-button-deprecated": "فرسودہ رینک تے سیٹ کرو",
 	"batch-list-individual-input": "اسٹیٹمنٹ IDs، درجے، تے درجہ دی اختیاری وجوہات (ہک فی لائن، ٹیب یا پائپ حروف کنوں وکھ):",
 	"batch-query-individual-links": "تساں [$1 ہر ہک بیان کیتے ہک ہی عمل انجام ݙے سڳدو] یا [$2 اسٹیٹمنٹ IDs اَتے رینک بطور فہرست فراہم کر سڳدو]۔",
-	"reason-label-preferred-or-deprecated": "ترجیحی / فرسودہ درجہ دی وجہ ( جے قابل اطلاق ہووے؛ اختیاری)"
+	"reason-label-preferred-or-deprecated": "ترجیحی / فرسودہ درجہ دی وجہ ( جے قابل اطلاق ہووے؛ اختیاری)",
+	"reason-label-optgroup-preferred": "ترجیحی"
 }
