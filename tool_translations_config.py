@@ -6,6 +6,10 @@ def _language_code_to_babel(code: str) -> str:
     if mapped != code:
         return mapped
     return {
+        # diq (Dimli / Dimlî / Southern Zaza) is not in Babel;
+        # it has no fallbacks in MediaWikis, but it’s written in Latin script
+        # and has “normal” plural rules, so just use English I guess
+        'diq': 'en',
         # skr-arab (Saraiki) is not in Babel;
         # ur (Urdu) is the MediaWiki fallback and its .text_direction matches
         'skr-arab': 'ur',

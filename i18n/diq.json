@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"GolyatGeri",
+			"Mirzali"
+		]
+	},
+	"tool-name": "Ranker",
+	"skip-to-main-content": "Ravêr esas zerreki",
+	"nav-documentation": "Dokumantasyon",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "Kodê menbayi",
+	"nav-login": "Cı kewe",
+	"index-label-wiki": "Wiki",
+	"index-option-wikidatawiki": "Wikidata",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-option-testwikidatawiki": "Test Wikidata",
+	"index-option-testcommonswiki": "Test Wikimedia Commons",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 ya ki $2",
+	"index-label-property-id": "Kamiya mulki",
+	"edit-select-all": "Pêrune weçine"
+}
