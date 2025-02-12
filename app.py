@@ -16,7 +16,8 @@ import stat
 import string
 import sys
 import toolforge
-from toolforge_i18n import ToolforgeI18n, message
+from toolforge_i18n import ToolforgeI18n, \
+    interface_language_code_from_request, lang_autonym, message
 from typing import Any, Callable, Container, Dict, \
     Iterable, List, Optional, Tuple
 import werkzeug
@@ -30,8 +31,17 @@ from query_service import query_wiki, \
 import wbformat
 
 
+def interface_language_code(translations):
+    if 'uselang' in flask.request.args:
+        return interface_language_code_from_request(translations)
+    elif flask.session.get('interface_language_code') in translations:
+        return flask.session['interface_language_code']
+    else:
+        return interface_language_code_from_request(translations)
+
+
 app = flask.Flask(__name__)
-i18n = ToolforgeI18n(app)
+i18n = ToolforgeI18n(app, interface_language_code)
 
 user_agent = toolforge.set_user_agent(
     'ranker',
@@ -580,6 +590,28 @@ def batch_query_edit_rank(wiki: str) -> RRV:
                                             commands_by_entity_id,
                                             session,
                                             custom_summary)
+
+
+@app.get('/settings/')
+def settings():
+    flask.session['return_to_redirect'] = flask.request.referrer
+    return flask.render_template(
+        'settings.html',
+        languages={
+            language_code: lang_autonym(language_code)
+            for language_code in i18n.translations
+        },
+    )
+
+
+@app.post('/settings/')
+def settings_save():
+    if 'interface-language-code' in flask.request.form:
+        flask.session['interface_language_code'] = \
+            flask.request.form['interface-language-code'][:20]
+    return flask.redirect(
+        flask.session.pop('return_to_redirect', flask.url_for('index')),
+    )
 
 
 @app.route('/login')
