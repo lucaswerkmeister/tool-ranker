@@ -21,5 +21,8 @@
 	"edit-select-all": "모두 선택",
 	"edit-select-none": "선택 없음",
 	"edit-invert-selection": "선택 반전",
-	"edit-label-summary": "편집 요약 (선택사항):"
+	"edit-label-summary": "편집 요약 (선택사항):",
+	"settings": "설정",
+	"settings-label-interface-language-code": "사용자 인터페이스 언어",
+	"settings-save": "저장"
 }

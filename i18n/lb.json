@@ -23,6 +23,9 @@
 	"edit-button-not-prominent": "Als net prominent markéieren",
 	"edit-no-statements": "$1 huet keng Aussoe fir $2.",
 	"edit-return": "Zréck op d'Haaptsäit",
+	"settings": "Astellungen",
+	"settings-label-interface-language-code": "Sprooch vun der Benotzeruewerfläch",
+	"settings-save": "Späicheren",
 	"batch-individual-button-submit": "Bewäertung vun der Ausso änneren",
 	"reason-label-optgroup-preferred": "preferéiert",
 	"reason-label-optgroup-deprecated": "vereelzt"
