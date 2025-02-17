@@ -24,5 +24,7 @@
 	"edit-label-summary": "Опис измене (необавезно):",
 	"edit-no-statements": "$1 нема изјаве за $2.",
 	"edit-return": "Назад на главну страницу",
+	"settings": "Подешавања",
+	"settings-save": "Сачувај",
 	"error-no-such-entity": "Ентитет са ID $1 не постоји на $2."
 }
