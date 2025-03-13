@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Fotis A.",
+			"Lucas Werkmeister"
+		]
+	},
+	"skip-to-main-content": "Μετάβαση στο κύριο περιεχόμενο",
+	"nav-documentation": "Τεκμηρίωση",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "Πηγαίος κώδικας",
+	"nav-login": "Σύνδεση",
+	"nav-logged-in": "{{GENDER:$2|Συνδεθήκατε}} ως $1.",
+	"index-paragraph-1": "Αυτό το εργαλείο σάς επιτρέπει να επεξεργαστείτε την κατάταξη πολλαπλών δηλώσεων ταυτόχρονα.",
+	"index-label-wiki": "Βίκι",
+	"index-option-wikidatawiki": "Βικιδεδομένα",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-option-testwikidatawiki": "Δοκιμή Wikidata",
+	"index-option-testcommonswiki": "Δοκιμή Wikimedia Commons",
+	"index-label-entity-id": "Αναγνωριστικό καταχώρησης",
+	"index-placeholder-entity-id-wikidata": "$1 , $2 , $3 …",
+	"index-placeholder-entity-id-commons": "$1 από $2",
+	"index-button-submit": "Επιλέξτε δηλώσεις",
+	"index-batch-row-individual": "καθορίστε την κατάταξη για κάθε δήλωση",
+	"edit-must-log-in": "Πρέπει να [$1 συνδεθείτε] για να κάνετε αλλαγές.",
+	"edit-paragraph-1-logged-in": "Μπορείτε να επεξεργαστείτε την κατάταξη των ακόλουθων $3 {{PLURAL:$1| statement|states}} για $2 :",
+	"edit-paragraph-1-logged-out": "Μόλις συνδεθείτε, μπορείτε να επεξεργαστείτε την κατάταξη των ακόλουθων $3 {{PLURAL:$1| statement|states}} για $2 :",
+	"edit-select-all": "Επιλογή όλων",
+	"edit-select-none": "Επιλέξτε κανένα",
+	"edit-noscript": "Ενεργοποιήστε τη JavaScript για τα κουμπιά \"επιλογή όλων\", \"επιλογή κανενός\" και \"αντιστροφή επιλογής\". (Το υπόλοιπο εργαλείο λειτουργεί χωρίς JavaScript, αν δεν μπορείτε να το ενεργοποιήσετε.)",
+	"edit-label-summary": "Επεξεργασία περίληψης (προαιρετικό):",
+	"edit-button-preferred": "Ορισμός στην προτιμώμενη κατάταξη",
+	"edit-button-normal": "Ορισμός σε κανονική κατάταξη",
+	"edit-button-deprecated": "Ορίστηκε σε καταργημένη κατάταξη",
+	"settings": "Ρυθμίσεις",
+	"settings-label-interface-language-code": "Γλώσσα διεπαφής χρήστη",
+	"settings-save": "Αποθήκευση",
+	"batch-list-collective-input": "Αναγνωριστικά δηλώσεων (ένα ανά γραμμή):",
+	"batch-individual-button-submit": "Επεξεργασία κατάταξης δηλώσεων",
+	"batch-list-collective-links": "Μπορείτε επίσης να [$1 παρέχετε την κατάταξη για κάθε δήλωση ξεχωριστά]."
+}
