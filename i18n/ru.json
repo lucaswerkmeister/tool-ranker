@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kareyac",
+			"Okras"
+		]
+	},
+	"skip-to-main-content": "Перейти к основному содержанию",
+	"nav-documentation": "Документация",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "Исходный код",
+	"nav-login": "Войти",
+	"nav-logged-in": "{{GENDER:$2|Вы вошли в систему}} как $1",
+	"index-paragraph-1": "Этот инструмент позволяет редактировать ранг нескольких утверждений одновременно.",
+	"index-label-wiki": "Вики",
+	"index-option-wikidatawiki": "Викиданные",
+	"index-option-commonswiki": "Викисклад",
+	"index-option-testwikidatawiki": "Тестовые Викиданные",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 или $2",
+	"index-label-property-id": "Идентификатор свойства",
+	"index-button-submit": "Выберите утверждения",
+	"index-batch-heading": "Пакетный режим",
+	"edit-select-all": "Выбрать все",
+	"edit-select-none": "Снять выделение",
+	"edit-invert-selection": "Обратить выделение",
+	"edit-return": "Вернуться на главную страницу",
+	"settings": "Настройки",
+	"settings-save": "Сохранить"
+}
