@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"ABPMAB",
 			"Siebrand"
 		]
 	},
@@ -48,6 +49,8 @@
 	"settings-label-interface-language-code": "Taal van de gebruikersinterface",
 	"settings-save": "Opslaan",
 	"batch-list-collective-input": "Statement-ID's (één per regel):",
+	"reason-label-preferred": "Reden voor voorkeursrang (indien van toepassing; optioneel)",
 	"reason-label-optgroup-preferred": "voorkeur",
-	"reason-label-optgroup-deprecated": "verouderd"
+	"reason-label-optgroup-deprecated": "verouderd",
+	"error-no-such-entity": "Geen entiteit met ID $1 bestaat op $2."
 }
