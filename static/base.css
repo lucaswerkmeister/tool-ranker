@@ -40,3 +40,21 @@
 .navbar-dark .navbar-text {
     filter: brightness(1.5);
 }
+
+/*
+ * Replace some of Bootstrap’s physical properties with logical ones.
+ * (Reportedly Bootstrap v6 is expected to use logical properties,
+ * so hopefully we can remove this one day.)
+ */
+
+.form-check {
+    /* replaces padding-left: 1.5em; */
+    padding-inline: 1.5em 0;
+}
+
+.form-check .form-check-input {
+    /* replaces float: left; */
+    float: inline-start;
+    /* replaces margin-left: -1.5em; */
+    margin-inline: -1.5em 0;
+}
