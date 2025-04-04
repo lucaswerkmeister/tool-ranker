@@ -8,8 +8,8 @@
 {% endif %}
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-  <div class="form-group">
-    <label for="statement_ids">{{ message('batch-list-collective-input') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="statement_ids">{{ message('batch-list-collective-input') }}</label>
     <textarea
       class="form-control"
       id="statement_ids"
@@ -20,8 +20,8 @@
       ></textarea>
   </div>
   {{ reason_input(wiki) }}
-  <div class="form-group">
-    <label for="summary">{{ message('edit-label-summary') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}

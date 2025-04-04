@@ -1,7 +1,7 @@
 {% macro reason_input(wiki) %}
 {% if wiki | wiki_reason_preferred_property or wiki | wiki_reason_deprecated_property %}
-<div class="form-group">
-  <label for="reason">
+<div class="mb-3">
+  <label class="form-label" for="reason">
     {% if wiki | wiki_reason_preferred_property and wiki | wiki_reason_deprecated_property %}
     {{ message('reason-label-preferred-or-deprecated') }}
     {% elif wiki | wiki_reason_preferred_property %}

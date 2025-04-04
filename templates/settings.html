@@ -5,7 +5,7 @@
 <form method="post">
   <input name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="mb-3">
-    <label for="interface-language-code">
+    <label class="form-label" for="interface-language-code">
       {{ message('settings-label-interface-language-code') }}
     </label>
     <select id="interface-language-code" name="interface-language-code" class="form-control">

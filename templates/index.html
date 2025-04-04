@@ -11,8 +11,8 @@
   {{ message('index-paragraph-1') }}
 </p>
 <form method="post" action="{{ url_for('redirect_edit') }}">
-  <div class="form-group">
-    <label for="wiki">{{ message('index-label-wiki') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="wiki">{{ message('index-label-wiki') }}</label>
     <select class="form-control" id="wiki" name="wiki">
       <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>{{ message('index-option-wikidatawiki') }}</option>
       <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-commonswiki') }}</option>
@@ -20,8 +20,8 @@
       <option value="test-commons.wikimedia.org" {% if wiki == "test-commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-testcommonswiki') }}</option>
     </select>
   </div>
-  <div class="form-group">
-    <label for="entity_id">{{ message('index-label-entity-id') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="entity_id">{{ message('index-label-entity-id') }}</label>
     {% set placeholder_entity_id_wikidata = message('index-placeholder-entity-id-wikidata', item_id='Q42', property_id='P31', lexeme_id='L99') | striptags %}
     {% set placeholder_entity_id_commons = message('index-placeholder-entity-id-commons', mediainfo_id='M79869096', file_title='File:DSC 0484 2-01.jpg') | striptags %}
     <input
@@ -39,8 +39,8 @@
       {% if entity_id %}value="{{ entity_id }}" {% endif %}
       >
   </div>
-  <div class="form-group">
-    <label for="property_id">{{ message('index-label-property-id') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="property_id">{{ message('index-label-property-id') }}</label>
     <input
       id="property_id" class="form-control"
       type="text" name="property_id"
@@ -65,7 +65,7 @@
     </colgroup>
     <tr>
       <td>
-        <label for="batch-wiki" class="sr-only">{{ message('index-label-wiki') }}</label>
+        <label class="form-label" for="batch-wiki" class="sr-only">{{ message('index-label-wiki') }}</label>
         <select class="form-control" id="batch-wiki" name="wiki">
       <option value="www.wikidata.org" {% if wiki == "www.wikidata.org" %}selected{% endif %}>{{ message('index-option-wikidatawiki') }}</option>
       <option value="commons.wikimedia.org" {% if wiki == "commons.wikimedia.org" %}selected{% endif %}>{{ message('index-option-commonswiki') }}</option>
@@ -81,7 +81,7 @@
       <td>
         <button
           type="submit"
-          class="btn btn-secondary btn-block"
+          class="btn btn-secondary w-100"
           formaction="{{ url_for('redirect_batch_list_collective') }}">
           go
         </button>
@@ -89,7 +89,7 @@
       <td>
         <button
           type="submit"
-          class="btn btn-secondary btn-block"
+          class="btn btn-secondary w-100"
           formaction="{{ url_for('redirect_batch_query_collective') }}">
           go
         </button>
@@ -100,7 +100,7 @@
       <td>
         <button
           type="submit"
-          class="btn btn-secondary btn-block"
+          class="btn btn-secondary w-100"
           formaction="{{ url_for('redirect_batch_list_individual') }}">
           go
         </button>
@@ -108,7 +108,7 @@
       <td>
         <button
           type="submit"
-          class="btn btn-secondary btn-block"
+          class="btn btn-secondary w-100"
           formaction="{{ url_for('redirect_batch_query_individual') }}">
           go
         </button>

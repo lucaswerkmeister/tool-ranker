@@ -122,7 +122,7 @@ def authentication_area() -> Markup:
 
     session = authenticated_session('www.wikidata.org')
     if session is None:
-        return (Markup(r'<a id="login" class="navbar-text" href="') +
+        return (Markup(r'<a id="login" class="nav-link" href="') +
                 Markup.escape(flask.url_for('login')) +
                 Markup(r'">') +
                 message('nav-login') +
@@ -135,7 +135,7 @@ def authentication_area() -> Markup:
     logged_in_message = message('nav-logged-in',
                                 user_name=user_name,
                                 user_link=user_link(user_name))
-    return (Markup(r'<span class="navbar-text">') +
+    return (Markup(r'<span class="nav-link">') +
             logged_in_message +
             Markup(r'</span>'))
 

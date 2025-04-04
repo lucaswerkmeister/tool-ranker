@@ -62,7 +62,7 @@
   {% for statement in statements %}
   <div class="form-check statement statement-{{ statement.rank }}">
     <input type="checkbox" class="form-check-input" id="{{ statement.id }}" name="{{ statement.id }}">
-    <label for="{{ statement.id }}">
+    <label class="form-label" for="{{ statement.id }}">
       <div class="mainsnak">{{ format_snak(wiki, property_id, statement.mainsnak) }}</div>
       {% if statement.qualifiers %}
       <ul class="qualifiers-list">
@@ -90,8 +90,8 @@
   </div>
   {% endfor %}
   {{ reason_input(wiki) }}
-  <div class="form-group">
-    <label for="summary">{{ message('edit-label-summary') }}</label>
+  <div class="mb-3">
+    <label class="form-label" for="summary">{{ message('edit-label-summary') }}</label>
     <input name="summary" type="text" id="summary" class="form-control">
   </div>
   {% if can_edit() %}
