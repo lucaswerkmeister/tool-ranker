@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"MatyGamingHD"
+		]
+	},
+	"skip-to-main-content": "Saltar al contenido principal",
+	"nav-documentation": "Documentación",
+	"nav-source-code": "Código fuente",
+	"nav-login": "Iniciar sesión",
+	"nav-logged-in": "{{GENDER:$2|Conectado}} como $1",
+	"index-paragraph-1": "Esta herramienta te permite editar el rango de múltiples declaraciones a la vez.",
+	"index-label-entity-id": "ID de entidad",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 o $2",
+	"index-label-property-id": "ID de propiedad",
+	"index-batch-row-individual": "Especifica el rango para cada declaración",
+	"edit-must-log-in": "Debes [$1 iniciar sesión] para realizar modificaciones.",
+	"edit-paragraph-1-logged-out": "Una vez que inicies sesión, podrás editar el rango de la siguiente $3 {{PLURAL:$1|declaración|declaraciones}} en $2:",
+	"edit-select-all": "Seleccionar todo",
+	"edit-select-none": "Seleccionar ninguno",
+	"edit-invert-selection": "Invertir selección",
+	"edit-label-summary": "Resumen de edición (opcional):",
+	"edit-button-preferred": "Establecer como rango preferido",
+	"edit-button-normal": "Establecer como rango normal",
+	"edit-button-deprecated": "Establecer como rango en desuso",
+	"edit-button-prominent": "Marcar como prominente",
+	"edit-button-not-prominent": "Marcar como no prominente",
+	"edit-button-increment": "Incrementar rango",
+	"edit-no-statements": "$1 no tiene declaraciones para $2.",
+	"edit-return": "Volver a la página principal",
+	"settings": "Configuración",
+	"settings-label-interface-language-code": "Idioma de la interfaz de usuario",
+	"settings-save": "Guardar",
+	"batch-list-collective-input": "ID de las declaraciones (uno por línea):",
+	"batch-individual-button-submit": "Editar el rango de las declaraciones",
+	"reason-label-preferred-or-deprecated": "Motivo para el rango preferido / en desuso (si aplica; opcional)",
+	"reason-label-preferred": "Motivo para el rango preferido (si aplica; opcional)",
+	"reason-label-deprecated": "Motivo para el rango en desuso (si aplica; opcional)",
+	"reason-label-optgroup-preferred": "Preferido",
+	"reason-label-optgroup-deprecated": "en desuso",
+	"error-no-such-entity": "No existe ninguna entidad con el ID $1 en $2."
+}
