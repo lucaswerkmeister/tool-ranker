@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"EmDashUser002"
+		]
+	},
+	"tool-name": "Ranker",
+	"skip-to-main-content": "Passer au contenu principal",
+	"nav-documentation": "Documentation",
+	"nav-toolforge": "Wikimédia Toolforge",
+	"nav-source-code": "Code source",
+	"nav-login": "Se connecter",
+	"nav-logged-in": "{{GENDER:$2|Connecté}} avec le pseudo $1",
+	"index-paragraph-1": "Cet outil vous permet de modifier le rang de plusieurs déclarations à la fois.",
+	"index-label-wiki": "Wiki",
+	"index-option-wikidatawiki": "Wikidata",
+	"index-option-commonswiki": "Wikimédia Commons",
+	"index-option-testwikidatawiki": "Wikidata test",
+	"index-option-testcommonswiki": "Wikimédia Commons test",
+	"index-label-entity-id": "Identifiant (de l’entité)",
+	"index-placeholder-entity-id-wikidata": "$1 , $2 , $3 …",
+	"index-placeholder-entity-id-commons": "$1 ou $2"
+}
