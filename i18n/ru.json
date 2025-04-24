@@ -16,6 +16,8 @@
 	"index-option-wikidatawiki": "Викиданные",
 	"index-option-commonswiki": "Викисклад",
 	"index-option-testwikidatawiki": "Тестовые Викиданные",
+	"index-option-testcommonswiki": "Тестовый Викисклад",
+	"index-label-entity-id": "Идентификатор сущности",
 	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
 	"index-placeholder-entity-id-commons": "$1 или $2",
 	"index-label-property-id": "Идентификатор свойства",
@@ -24,7 +26,18 @@
 	"edit-select-all": "Выбрать все",
 	"edit-select-none": "Снять выделение",
 	"edit-invert-selection": "Обратить выделение",
+	"edit-button-preferred": "Установить предпочтительный ранг",
+	"edit-button-normal": "Установить нормальный ранг",
+	"edit-button-deprecated": "Установить нерекомендуемый ранг",
+	"edit-button-increment": "Повысить ранг",
 	"edit-return": "Вернуться на главную страницу",
 	"settings": "Настройки",
-	"settings-save": "Сохранить"
+	"settings-label-interface-language-code": "Язык интерфейса",
+	"settings-save": "Сохранить",
+	"batch-individual-button-submit": "Изменить ранг утверждений",
+	"reason-label-preferred-or-deprecated": "Причина предпочтительного/нерекомендуемого ранга (если применимо; необязательно)",
+	"reason-label-preferred": "Причина предпочтительного ранга (если применимо; необязательно)",
+	"reason-label-deprecated": "Причина нерекомендуемого ранга (если применимо; необязательно)",
+	"reason-label-optgroup-preferred": "предпочтительный",
+	"reason-label-optgroup-deprecated": "нерекомендуемый"
 }
