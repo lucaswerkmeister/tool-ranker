@@ -49,7 +49,9 @@
 	"settings-label-interface-language-code": "Taal van de gebruikersinterface",
 	"settings-save": "Opslaan",
 	"batch-list-collective-input": "Statement-ID's (één per regel):",
+	"reason-label-preferred-or-deprecated": "Reden voor voorkeurs-/afgekeurde rang (indien van toepassing; optioneel)",
 	"reason-label-preferred": "Reden voor voorkeursrang (indien van toepassing; optioneel)",
+	"reason-label-deprecated": "Reden voor verouderde rang (indien van toepassing; optioneel)",
 	"reason-label-optgroup-preferred": "voorkeur",
 	"reason-label-optgroup-deprecated": "verouderd",
 	"error-no-such-entity": "Geen entiteit met ID $1 bestaat op $2."
