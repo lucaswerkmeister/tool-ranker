@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Wheelygay"
+		]
+	},
+	"skip-to-main-content": "Passa al contenuto principale",
+	"nav-login": "Entra",
+	"index-label-wiki": "Wiki",
+	"index-option-wikidatawiki": "Wikidata",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-label-entity-id": "ID entità",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 o $2",
+	"index-label-property-id": "ID proprietà",
+	"index-button-submit": "Seleziona dichiarazioni",
+	"edit-must-log-in": "Devi [$1 accedere] per apportare modifiche.",
+	"edit-select-all": "Seleziona tutto",
+	"edit-invert-selection": "Inverti selezione",
+	"edit-button-deprecated": "Imposta su rango sconsigliato",
+	"edit-return": "Torna alla pagina principale",
+	"settings": "Impostazioni",
+	"settings-label-interface-language-code": "Lingua dell'interfaccia utente",
+	"settings-save": "Salva",
+	"reason-label-preferred-or-deprecated": "Motivo del grado preferito/sconsigliato (se applicabile; facoltativo)",
+	"reason-label-optgroup-preferred": "preferito",
+	"reason-label-optgroup-deprecated": "deprecato"
+}
