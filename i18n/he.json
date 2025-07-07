@@ -1,0 +1,40 @@
+{
+	"@metadata": {
+		"authors": [
+			"YaronSh"
+		]
+	},
+	"skip-to-main-content": "מעבר לתוכן הראשי",
+	"nav-documentation": "תיעוד",
+	"nav-source-code": "קוד מקור",
+	"nav-login": "כניסה לחשבון",
+	"nav-logged-in": "{{GENDER:$2|נכנס|נכנסה}} לחשבון בתור $1.",
+	"index-label-wiki": "ויקי",
+	"index-option-wikidatawiki": "ויקינתונים",
+	"index-option-commonswiki": "ויקישיתוף",
+	"index-option-testwikidatawiki": "בדיקות ויקינתונים",
+	"index-option-testcommonswiki": "בדיקת ויקישיתוף",
+	"index-label-entity-id": "מזהה ישות",
+	"index-label-property-id": "מזהה מאפיין",
+	"index-button-submit": "בחירת קביעות",
+	"index-batch-heading": "מצב מרוכז",
+	"index-batch-paragraph-1": "יש כמה מצבים מרוכזים זמינים. אפשר לספק את הקביעות כרשימה או לבחור אותן עם שאילתת SPARQL, ואפשר גם לבצע את אותה הפעולה (להגדיר או להגדיל דירוג) לכל הקביעות או לציין דירוג לכל קביעה בנפרד. נא לבחור להלן מה המצב המרוכז לשימוש.",
+	"index-batch-col-list": "רשימת קביעות",
+	"index-batch-col-query": "שאילתת קביעות",
+	"index-batch-row-collective": "אותה פעולה לכל הקביעות",
+	"index-batch-row-individual": "לציין דירוג לכל קביעה בנפרד",
+	"edit-must-log-in": "יש [$1 להיכנס] כדי לערוך.",
+	"edit-invert-selection": "היפוך הבחירה",
+	"edit-label-summary": "תקציר עריכה (רשות):",
+	"edit-button-preferred": "הגדרת דירוג מועדף",
+	"edit-button-normal": "הגדרה לדירוג רגיל",
+	"edit-button-deprecated": "הגדרה לדירוג מיושן",
+	"edit-button-prominent": "סימון כבולט",
+	"edit-button-not-prominent": "סימון כלא בולט",
+	"edit-button-increment": "הגדלת דירוג",
+	"edit-return": "חזרה לדף הראשי",
+	"settings": "הגדרות",
+	"settings-label-interface-language-code": "שפת ממשק המשתמש",
+	"settings-save": "שמירה",
+	"batch-list-collective-input": "מזהי קביעות (אחד בשורה):"
+}
