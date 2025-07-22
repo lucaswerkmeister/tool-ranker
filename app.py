@@ -18,6 +18,7 @@ from toolforge_i18n import ToolforgeI18n, \
 from typing import Container, Dict, \
     Iterable, List, Optional, Tuple
 import werkzeug
+import yaml
 
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter, WikiWithQueryServiceConverter, \
@@ -44,20 +45,25 @@ user_agent = toolforge.set_user_agent(
     email='ranker@lucaswerkmeister.de')
 
 
-has_config = app.config.from_file('config.yaml',
-                                  load=toolforge.load_private_yaml,
-                                  silent=True)
-if not has_config:
-    print('config.yaml file not found, assuming local development setup')
-    characters = string.ascii_letters + string.digits
-    random_string = ''.join(random.choice(characters) for _ in range(64))
-    app.secret_key = random_string
-
+app.config.from_file('config.yaml',
+                     load=toolforge.load_private_yaml,
+                     silent=True)
+app.config.from_prefixed_env('TOOL',
+                             loads=yaml.safe_load)
 if 'OAUTH' in app.config:
     oauth_config = app.config['OAUTH']
     consumer_token = mwoauth.ConsumerToken(oauth_config['CONSUMER_KEY'],
                                            oauth_config['CONSUMER_SECRET'])
     index_php = 'https://www.wikidata.org/w/index.php'
+    assert app.secret_key is not None, \
+        'If OAuth is configured, the SECRET_KEY must also be configured ' \
+        '(a fixed random string)'
+else:
+    print('No OAuth configuration found, assuming local development setup')
+    if app.secret_key is None:
+        characters = string.ascii_letters + string.digits
+        random_string = ''.join(random.choice(characters) for _ in range(64))
+        app.secret_key = random_string
 
 
 app.url_map.converters['eid'] = EntityIdConverter
