@@ -636,6 +636,11 @@ def logout() -> RRV:
     return flask.redirect(flask.url_for('index'))
 
 
+@app.route('/healthz')
+def health() -> RRV:
+    return ''
+
+
 def full_url(endpoint: str, **kwargs) -> str:
     scheme = flask.request.headers.get('X-Forwarded-Proto', 'http')
     return flask.url_for(endpoint, _external=True, _scheme=scheme, **kwargs)
