@@ -55,8 +55,8 @@ if not has_config:
 
 if 'OAUTH' in app.config:
     oauth_config = app.config['OAUTH']
-    consumer_token = mwoauth.ConsumerToken(oauth_config['consumer_key'],
-                                           oauth_config['consumer_secret'])
+    consumer_token = mwoauth.ConsumerToken(oauth_config['CONSUMER_KEY'],
+                                           oauth_config['CONSUMER_SECRET'])
     index_php = 'https://www.wikidata.org/w/index.php'
 
 
