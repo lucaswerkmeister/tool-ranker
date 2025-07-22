@@ -1,3 +1,10 @@
+default:
+  image: python:3.11
+  cache:
+    - key: pip-python-3.11
+      paths:
+        - .cache/pip
+
 stages:
   - test
 
@@ -7,11 +14,14 @@ variables:
 
 test-job:
   stage: test
-  image: python:3.11
-  cache:
-    - key: pip-python-3.11
-      paths:
-        - .cache/pip
   script:
-    - python3 -m pip install -r requirements.txt
+    - python3 -m pip install -r requirements.txt -r dev-requirements.txt
     - make
+
+test-prod-requirements-job:
+  stage: test
+  script:
+    # only install prod requirements
+    - python3 -m pip install -r requirements.txt
+    # check that app.py runs without crashing on a missing import
+    - python3 app.py

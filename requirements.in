@@ -1,20 +1,12 @@
 beautifulsoup4
 cachetools
-flake8
 Flask >= 2.0.2
 MarkupSafe
 mwapi
 mwoauth
-pytest
-mypy
 PyYAML
 requests
 requests_oauthlib
 SPARQLWrapper
 toolforge >= 6.1
 toolforge_i18n[Flask]
-types-beautifulsoup4
-types-cachetools
-types-decorator
-types-requests
-types-PyYAML
