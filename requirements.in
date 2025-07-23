@@ -1,9 +1,11 @@
 beautifulsoup4
 cachetools
 Flask >= 2.0.2
+gunicorn
 MarkupSafe
 mwapi
 mwoauth
+pymysql @ git+https://github.com/PyMySQL/PyMySQL@main
 PyYAML
 requests
 requests_oauthlib

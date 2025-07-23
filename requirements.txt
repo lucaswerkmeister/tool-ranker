@@ -38,6 +38,8 @@ frozenlist==1.7.0
     # via
     #   aiohttp
     #   aiosignal
+gunicorn==23.0.0
+    # via -r requirements.in
 idna==3.10
     # via
     #   requests
@@ -67,14 +69,18 @@ oauthlib==3.3.1
     # via
     #   mwoauth
     #   requests-oauthlib
+packaging==25.0
+    # via gunicorn
 propcache==0.3.2
     # via
     #   aiohttp
     #   yarl
 pyjwt==2.10.1
     # via mwoauth
-pymysql==1.1.1
-    # via toolforge
+pymysql @ git+https://github.com/PyMySQL/PyMySQL@main
+    # via
+    #   -r requirements.in
+    #   toolforge
 pyparsing==3.2.3
     # via rdflib
 pyyaml==6.0.2
