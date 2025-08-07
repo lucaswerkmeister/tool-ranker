@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"tool-name": "Ранкер",
+	"skip-to-main-content": "Коьрта чулацаман тӀегӀо",
+	"nav-documentation": "Документаци",
+	"nav-toolforge": "Викиларман гIирс",
+	"nav-source-code": "Йуьхьанцара код",
+	"nav-login": "ЧугӀо",
+	"nav-logged-in": "{{GENDER:$2|Ахь системин тӀехь авторизаци йина}} $1 цӀарца.",
+	"index-paragraph-1": "ХӀокху гӀирсо аьтто бо масех дӀахьедаран ранг цхьана хенахь хийца.",
+	"index-label-wiki": "Вики",
+	"index-option-wikidatawiki": "Викихаамаш",
+	"index-option-commonswiki": "Викиларма",
+	"index-option-testwikidatawiki": "Тестан Викихаамаш",
+	"index-option-testcommonswiki": "Тестан Викиларма",
+	"index-label-entity-id": "Духан идентификатор",
+	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
+	"index-placeholder-entity-id-commons": "$1 йа $2",
+	"index-label-property-id": "Башхаллин идентификатор",
+	"index-button-submit": "ДӀахьедарш харжа",
+	"index-batch-heading": "Пакетан раж",
+	"index-batch-col-list": "дӀахьедарийн могӀам",
+	"settings": "Нисдаран гӀирс",
+	"settings-label-interface-language-code": "Интерфейсан мотт",
+	"settings-save": "Ӏалашйан",
+	"batch-individual-button-submit": "ДӀахьедарийн ранг хийца",
+	"reason-label-optgroup-preferred": "бакъхьахетарг",
+	"reason-label-optgroup-deprecated": "ширйелла"
+}
