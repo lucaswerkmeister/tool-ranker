@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"شاه زمان پټان"
+		]
+	},
+	"tool-name": "درجه‌بندي",
+	"skip-to-main-content": "ارې منځپانگې ته ورتېرېدل",
+	"nav-documentation": "لاسوند",
+	"nav-toolforge": "ويکي‌رسنۍ توکي‌سپاکوونکی",
+	"nav-source-code": "سرچينې کوډ",
+	"nav-login": "ننوتل",
+	"nav-logged-in": "د $1 په توگه {{GENDER:$2|ننوتي ياست}}",
+	"index-paragraph-1": "دا توکی تاسو ته اجازه درکوي چې په يوځل د څو پرېکړه‌ليکونو درجه سمه کړئ.",
+	"index-label-wiki": "ويکي",
+	"index-option-wikidatawiki": "ويکي‌اومتوک",
+	"index-option-commonswiki": "ويکي‌رسنۍ ټولواله",
+	"index-option-testwikidatawiki": "ازموينې ويکي‌اومتوک",
+	"index-label-entity-id": "شتونتيا پېژند",
+	"index-label-property-id": "ځانتيا پېژند",
+	"index-button-submit": "پرېکړه ليکونه غوره‌کول",
+	"index-batch-col-list": "پرېکړه‌ليکونه لړليکول",
+	"edit-select-all": "ټول ټاکل",
+	"edit-return": "ار مخ ته مخگرځ",
+	"settings": "اوڼنې",
+	"settings-label-interface-language-code": "کارن مخبڼې ژبه",
+	"settings-save": "خوندي‌کول",
+	"batch-list-collective-input": "پرېکړه‌ليک پېژندونه (په هره کرښه کې يو):",
+	"reason-label-optgroup-preferred": "غوره‌شوی",
+	"reason-label-optgroup-deprecated": "له پامه غورځول شوی",
+	"error-no-such-entity": "پّ $2 کې د $1 پېژند سره هېڅ شتونتيا نشته."
+}
