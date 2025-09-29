@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Largestone"
+		]
+	},
+	"tool-name": "Ranker",
+	"skip-to-main-content": "メインコンテンツへスキップ",
+	"nav-documentation": "ドキュメント",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "ソースコード",
+	"nav-login": "ログイン",
+	"index-label-wiki": "ウィキ",
+	"index-option-wikidatawiki": "ウィキデータ",
+	"index-option-commonswiki": "ウィキメディア・コモンズ",
+	"index-label-entity-id": "エンティティID",
+	"index-placeholder-entity-id-commons": "$1または$2",
+	"index-label-property-id": "プロパティID",
+	"index-button-submit": "文を選択",
+	"edit-select-all": "すべて選択",
+	"edit-select-none": "すべて選択解除",
+	"edit-invert-selection": "選択を反転",
+	"settings-save": "保存"
+}
