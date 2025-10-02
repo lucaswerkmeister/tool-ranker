@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Fotis A.",
+			"Jimkats",
 			"Lucas Werkmeister"
 		]
 	},
@@ -20,6 +21,7 @@
 	"index-label-entity-id": "Αναγνωριστικό καταχώρησης",
 	"index-placeholder-entity-id-wikidata": "$1 , $2 , $3 …",
 	"index-placeholder-entity-id-commons": "$1 από $2",
+	"index-label-property-id": "ID Ιδιότητας",
 	"index-button-submit": "Επιλέξτε δηλώσεις",
 	"index-batch-row-individual": "καθορίστε την κατάταξη για κάθε δήλωση",
 	"edit-must-log-in": "Πρέπει να [$1 συνδεθείτε] για να κάνετε αλλαγές.",
@@ -27,11 +29,13 @@
 	"edit-paragraph-1-logged-out": "Μόλις συνδεθείτε, μπορείτε να επεξεργαστείτε την κατάταξη των ακόλουθων $3 {{PLURAL:$1| statement|states}} για $2 :",
 	"edit-select-all": "Επιλογή όλων",
 	"edit-select-none": "Επιλέξτε κανένα",
+	"edit-invert-selection": "Αντιστροφή επιλογής",
 	"edit-noscript": "Ενεργοποιήστε τη JavaScript για τα κουμπιά \"επιλογή όλων\", \"επιλογή κανενός\" και \"αντιστροφή επιλογής\". (Το υπόλοιπο εργαλείο λειτουργεί χωρίς JavaScript, αν δεν μπορείτε να το ενεργοποιήσετε.)",
 	"edit-label-summary": "Επεξεργασία περίληψης (προαιρετικό):",
 	"edit-button-preferred": "Ορισμός στην προτιμώμενη κατάταξη",
 	"edit-button-normal": "Ορισμός σε κανονική κατάταξη",
 	"edit-button-deprecated": "Ορίστηκε σε καταργημένη κατάταξη",
+	"edit-return": "Επιστροφή στην κύρια σελίδα",
 	"settings": "Ρυθμίσεις",
 	"settings-label-interface-language-code": "Γλώσσα διεπαφής χρήστη",
 	"settings-save": "Αποθήκευση",
