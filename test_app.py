@@ -243,11 +243,14 @@ Q2$123|deprecated|Q123
 Q1$456\tpreferred\tQ456
 q2$456\tnormal|Q789
 P3$123|preferred|
+P4$123
 '''.strip()
     assert ranker.parse_statement_ids_with_ranks_and_reasons(input) == {
         'Q1': {'Q1$123': ('normal', ''), 'Q1$456': ('preferred', 'Q456')},
         'Q2': {'Q2$123': ('deprecated', 'Q123'), 'q2$456': ('normal', 'Q789')},
         'P3': {'P3$123': ('preferred', '')},
+        # the API will reject this but it shouldn’t crash the rest of the batch
+        'P4': {'P4$123': ('', '')},
     }
 
 

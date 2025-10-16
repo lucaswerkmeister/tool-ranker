@@ -741,7 +741,11 @@ def parse_statement_ids_list(input: str) -> Dict[str, List[str]]:
 
 def query_statement_ids(wiki: str, query: str) -> Dict[str, List[str]]:
     results = query_wiki(wiki, query, user_agent)
-    assert 'statement' in results['head']['vars']  # TODO better error handling
+    vars = results['head']['vars']
+    if 'statement' not in vars:
+        flask.abort(400, 'SPARQL query did not return a ?statement variable'
+                    ' (returned variables: ' +
+                    ', '.join(f'?{var}' for var in vars) + ')')
     statement_ids_by_entity_id: Dict[str, List[str]] = {}
     for result in results['results']['bindings']:
         if result['statement']['type'] != 'uri':
@@ -761,7 +765,7 @@ def parse_statement_ids_with_ranks_and_reasons(input: str) \
     for command in commands:
         statement_id, rank, reason, _ = re.split(
             r'[|\t]',
-            command + '||',  # ensure we can unpack reason even if not given
+            command + '|||',  # ensure unpack doesn’t crash
             maxsplit=3,
         )
         entity_id = entity_id_from_statement_id(statement_id)
@@ -773,9 +777,15 @@ def parse_statement_ids_with_ranks_and_reasons(input: str) \
 def query_statement_ids_with_ranks_and_reasons(wiki: str, query: str) \
         -> Dict[str, Dict[str, Tuple[str, str]]]:
     results = query_wiki(wiki, query, user_agent)
-    # TODO better error handling
-    assert 'statement' in results['head']['vars']
-    assert 'rank' in results['head']['vars']
+    vars = results['head']['vars']
+    if 'statement' not in vars:
+        flask.abort(400, 'SPARQL query did not return a ?statement variable'
+                    ' (returned variables: ' +
+                    ', '.join(f'?{var}' for var in vars) + ')')
+    if 'rank' not in vars:
+        flask.abort(400, 'SPARQL query did not return a ?rank variable'
+                    ' (returned variables: ' +
+                    ', '.join(f'?{var}' for var in vars) + ')')
     commands_by_entity_id: Dict[str, Dict[str, Tuple[str, str]]] = {}
     for result in results['results']['bindings']:
         if result['statement']['type'] != 'uri':
