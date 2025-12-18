@@ -1,0 +1,26 @@
+{
+	"@metadata": {
+		"authors": [
+			"Duongvu"
+		]
+	},
+	"tool-name": "Xếp hạng",
+	"skip-to-main-content": "Chuyển đến nội dung chính",
+	"nav-documentation": "Tài liệu",
+	"nav-toolforge": "Công cụ Wikimedia",
+	"nav-source-code": "Mã nguồn",
+	"nav-login": "Đăng nhập",
+	"nav-logged-in": "{{GENDER:$2| Đã đăng nhập}} với tư cách $1",
+	"index-paragraph-1": "Công cụ này cho phép bạn chỉnh sửa thứ hạng của nhiều câu lệnh cùng một lúc.",
+	"index-label-wiki": "Wiki",
+	"index-option-wikidatawiki": "Wikidata",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-option-testwikidatawiki": "Wikidata Thử nghiệm",
+	"index-option-testcommonswiki": "Từ Wikimedia Commons",
+	"index-label-entity-id": "Mã thực thể",
+	"index-placeholder-entity-id-wikidata": "$1 , $2 , $3 …",
+	"index-placeholder-entity-id-commons": "$1 trong số $2",
+	"index-label-property-id": "Mã số tài sản",
+	"index-button-submit": "Một số lời phát biểu",
+	"index-batch-heading": "Chế độ hàng loạt"
+}
