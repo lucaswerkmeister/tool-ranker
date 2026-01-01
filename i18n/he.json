@@ -9,6 +9,7 @@
 	"nav-source-code": "קוד מקור",
 	"nav-login": "כניסה לחשבון",
 	"nav-logged-in": "{{GENDER:$2|נכנס|נכנסה}} לחשבון בתור $1.",
+	"index-paragraph-1": "הכלי הזה מאפשר לך לערוך דירוג של מגוון קביעות בבת־אחת.",
 	"index-label-wiki": "ויקי",
 	"index-option-wikidatawiki": "ויקינתונים",
 	"index-option-commonswiki": "ויקישיתוף",
@@ -39,5 +40,10 @@
 	"settings": "הגדרות",
 	"settings-label-interface-language-code": "שפת ממשק המשתמש",
 	"settings-save": "שמירה",
-	"batch-list-collective-input": "מזהי קביעות (אחד בשורה):"
+	"batch-list-collective-input": "מזהי קביעות (אחד בשורה):",
+	"batch-individual-button-submit": "עריכת דירוג של קביעות",
+	"batch-list-collective-links": "אפשר גם [$1 לספק דירוג לכל קביעה בנפרד].",
+	"batch-list-collective-links-with-qs": "אפשר גם [$1 לספק דירוג לכל קביעה בנפרד] או [$2 לבחור את הקביעות דרך שאילתת SPARQL].",
+	"batch-list-individual-links": "אפשר גם [$1 לבצע את אותה הפעולה לכל אחת מהקביעות].",
+	"batch-list-individual-links-with-qs": "אפשר גם [$1 לבצע את אותה הפעולה לכל אחת מהקביעות] או [$2 לבחור את הקביעות והדירוגים דרך שאילתת SPARQL]."
 }
