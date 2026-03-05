@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Samoasambia"
+			"Samoasambia",
+			"Yupik"
 		]
 	},
 	"tool-name": "Ranker",
@@ -40,6 +41,7 @@
 	"edit-button-increment": "Kasvata asemaa",
 	"edit-no-statements": "Entiteetissä $1 ei ole esityksiä ominaisuudella $2.",
 	"edit-return": "Palaa etusivulle",
+	"settings-save": "Tallenna",
 	"batch-list-collective-input": "Esitys-ID:t (yksi per rivi):",
 	"reason-label-optgroup-preferred": "suosittu",
 	"reason-label-optgroup-deprecated": "vanhentunut"
