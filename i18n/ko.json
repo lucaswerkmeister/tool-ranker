@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Tensama0415",
 			"Ykhwong"
 		]
 	},
@@ -15,13 +16,18 @@
 	"index-option-commonswiki": "위키미디어 공용",
 	"index-option-testwikidatawiki": "테스트 위키데이터",
 	"index-option-testcommonswiki": "테스트 위키미디어 공용",
+	"index-label-entity-id": "개체 ID",
 	"index-placeholder-entity-id-wikidata": "$1, $2, $3…",
 	"index-placeholder-entity-id-commons": "$1 또는 $2",
 	"index-label-property-id": "속성 ID",
+	"index-button-submit": "서술 선택",
+	"index-batch-heading": "일괄 모두",
+	"index-batch-col-list": "서술 나열",
+	"index-batch-col-query": "서술 쿼리",
 	"edit-select-all": "모두 선택",
 	"edit-select-none": "선택 없음",
 	"edit-invert-selection": "선택 반전",
-	"edit-label-summary": "편집 요약 (선택사항):",
+	"edit-label-summary": "편집 요약 (선택 사항):",
 	"settings": "설정",
 	"settings-label-interface-language-code": "사용자 인터페이스 언어",
 	"settings-save": "저장"
