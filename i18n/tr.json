@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hedda"
+		]
+	},
+	"skip-to-main-content": "Ana içeriğe git",
+	"nav-documentation": "Belgelendirme",
+	"nav-toolforge": "Wikimedia Toolforge",
+	"nav-source-code": "Kaynak kodu",
+	"nav-login": "Giriş yap",
+	"nav-logged-in": "$1 olarak {{GENDER:$2|giriş yapıldı}}",
+	"index-paragraph-1": "Bu araç, birden fazla ifadenin sıralamasını aynı anda düzenlemenizi sağlar.",
+	"index-label-wiki": "Viki",
+	"index-option-wikidatawiki": "Vikiveri",
+	"index-option-commonswiki": "Wikimedia Commons",
+	"index-option-testwikidatawiki": "Vikiveri'yi test et",
+	"index-option-testcommonswiki": "Wikipedia Ortak Medyayı test et",
+	"index-label-entity-id": "Varlık kimliği",
+	"index-placeholder-entity-id-commons": "$1 ya da $2",
+	"index-label-property-id": "Özellik kimliği",
+	"index-button-submit": "İfadeleri seç",
+	"index-batch-heading": "Toplu iş modu",
+	"index-batch-paragraph-1": "Ayrıca çeşitli toplu iş modları da mevcuttur. İfadeleri bir liste halinde girebilir veya bir SPARQL sorgusuyla seçebilirsiniz, tüm ifadeler için aynı işlemi (sıralamayı ayarlama veya artırma) gerçekleştirebilir ya da her bir ifade için ayrı bir sıralama belirleyebilirsiniz. Lütfen aşağıdan kullanmak istediğiniz toplu iş modunu seçin.",
+	"index-batch-col-list": "ifadeleri listele",
+	"index-batch-col-query": "ifadeleri sorgula",
+	"index-batch-row-collective": "tüm ifadelere aynı eylemi uygula",
+	"index-batch-row-individual": "her ifade için bir sıralama belirt",
+	"edit-must-log-in": "Düzenleme yapabilmek için [$1 oturum açmalısınız].",
+	"edit-paragraph-1-logged-in": "$2 üzerinde aşağıdaki $3 {{PLURAL:$1|ifadesinin}} sıralamasını düzenleyebilirsiniz:"
+}
