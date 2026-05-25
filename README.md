@@ -52,12 +52,12 @@ and the tool lowercases keys in nested dicts,
 so that e.g. the following are equivalent:
 
 ```sh
-toolforge envvars create TOOL_OAUTH__CONSUMER_KEY 8dc37f7e2fda9e9f8e9dd602f42b1505
+toolforge envvars create TOOL_OAUTH__CLIENT_ID 7b31f63d74b5952c43d4df2b7d085a4f
 ```
 
 ```yaml
 OAUTH:
-    CONSUMER_KEY: 8dc37f7e2fda9e9f8e9dd602f42b1505
+    CLIENT_ID: 7b31f63d74b5952c43d4df2b7d085a4f
 ```
 
 For the available configuration variables, see the `config.yaml.example` file.

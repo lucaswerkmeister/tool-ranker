@@ -63,20 +63,16 @@ mwapi==0.6.1
     # via
     #   -r requirements.in
     #   toolforge-i18n
-mwoauth==0.4.0
+mwoauth2==0.1.0
     # via -r requirements.in
 oauthlib==3.3.1
-    # via
-    #   mwoauth
-    #   requests-oauthlib
+    # via requests-oauthlib
 packaging==26.2
     # via gunicorn
 propcache==0.5.2
     # via
     #   aiohttp
     #   yarl
-pyjwt==2.13.0
-    # via mwoauth
 pymysql==1.2.0
     # via toolforge
 pyparsing==3.3.2
@@ -89,14 +85,11 @@ requests==2.34.2
     # via
     #   -r requirements.in
     #   mwapi
-    #   mwoauth
     #   requests-oauthlib
     #   toolforge
     #   toolforge-i18n
 requests-oauthlib==2.0.0
-    # via
-    #   -r requirements.in
-    #   mwoauth
+    # via mwoauth2
 soupsieve==2.8.4
     # via beautifulsoup4
 sparqlwrapper==2.0.0

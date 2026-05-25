@@ -5,11 +5,9 @@ from flask.typing import ResponseReturnValue as RRV
 import json
 from markupsafe import Markup
 import mwapi  # type: ignore
-import mwoauth  # type: ignore
 import random
 import re
 import requests
-import requests_oauthlib  # type: ignore
 import string
 import sys
 import toolforge
@@ -23,6 +21,7 @@ import yaml
 from converters import EntityIdConverter, PropertyIdConverter, \
     RankConverter, WikiConverter, WikiWithQueryServiceConverter, \
     WikiWithoutQueryServiceException
+from mwoauth2 import MWOAuth2FlaskMWApi
 from query_service import query_wiki, \
     query_service_id, query_service_url
 import wbformat
@@ -51,13 +50,15 @@ app.config.from_file('config.yaml',
 app.config.from_prefixed_env('TOOL',
                              loads=yaml.safe_load)
 if 'OAUTH' in app.config:
-    oauth_config = app.config['OAUTH']
-    consumer_token = mwoauth.ConsumerToken(oauth_config['CONSUMER_KEY'],
-                                           oauth_config['CONSUMER_SECRET'])
-    index_php = 'https://www.wikidata.org/w/index.php'
     assert app.secret_key is not None, \
         'If OAuth is configured, the SECRET_KEY must also be configured ' \
         '(a fixed random string)'
+    oauth = MWOAuth2FlaskMWApi(
+        host='https://www.wikidata.org',
+        user_agent=user_agent,
+        app=app,
+        check_access_token_before_request=True,
+    )
 else:
     print('No OAuth configuration found, assuming local development setup')
     if app.secret_key is None:
@@ -128,7 +129,7 @@ def authentication_area() -> Markup:
 def can_edit() -> bool:
     if 'OAUTH' not in app.config:
         return True
-    return 'oauth_access_token' in flask.session
+    return oauth.has_access_token()
 
 
 @app.template_global()
@@ -233,18 +234,7 @@ def anonymous_session(wiki: str) -> mwapi.Session:
 
 
 def authenticated_session(wiki: str) -> Optional[mwapi.Session]:
-    if 'oauth_access_token' not in flask.session:
-        return None
-
-    access_token = mwoauth.AccessToken(
-        **flask.session['oauth_access_token'])
-    auth = requests_oauthlib.OAuth1(client_key=consumer_token.key,
-                                    client_secret=consumer_token.secret,
-                                    resource_owner_key=access_token.key,
-                                    resource_owner_secret=access_token.secret)
-    return mwapi.Session(host='https://' + wiki,
-                         auth=auth,
-                         user_agent=user_agent)
+    return oauth.mwapi_session(host='https://' + wiki)
 
 
 @app.route('/')
@@ -600,11 +590,7 @@ def settings_save():
 
 @app.route('/login')
 def login() -> RRV:
-    redirect, request_token = mwoauth.initiate(index_php,
-                                               consumer_token,
-                                               user_agent=user_agent)
-    flask.session['oauth_request_token'] = dict(zip(request_token._fields,
-                                                    request_token))
+    redirect = oauth.authorization_url()
     return_url = flask.request.referrer
     if return_url and return_url.startswith(full_url('index')):
         flask.session['oauth_redirect_target'] = return_url
@@ -613,22 +599,15 @@ def login() -> RRV:
 
 @app.route('/oauth/callback')
 def oauth_callback() -> RRV:
-    oauth_request_token = flask.session.pop('oauth_request_token', None)
-    if oauth_request_token is None:
-        already_logged_in = 'oauth_access_token' in flask.session
+    try:
+        oauth.fetch_token()
+    except KeyError:
+        already_logged_in = oauth.has_access_token()
         query_string = flask.request.query_string\
                                     .decode('utf8')
         return flask.render_template('no-oauth-request-token.html',
                                      already_logged_in=already_logged_in,
                                      query_string=query_string)
-    request_token = mwoauth.RequestToken(**oauth_request_token)
-    access_token = mwoauth.complete(index_php,
-                                    consumer_token,
-                                    request_token,
-                                    flask.request.query_string,
-                                    user_agent=user_agent)
-    flask.session['oauth_access_token'] = dict(zip(access_token._fields,
-                                                   access_token))
     flask.session.permanent = True
     flask.session.pop('csrf_token', None)
     redirect_target = flask.session.pop('oauth_redirect_target', None)
@@ -637,7 +616,10 @@ def oauth_callback() -> RRV:
 
 @app.route('/logout')
 def logout() -> RRV:
-    flask.session.pop('oauth_access_token', None)
+    try:
+        oauth.pop_access_token()
+    except KeyError:
+        pass
     flask.session.permanent = False
     return flask.redirect(flask.url_for('index'))
 

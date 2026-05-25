@@ -4,10 +4,9 @@ Flask >= 2.0.2
 gunicorn
 MarkupSafe
 mwapi
-mwoauth
+mwoauth2
 PyYAML
 requests
-requests_oauthlib
 SPARQLWrapper
 toolforge >= 6.1
 toolforge_i18n[Flask]
