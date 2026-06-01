@@ -1,5 +1,7 @@
 default:
   image: python:3.13
+  tags:
+    - wmcs
   cache:
     - key: pip-python-3.13
       paths:
