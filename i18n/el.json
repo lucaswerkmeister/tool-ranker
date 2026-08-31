@@ -41,5 +41,11 @@
 	"settings-save": "Αποθήκευση",
 	"batch-list-collective-input": "Αναγνωριστικά δηλώσεων (ένα ανά γραμμή):",
 	"batch-individual-button-submit": "Επεξεργασία κατάταξης δηλώσεων",
-	"batch-list-collective-links": "Μπορείτε επίσης να [$1 παρέχετε την κατάταξη για κάθε δήλωση ξεχωριστά]."
+	"batch-list-collective-links": "Μπορείτε επίσης να [$1 παρέχετε την κατάταξη για κάθε δήλωση ξεχωριστά].",
+	"reason-label-preferred-or-deprecated": "Αιτιολογία για την προτιμώμενη/καταργημένη κατάταξη (εάν ισχύει, προαιρετικό)",
+	"reason-label-preferred": "Αιτιολογία για την προτιμώμενη κατάταξη (εάν ισχύει, προαιρετικό)",
+	"reason-label-deprecated": "Αιτιολογία για την κατηργημένη κατάταξη (εάν ισχύει, προαιρετικό)",
+	"reason-label-optgroup-preferred": "προτιμώμενη",
+	"reason-label-optgroup-deprecated": "καταργημένη",
+	"error-no-such-entity": "Δεν υπάρχει οντότητα με το ID $1 στο $2."
 }
