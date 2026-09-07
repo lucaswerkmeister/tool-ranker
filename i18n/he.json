@@ -46,5 +46,8 @@
 	"batch-list-collective-links": "אפשר גם [$1 לספק דירוג לכל קביעה בנפרד].",
 	"batch-list-collective-links-with-qs": "אפשר גם [$1 לספק דירוג לכל קביעה בנפרד] או [$2 לבחור את הקביעות באמצעות שאילתת SPARQL].",
 	"batch-list-individual-links": "אפשר גם [$1 לבצע את אותה הפעולה לכל אחת מהקביעות].",
-	"batch-list-individual-links-with-qs": "אפשר גם [$1 לבצע את אותה הפעולה לכל אחת מהקביעות] או [$2 לבחור את הקביעות והדירוגים דרך שאילתת SPARQL]."
+	"batch-list-individual-links-with-qs": "אפשר גם [$1 לבצע את אותה הפעולה לכל אחת מהקביעות] או [$2 לבחור את הקביעות והדירוגים דרך שאילתת SPARQL].",
+	"reason-label-optgroup-preferred": "מועדף",
+	"reason-label-optgroup-deprecated": "מיושן",
+	"error-no-such-entity": "לא קיימת ישות עם הזהות $1 תחת $2."
 }
