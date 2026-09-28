@@ -4,55 +4,53 @@
 #
 #    pip-compile dev-requirements.in
 #
-ast-serialize==0.6.0
+ast-serialize==0.11.2
     # via mypy
-flake8==7.3.0
+flake8==7.4.1
     # via -r dev-requirements.in
 iniconfig==2.3.0
     # via pytest
-librt==0.12.0
+librt==0.15.0
     # via mypy
 mccabe==0.7.0
     # via flake8
-mypy==2.1.0
+mypy==2.3.1
     # via -r dev-requirements.in
 mypy-extensions==1.1.0
     # via mypy
-packaging==26.2
-    # via
-    #   -c requirements.txt
-    #   pytest
+packaging==26.3
+    # via pytest
 pathspec==1.1.1
     # via mypy
 pluggy==1.6.0
     # via pytest
-pycodestyle==2.14.0
+pycodestyle==2.15.0
     # via flake8
-pyflakes==3.4.0
+pyflakes==4.0.0
     # via flake8
-pygments==2.20.0
+pygments==2.21.0
     # via pytest
 pytest==9.1.1
     # via -r dev-requirements.in
 types-beautifulsoup4==4.12.0.20250516
     # via -r dev-requirements.in
-types-cachetools==7.0.0.20260518
+types-cachetools==7.0.0.20260713
     # via -r dev-requirements.in
-types-decorator==5.2.0.20260519
+types-decorator==5.2.0.20260712
     # via -r dev-requirements.in
 types-html5lib==1.1.11.20260518
     # via types-beautifulsoup4
-types-pyyaml==6.0.12.20260518
+types-pyyaml==6.0.12.20260906
     # via -r dev-requirements.in
-types-requests==2.33.0.20260518
+types-requests==2.33.0.20260906
     # via -r dev-requirements.in
-types-webencodings==0.5.0.20260408
+types-webencodings==0.6.0.20260907
     # via types-html5lib
 typing-extensions==4.16.0
     # via
     #   -c requirements.txt
     #   mypy
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   -c requirements.txt
     #   types-requests
