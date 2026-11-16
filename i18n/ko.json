@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Tensama0415",
+			"YeBoy371",
 			"Ykhwong"
 		]
 	},
@@ -40,8 +41,8 @@
 	"edit-button-preferred": "선호하는 등급으로 설정",
 	"edit-button-normal": "일반 등금으로 설정",
 	"edit-button-deprecated": "비사용 등급으로 설정",
-	"edit-button-prominent": "또렷한 것으로 표시",
-	"edit-button-not-prominent": "또렷하지 않은 것으로 표시",
+	"edit-button-prominent": "두드러짐으로 표시하기",
+	"edit-button-not-prominent": "두드러지지 않은 것으로 표시",
 	"edit-button-increment": "등급 증가",
 	"edit-no-statements": "$1은(는) $2에 대한 서술이 없습니다.",
 	"edit-return": "대문으로 돌아가기",
